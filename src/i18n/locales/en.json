@@ -1,0 +1,68 @@
+{
+  "navbar": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "freelancers": "Freelancers",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "home": {
+    "hero_title": "Share Your",
+    "hero_highlight": "Thread",
+    "hero_description": "Join the social platform built for meaningful connections. Share your thoughts, discover amazing content, and connect with like-minded people.",
+    "hero_getStarted": "Get Started Free",
+    "hero_explore": "Explore Threads",
+    "hero_joinUsers": "Join 1M+ active users worldwide",
+    "stats_users": "Active Users",
+    "stats_posts": "Posts Shared",
+    "stats_interactions": "Interactions",
+    "stats_countries": "Countries",
+    "features_title": "Why Threadoria?",
+    "features_subtitle": "The social platform designed for meaningful connections and authentic conversations.",
+    "features_connect_title": "Connect & Share",
+    "features_connect_description": "Share your thoughts, connect with friends, and build your community",
+    "features_engage_title": "Engage & Interact",
+    "features_engage_description": "Like, comment, and repost content that matters to you",
+    "features_discover_title": "Discover Trends",
+    "features_discover_description": "Stay updated with what is trending in your network and beyond",
+    "features_save_title": "Save & Organize",
+    "features_save_description": "Bookmark posts you love and organize your favorite content",
+    "categories_title": "Explore Communities",
+    "categories_subtitle": "Find your tribe and join conversations that matter to you",
+    "testimonials_title": "Loved by Our Community",
+    "testimonials_subtitle": "See what our users are saying about Threadoria",
+    "cta_title": "Ready to Share Your Thread?",
+    "cta_subtitle": "Join millions of users sharing their thoughts, connecting with friends, and discovering amazing content.",
+    "cta_join": "Join Threadoria",
+    "cta_exploreCommunities": "Explore Communities"
+  },
+  "navmenu": {
+    "home": "Home",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "settings": "Settings",
+    "new_thread": "New Thread"
+  },
+  "rightbar": {
+    "who_to_follow": "Who to follow",
+    "follow": "Follow",
+    "following": "Following",
+    "see_more": "See more"
+  },
+  "profile": {
+    "follow": "Follow",
+    "following": "Following",
+    "followers": "Followers",
+    "posts": "Posts",
+    "joined": "Joined",
+    "threads": "Threads",
+    "replies": "Replies",
+    "media": "Media",
+    "likes": "Likes",
+    "no_threads": "No threads yet",
+    "no_threads_description": "When this user posts threads, they'll show up here."
+  }
+}

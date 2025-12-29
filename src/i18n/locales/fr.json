@@ -1,0 +1,68 @@
+{
+  "navbar": {
+    "home": "Accueil",
+    "about": "À propos",
+    "services": "Services",
+    "freelancers": "Freelances",
+    "dashboard": "Tableau de bord",
+    "login": "Connexion",
+    "register": "Sinscrire",
+    "logout": "Déconnexion"
+  },
+  "home": {
+    "hero_title": "Partagez Votre",
+    "hero_highlight": "Fil",
+    "hero_description": "Rejoignez la plateforme sociale conçue pour des connexions significatives. Partagez vos pensées, découvrez un contenu incroyable et connectez-vous avec des personnes partageant les mêmes idées.",
+    "hero_getStarted": "Commencer Gratuitement",
+    "hero_explore": "Explorer les Fils",
+    "hero_joinUsers": "Rejoignez 1M+ dutilisateurs actifs dans le monde",
+    "stats_users": "Utilisateurs Actifs",
+    "stats_posts": "Messages Partagés",
+    "stats_interactions": "Interactions",
+    "stats_countries": "Pays",
+    "features_title": "Pourquoi Threadoria?",
+    "features_subtitle": "La plateforme sociale conçue pour des connexions significatives et des conversations authentiques.",
+    "features_connect_title": "Connecter & Partager",
+    "features_connect_description": "Partagez vos pensées, connectez-vous avec des amis et construisez votre communauté",
+    "features_engage_title": "Engager & Interagir",
+    "features_engage_description": "Aimez, commentez et republiez du contenu qui vous importe",
+    "features_discover_title": "Découvrir les Tendances",
+    "features_discover_description": "Restez informé de ce qui est tendance dans votre réseau et au-delà",
+    "features_save_title": "Sauvegarder & Organiser",
+    "features_save_description": "Marquez les messages que vous aimez et organisez votre contenu préféré",
+    "categories_title": "Explorer les Communautés",
+    "categories_subtitle": "Trouvez votre tribu et rejoignez des conversations qui vous importent",
+    "testimonials_title": "Aimé par Notre Communauté",
+    "testimonials_subtitle": "Voyez ce que nos utilisateurs disent de Threadoria",
+    "cta_title": "Prêt à Partager Votre Fil?",
+    "cta_subtitle": "Rejoignez des millions dutilisateurs partageant leurs pensées, se connectant avec des amis et découvrant un contenu incroyable.",
+    "cta_join": "Rejoindre Threadoria",
+    "cta_exploreCommunities": "Explorer les Communautés"
+  },
+  "navmenu": {
+    "home": "Accueil",
+    "notifications": "Notifications",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "new_thread": "Nouveau Fil"
+  },
+  "rightbar": {
+    "who_to_follow": "Qui suivre",
+    "follow": "Suivre",
+    "following": "Suivi",
+    "see_more": "Voir plus"
+  },
+  "profile": {
+    "follow": "Suivre",
+    "following": "Suivi",
+    "followers": "Abonnés",
+    "posts": "Publications",
+    "joined": "Inscrit en",
+    "threads": "Fils",
+    "replies": "Réponses",
+    "media": "Médias",
+    "likes": "J'aime",
+    "no_threads": "Pas encore de fils",
+    "no_threads_description": "Quand cet utilisateur publiera des fils, ils apparaîtront ici."
+  }
+}

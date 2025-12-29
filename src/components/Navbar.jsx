@@ -1,163 +1,143 @@
 import { useState } from "react";
 import { FiSun, FiMoon, FiGlobe, FiMenu, FiX } from "react-icons/fi";
-import threadoria_white from "../assets/thredoria_white.png";
-import { useTheme } from "next-themes";
+import handleLanguageChange from "../handlers/handleLanguageChange";
+import { useTranslation } from "react-i18next";
+import useThemeHandler from "../handlers/themeHandler";
+
+// Inline SVG Logo component for proper dark mode support
+const Logo = ({ className }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 218 42"
+    className={className}>
+    <g id="logogram" transform="translate(0, 1)">
+      <path
+        d="M0 20C0 12.5231 0 8.78461 1.60769 6C2.66091 4.17577 4.17577 2.66091 6 1.60769C8.78461 0 12.5231 0 20 0C27.4769 0 31.2154 0 34 1.60769C35.8242 2.66091 37.3391 4.17577 38.3923 6C40 8.78461 40 12.5231 40 20C40 27.4769 40 31.2154 38.3923 34C37.3391 35.8242 35.8242 37.3391 34 38.3923C31.2154 40 27.4769 40 20 40C12.5231 40 8.78461 40 6 38.3923C4.17577 37.3391 2.66091 35.8242 1.60769 34C0 31.2154 0 27.4769 0 20Z"
+        fill="#2563eb"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M28.0441 7.60927C28.8868 6.80331 30.2152 6.79965 31.0622 7.58229L31.1425 7.66005L31.4164 7.94729C34.1911 10.9318 35.2251 14.4098 34.9599 17.8065C34.6908 21.2511 33.1012 24.4994 30.8836 27.0664C28.6673 29.6316 25.7084 31.6519 22.51 32.5287C19.2714 33.4164 15.7294 33.1334 12.6547 30.9629C10.0469 29.1218 9.05406 26.1465 8.98661 23.2561C7.52323 22.5384 5.98346 21.6463 4.36789 20.5615L3.941 20.2716L3.85006 20.206C2.93285 19.5053 2.72313 18.2084 3.39161 17.2564C4.06029 16.3043 5.36233 16.046 6.34665 16.6512L6.44134 16.7126L6.83024 16.9771C7.79805 17.6269 8.72153 18.1903 9.59966 18.6767C10.1661 16.6889 11.1047 14.7802 12.3413 13.207C14.1938 10.8501 16.9713 8.96525 20.374 9.24647C23.439 9.49995 25.7036 11.081 26.8725 13.3122C28.0044 15.4728 28.0211 18.0719 27.0319 20.307C26.0234 22.5857 23.976 24.484 21.0309 25.2662C18.9114 25.8291 16.4284 25.7905 13.6267 25.0367V25.0377C12.5115 24.7375 11.3427 24.323 10.1212 23.7846C9.8472 23.6638 9.60873 23.8483 10.1212 24.1686C11.5636 25.1924 13.5956 26.0505 14.1836 26.3385C14.4615 26.788 14.8061 27.1568 15.2011 27.4356C17.0188 28.7188 19.1451 28.9539 21.3396 28.3523C23.5743 27.7397 25.8141 26.2625 27.5514 24.2516C29.2873 22.2423 30.4065 19.8348 30.5909 17.4727C30.765 15.2439 30.1218 12.9543 28.1842 10.8736L27.9927 10.6731L27.9162 10.5906C27.1538 9.72748 27.2018 8.41516 28.0441 7.60927ZM20.0092 13.5651C18.6033 13.4489 17.1196 14.189 15.8013 15.8662C14.7973 17.1436 14.0376 18.8033 13.6503 20.5112C16.4093 21.4544 18.4655 21.4608 19.8942 21.0814C21.5481 20.6422 22.5399 19.6477 23.0172 18.5693C23.5137 17.4472 23.4628 16.2245 22.9813 15.3055C22.5369 14.4571 21.6422 13.7002 20.0092 13.5651Z"
+        fill="#ffffff"
+      />
+    </g>
+    <g id="logotype" transform="translate(46, 7.5)">
+      <path
+        fill="currentColor"
+        d="M15.07 5.86L7.28 5.86L7.28 1.54L28.08 1.54L28.08 5.86L20.30 5.86L20.30 27L15.07 27L15.07 5.86ZM34.40 15.94L34.40 15.94L34.40 27L29.27 27L29.27 1.54L34.30 1.54L34.30 12.66L33.89 12.66Q34.64 10.27 36.17 8.96Q37.70 7.65 40.13 7.65L40.13 7.65Q42.11 7.65 43.59 8.52Q45.07 9.38 45.88 11.00Q46.69 12.61 46.69 14.85L46.69 14.85L46.69 27L41.56 27L41.56 15.74Q41.56 13.96 40.65 12.95Q39.73 11.94 38.11 11.94L38.11 11.94Q37.03 11.94 36.19 12.41Q35.34 12.88 34.87 13.77Q34.40 14.66 34.40 15.94ZM53.92 27L48.79 27L48.79 7.89L53.74 7.89L53.74 11.23L53.95 11.23Q54.48 9.45 55.72 8.54Q56.96 7.64 58.56 7.64L58.56 7.64Q58.96 7.64 59.41 7.68Q59.86 7.72 60.22 7.81L60.22 7.81L60.22 12.39Q59.88 12.27 59.23 12.20Q58.58 12.13 58.00 12.13L58.00 12.13Q56.84 12.13 55.90 12.64Q54.96 13.14 54.44 14.04Q53.92 14.93 53.92 16.13L53.92 16.13L53.92 27ZM69.40 27.38L69.40 27.38Q66.47 27.38 64.36 26.18Q62.24 24.98 61.10 22.78Q59.96 20.57 59.96 17.55L59.96 17.55Q59.96 14.59 61.09 12.37Q62.22 10.15 64.29 8.90Q66.36 7.65 69.14 7.65L69.14 7.65Q71.02 7.65 72.64 8.25Q74.27 8.85 75.50 10.06Q76.73 11.26 77.42 13.07Q78.11 14.88 78.11 17.34L78.11 17.34L78.11 18.78L62.07 18.78L62.07 15.57L75.60 15.57L73.21 16.42Q73.21 14.93 72.76 13.83Q72.30 12.73 71.41 12.12Q70.51 11.52 69.18 11.52L69.18 11.52Q67.86 11.52 66.93 12.13Q66.00 12.75 65.52 13.80Q65.04 14.85 65.04 16.20L65.04 16.20L65.04 18.47Q65.04 20.13 65.59 21.26Q66.15 22.39 67.15 22.95Q68.15 23.51 69.48 23.51L69.48 23.51Q70.39 23.51 71.12 23.26Q71.86 23.00 72.38 22.50Q72.90 21.99 73.17 21.26L73.17 21.26L77.82 22.13Q77.36 23.70 76.22 24.89Q75.07 26.08 73.35 26.73Q71.64 27.38 69.40 27.38ZM84.67 27.38L84.67 27.38Q82.86 27.38 81.42 26.74Q79.97 26.09 79.14 24.82Q78.32 23.55 78.32 21.65L78.32 21.65Q78.32 20.06 78.91 18.98Q79.50 17.91 80.51 17.26Q81.53 16.61 82.82 16.27Q84.11 15.93 85.53 15.79L85.53 15.79Q87.19 15.62 88.20 15.47Q89.22 15.33 89.69 15.01Q90.16 14.70 90.16 14.08L90.16 14.08L90.16 13.99Q90.16 13.17 89.82 12.61Q89.48 12.05 88.81 11.75Q88.14 11.45 87.17 11.45L87.17 11.45Q86.18 11.45 85.44 11.75Q84.71 12.05 84.25 12.54Q83.78 13.04 83.56 13.65L83.56 13.65L78.86 12.87Q79.36 11.21 80.50 10.05Q81.65 8.88 83.35 8.27Q85.05 7.65 87.17 7.65L87.17 7.65Q88.72 7.65 90.18 8.02Q91.63 8.39 92.78 9.16Q93.94 9.93 94.61 11.16Q95.29 12.39 95.29 14.13L95.29 14.13L95.29 27L90.43 27L90.43 24.35L90.26 24.35Q89.80 25.24 89.03 25.91Q88.26 26.59 87.18 26.98Q86.09 27.38 84.67 27.38ZM86.13 23.77L86.13 23.77Q87.34 23.77 88.25 23.29Q89.17 22.81 89.68 21.99Q90.19 21.17 90.19 20.16L90.19 20.16L90.19 18.10Q89.97 18.27 89.51 18.40Q89.05 18.54 88.48 18.64Q87.92 18.75 87.37 18.83Q86.83 18.92 86.40 18.97L86.40 18.97Q85.46 19.10 84.74 19.41Q84.02 19.72 83.63 20.22Q83.24 20.73 83.24 21.51L83.24 21.51Q83.24 22.25 83.61 22.75Q83.99 23.26 84.63 23.51Q85.27 23.77 86.13 23.77ZM104.38 27.32L104.38 27.32Q102.17 27.32 100.40 26.19Q98.63 25.05 97.61 22.86Q96.58 20.66 96.58 17.48L96.58 17.48Q96.58 14.22 97.64 12.03Q98.70 9.84 100.46 8.75Q102.22 7.65 104.34 7.65L104.34 7.65Q105.97 7.65 107.04 8.20Q108.12 8.75 108.79 9.55Q109.45 10.35 109.78 11.11L109.78 11.11L109.95 11.11L109.95 1.54L115.07 1.54L115.07 27L110.03 27L110.03 23.94L109.78 23.94Q109.43 24.71 108.76 25.49Q108.08 26.27 107.01 26.79Q105.93 27.32 104.38 27.32ZM105.95 23.21L105.95 23.21Q107.25 23.21 108.17 22.49Q109.09 21.77 109.57 20.48Q110.05 19.19 110.05 17.46L110.05 17.46Q110.05 15.72 109.58 14.45Q109.11 13.17 108.19 12.47Q107.26 11.76 105.95 11.76L105.95 11.76Q104.60 11.76 103.68 12.49Q102.77 13.23 102.31 14.51Q101.85 15.79 101.85 17.46L101.85 17.46Q101.85 19.14 102.32 20.44Q102.79 21.74 103.70 22.47Q104.62 23.21 105.95 23.21ZM125.72 27.38L125.72 27.38Q122.85 27.38 120.75 26.14Q118.64 24.90 117.51 22.68Q116.37 20.47 116.37 17.53L116.37 17.53Q116.37 14.56 117.51 12.35Q118.64 10.13 120.75 8.89Q122.85 7.65 125.72 7.65L125.72 7.65Q128.61 7.65 130.70 8.89Q132.79 10.13 133.93 12.35Q135.07 14.56 135.07 17.53L135.07 17.53Q135.07 20.47 133.93 22.68Q132.79 24.90 130.70 26.14Q128.61 27.38 125.72 27.38ZM125.72 23.34L125.72 23.34Q127.09 23.34 128.01 22.58Q128.93 21.82 129.39 20.50Q129.85 19.17 129.85 17.52L129.85 17.52Q129.85 15.82 129.39 14.51Q128.93 13.19 128.01 12.44Q127.09 11.69 125.72 11.69L125.72 11.69Q124.35 11.69 123.44 12.44Q122.52 13.19 122.06 14.51Q121.60 15.82 121.60 17.52L121.60 17.52Q121.60 19.17 122.06 20.50Q122.52 21.82 123.44 22.58Q124.35 23.34 125.72 23.34ZM141.49 27L136.36 27L136.36 7.89L141.32 7.89L141.32 11.23L141.53 11.23Q142.05 9.45 143.29 8.54Q144.53 7.64 146.14 7.64L146.14 7.64Q146.53 7.64 146.99 7.68Q147.44 7.72 147.80 7.81L147.80 7.81L147.80 12.39Q147.46 12.27 146.81 12.20Q146.16 12.13 145.58 12.13L145.58 12.13Q144.41 12.13 143.47 12.64Q142.53 13.14 142.01 14.04Q141.49 14.93 141.49 16.13L141.49 16.13L141.49 27ZM153.47 27L148.34 27L148.34 7.89L153.47 7.89L153.47 27ZM150.91 5.40L150.91 5.40Q149.74 5.40 148.92 4.63Q148.10 3.86 148.10 2.77L148.10 2.77Q148.10 1.67 148.92 0.90Q149.74 0.13 150.91 0.13L150.91 0.13Q152.07 0.13 152.90 0.90Q153.73 1.66 153.73 2.77L153.73 2.77Q153.73 3.86 152.90 4.63Q152.07 5.40 150.91 5.40ZM160.88 27.38L160.88 27.38Q159.07 27.38 157.63 26.74Q156.18 26.09 155.36 24.82Q154.53 23.55 154.53 21.65L154.53 21.65Q154.53 20.06 155.12 18.98Q155.71 17.91 156.72 17.26Q157.74 16.61 159.03 16.27Q160.32 15.93 161.74 15.79L161.74 15.79Q163.40 15.62 164.41 15.47Q165.43 15.33 165.90 15.01Q166.37 14.70 166.37 14.08L166.37 14.08L166.37 13.99Q166.37 13.17 166.03 12.61Q165.69 12.05 165.02 11.75Q164.35 11.45 163.38 11.45L163.38 11.45Q162.39 11.45 161.65 11.75Q160.92 12.05 160.46 12.54Q160.00 13.04 159.77 13.65L159.77 13.65L155.07 12.87Q155.57 11.21 156.71 10.05Q157.86 8.88 159.56 8.27Q161.26 7.65 163.38 7.65L163.38 7.65Q164.93 7.65 166.39 8.02Q167.84 8.39 168.99 9.16Q170.15 9.93 170.82 11.16Q171.50 12.39 171.50 14.13L171.50 14.13L171.50 27L166.64 27L166.64 24.35L166.47 24.35Q166.01 25.24 165.24 25.91Q164.47 26.59 163.39 26.98Q162.30 27.38 160.88 27.38ZM162.34 23.77L162.34 23.77Q163.55 23.77 164.46 23.29Q165.38 22.81 165.89 21.99Q166.40 21.17 166.40 20.16L166.40 20.16L166.40 18.10Q166.18 18.27 165.72 18.40Q165.26 18.54 164.69 18.64Q164.13 18.75 163.58 18.83Q163.04 18.92 162.61 18.97L162.61 18.97Q161.67 19.10 160.95 19.41Q160.23 19.72 159.84 20.22Q159.45 20.73 159.45 21.51L159.45 21.51Q159.45 22.25 159.82 22.75Q160.20 23.26 160.84 23.51Q161.48 23.77 162.34 23.77Z"
+      />
+    </g>
+  </svg>
+);
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { theme, setTheme } = useTheme("light");
+  const { i18n } = useTranslation();
+  const { isDark, toggleTheme, mounted } = useThemeHandler();
+
+  if (!mounted) {
+    return <nav className="sticky top-0 z-50 h-16 bg-bg-secondary border-b" />;
+  }
 
   return (
-    <>
-      <nav className="border-b border-gray-200 sticky top-0 z-50">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <a href="/" className="flex items-center">
-                <div className="w-28 mr-3 flex items-center justify-center">
-                  <img
-                    src={threadoria_white}
-                    alt="Threadoria Logo"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-              </a>
-            </div>
+    <nav className="sticky top-0 z-50 bg-bg-secondary/80 backdrop-blur-md border-b border-border/50 w-full">
+      <div className="w-full px-4 sm:px-6">
+        <div className="w-full flex justify-between items-center h-16">
+          {/* Logo */}
+          <a href="/" className="flex items-center text-text-primary">
+            <Logo className="h-9 w-auto" />
+          </a>
 
-            <div className="hidden md:flex items-center space-x-4">
-              <button
-                className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition"
-                title="Change Language"
-              >
-                <FiGlobe className="w-4 h-4" />
-                <span className="text-sm font-medium">EN</span>
-              </button>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-1">
+            {/* Language Toggle */}
+            <button
+              onClick={handleLanguageChange}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+              title="Change Language">
+              <FiGlobe className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                {i18n.language.toUpperCase()}
+              </span>
+            </button>
 
-              <button
-                className="p-2 text-gray-700 hover:text-blue-600 transition"
-                title="Toggle Dark Mode"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              >
-                {theme === "dark" ? (
-                  <FiSun className="w-5 h-5" />
-                ) : (
-                  <FiMoon className="w-5 h-5" />
-                )}
-              </button>
-
-              {false ? (
-                <a
-                  href="/"
-                  className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
-                >
-                  Logout
-                </a>
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+              title={isDark ? "Switch to light mode" : "Switch to dark mode"}>
+              {isDark ? (
+                <FiSun className="w-5 h-5" />
               ) : (
-                <div className="flex space-x-2">
-                  <a
-                    href="/auth/login"
-                    className="text-gray-700 hover:text-blue-600 px-4 py-2 transition"
-                  >
-                    Login
-                  </a>
-                  <a
-                    href="/auth"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
-                  >
-                    Register
-                  </a>
-                </div>
+                <FiMoon className="w-5 h-5" />
               )}
-            </div>
+            </button>
 
-            <div className="md:hidden flex items-center space-x-2">
-              <button className="p-2 text-gray-700">
-                <FiGlobe className="w-4 h-4" />
-              </button>
-
-              <button className="p-2 text-gray-700">
-                {theme === "dark" ? (
-                  <FiSun
-                    className="w-5 h-5"
-                    onClick={() => setTheme("light")}
-                  />
-                ) : (
-                  <FiMoon
-                    className="w-5 h-5"
-                    onClick={() => setTheme("dark")}
-                  />
-                )}
-              </button>
-
-              <button className="p-2 text-gray-700">
-                {mobileMenuOpen ? (
-                  <FiX className="w-6 h-6" />
-                ) : (
-                  <FiMenu className="w-6 h-6" />
-                )}
-              </button>
+            {/* Auth Buttons */}
+            <div className="flex items-center gap-2 ml-2 pl-3 border-l border-border/50">
+              <a
+                href="/auth/login"
+                className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
+                Log in
+              </a>
+              <a
+                href="/auth"
+                className="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors">
+                Sign up
+              </a>
             </div>
           </div>
 
-          {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-gray-200">
-              <div className="flex flex-col space-y-3">
-                <a
-                  to="/"
-                  className="text-gray-700 hover:text-blue-600 transition"
-                >
-                  {t("navbar.home")}
-                </a>
-                <a
-                  to="/about"
-                  className="text-gray-700 hover:text-blue-600 transition"
-                >
-                  {t("navbar.about")}
-                </a>
-                <a
-                  to="/services"
-                  className="text-gray-700 hover:text-blue-600 transition"
-                >
-                  {t("navbar.services")}
-                </a>
-                <a
-                  to="/freelancers"
-                  className="text-gray-700 hover:text-blue-600 transition"
-                >
-                  {t("navbar.freelancers")}
-                </a>
+          {/* Mobile Navigation */}
+          <div className="md:hidden flex items-center gap-1">
+            <button
+              onClick={handleLanguageChange}
+              className="p-2 rounded-lg text-text-secondary hover:bg-bg-tertiary transition-colors">
+              <FiGlobe className="w-5 h-5" />
+            </button>
 
-                <div className="pt-3 border-t border-gray-200">
-                  {isAuth ? (
-                    <a
-                      to="/dashboard"
-                      className="block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-center"
-                    >
-                      {t("navbar.dashboard")}
-                    </a>
-                  ) : (
-                    <div className="flex flex-col space-y-2">
-                      <a
-                        to="/login"
-                        className="block text-gray-700 hover:text-blue-600 px-4 py-2 transition text-center"
-                      >
-                        {t("navbar.login")}
-                      </a>
-                      <a
-                        to="/register"
-                        className="block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-center"
-                      >
-                        {t("navbar.register")}
-                      </a>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg text-text-secondary hover:bg-bg-tertiary transition-colors">
+              {isDark ? (
+                <FiSun className="w-5 h-5" />
+              ) : (
+                <FiMoon className="w-5 h-5" />
+              )}
+            </button>
+
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-lg text-text-secondary hover:bg-bg-tertiary transition-colors">
+              {mobileMenuOpen ? (
+                <FiX className="w-5 h-5" />
+              ) : (
+                <FiMenu className="w-5 h-5" />
+              )}
+            </button>
+          </div>
         </div>
-      </nav>
-    </>
+      </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-border bg-bg-secondary">
+          <div className="px-4 py-4 space-y-3">
+            <a
+              href="/auth/login"
+              className="block px-4 py-2.5 text-center text-sm font-medium text-text-primary rounded-lg border border-border hover:bg-bg-tertiary transition-colors">
+              Log in
+            </a>
+            <a
+              href="/auth"
+              className="block px-4 py-2.5 text-center text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors">
+              Sign up
+            </a>
+          </div>
+        </div>
+      )}
+    </nav>
   );
 };
 

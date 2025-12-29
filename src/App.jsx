@@ -1,12 +1,16 @@
 import { ThemeProvider } from "next-themes";
-import MainLayout from "./layouts/MainLayout";
+import GlobalRoutes from "./routes/GlobalRoutes";
+
 function App() {
   return (
-    <>
-      <ThemeProvider>
-        <MainLayout />
-      </ThemeProvider>
-    </>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="dark"
+      enableSystem={true}
+      disableTransitionOnChange={false}
+    >
+      <GlobalRoutes />
+    </ThemeProvider>
   );
 }
 
