@@ -79,5 +79,22 @@
     "sign_in": "Se connecter",
     "no_account": "Vous n'avez pas de compte ?",
     "create_account": "Créer un compte"
+  },
+  "register": {
+    "create_account": "Créer un compte",
+    "subtitle": "Rejoignez-nous pour utiliser votre tableau de bord.",
+    "full_name": "Nom complet",
+    "full_name_placeholder": "Jean Dupont",
+    "email": "Email",
+    "email_placeholder": "vous@exemple.com",
+    "password": "Mot de passe",
+    "password_placeholder": "••••••••",
+    "confirm_password": "Confirmez le mot de passe",
+    "show": "Afficher",
+    "hide": "Masquer",
+    "terms_text": "J'accepte les conditions d'utilisation et la politique de confidentialité.",
+    "submit": "Créer un compte",
+    "have_account": "Vous avez déjà un compte ?",
+    "sign_in": "Se connecter"
   }
 }

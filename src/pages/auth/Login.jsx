@@ -1,4 +1,4 @@
-import { useState } from "react";
+ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -105,7 +105,7 @@ export default function Login() {
             <button
               type="button"
               className="font-medium text-neutral-700 hover:text-neutral-900 dark:text-neutral-200 dark:hover:text-white"
-              onClick={() => navigate("/signup")}>
+              onClick={() => navigate("/register")}>
               {t("login.create_account")}
             </button>
           </p>

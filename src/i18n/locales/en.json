@@ -79,5 +79,22 @@
     "sign_in": "Sign in",
     "no_account": "Don't have an account?",
     "create_account": "Create account"
+  },
+  "register": {
+    "create_account": "Create an account",
+    "subtitle": "Join to start using your dashboard.",
+    "full_name": "Full name",
+    "full_name_placeholder": "John Doe",
+    "email": "Email",
+    "email_placeholder": "you@example.com",
+    "password": "Password",
+    "password_placeholder": "••••••••",
+    "confirm_password": "Confirm password",
+    "show": "Show",
+    "hide": "Hide",
+    "terms_text": "I agree to the terms of service and privacy policy.",
+    "submit": "Create account",
+    "have_account": "Already have an account?",
+    "sign_in": "Sign in"
   }
 }

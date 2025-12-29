@@ -7,6 +7,7 @@ import IndexLayout from "../layouts/IndexLayout";
 import MainLayout from "../layouts/MainLayout";
 import ThreadsLayout from "../layouts/ThreadsLayout";
 import Login from "../pages/auth/Login";
+import Register from "../pages/auth/Register";
 
 export default function PublicRoutes() {
   const routes = createBrowserRouter([
@@ -23,8 +24,18 @@ export default function PublicRoutes() {
           element: <NotFound />,
         },
         {
-          path: "login",
-          element: <Login />,
+          path: "auth",
+          children: [
+            {
+              index: true,
+              path: "login",
+              element: <Login />,
+            },
+            {
+              path: "register",
+              element: <Register />,
+            },
+          ],
         },
       ],
     },

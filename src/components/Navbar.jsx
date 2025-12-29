@@ -82,7 +82,7 @@ const Navbar = () => {
                 Log in
               </a>
               <a
-                href="/auth"
+                href="/auth/register"
                 className="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors">
                 Sign up
               </a>
@@ -130,7 +130,7 @@ const Navbar = () => {
               Log in
             </a>
             <a
-              href="/auth"
+              href="/auth/register"
               className="block px-4 py-2.5 text-center text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors">
               Sign up
             </a>
