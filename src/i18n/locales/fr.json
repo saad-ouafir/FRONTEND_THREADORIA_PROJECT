@@ -64,5 +64,20 @@
     "likes": "J'aime",
     "no_threads": "Pas encore de fils",
     "no_threads_description": "Quand cet utilisateur publiera des fils, ils apparaîtront ici."
+  },
+  "login": {
+    "welcome_back": "Se connecter",
+    "subtitle": "Connectez-vous pour accéder à votre tableau de bord.",
+    "email": "Email",
+    "email_placeholder": "vous@exemple.com",
+    "password": "Mot de passe",
+    "password_placeholder": "••••••••",
+    "show": "Afficher",
+    "hide": "Masquer",
+    "remember_me": "Se souvenir de moi",
+    "forgot_password": "Mot de passe oublié ?",
+    "sign_in": "Se connecter",
+    "no_account": "Vous n'avez pas de compte ?",
+    "create_account": "Créer un compte"
   }
 }
