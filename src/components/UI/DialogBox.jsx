@@ -1,42 +1,65 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
-const Dialog = () => {
-  const [dialogOpen, setDialogOpen] = useState(false);
+const DialogBox = ({ message, onClose, onConfirm }) => {
+  const { t } = useTranslation();
+
+  // Close dialog on Escape key
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape") {
+        onClose?.();
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
+    // Prevent body scroll when dialog is open
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [onClose]);
+
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose?.();
+    }
+  };
 
   return (
-    <>
-      {dialogOpen && (
-        <div
-          className="bg-[#00000027] z-2000000000 fixed flex
-                  items-center justify-center top-0 left-0 w-full h-screen">
-          <div
-            className="absolute top-0 left-0 h-full w-full cursor-pointer backdrop-blur-[2px]"
-            onClick={() => setDialogOpen(false)}></div>
-          <div className="max-w-md w-[90vw] dark:bg-slate-800 h-auto bg-white rounded relative z-10 px-4 py-3">
-            <h1 className="font-semibold dark:text-[#abc2d3] text-xl mb-2">
-              Delete Item
-            </h1>
-            <p className="text-gray-600 dark:text-slate-400 mb-2">
-              Are you sure you want to delete this? This action cannot be
-              undone.
-            </p>
-            <div className="w-full flex items-center justify-end gap-2">
-              <button
-                className="font-semibold px-1.5 dark:hover:bg-red-800/20 py-1 hover:bg-gray-100 rounded text-sm uppercase text-red-500"
-                onClick={() => setDialogOpen(false)}>
-                Cancel
-              </button>
-              <button
-                className="font-semibold px-1.5 dark:hover:bg-blue-800/20 py-1 hover:bg-gray-100 rounded text-sm uppercase text-blue-600"
-                onClick={() => setDialogOpen(false)}>
-                Confirm
-              </button>
-            </div>
-          </div>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      onClick={handleBackdropClick}>
+      <div
+        className="max-w-md w-[90vw] bg-bg-secondary border border-border rounded-lg shadow-lg relative z-10 px-4 sm:px-6 py-4 sm:py-5"
+        onClick={(e) => e.stopPropagation()}>
+        <h2 className="text-lg sm:text-xl font-semibold text-text-primary mb-3">
+          Attention !
+        </h2>
+        <p className="text-sm sm:text-base text-text-muted mb-4 sm:mb-5">
+          {message}
+        </p>
+        <div className="w-full flex items-center justify-end gap-3">
+          <button
+            type="button"
+            className="px-4 py-2 rounded-lg border border-border text-sm sm:text-base font-medium text-text-primary bg-bg-tertiary hover:bg-bg-tertiary/80 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-colors"
+            onClick={onClose}>
+            {t("dialogBox.cancel") || "Cancel"}
+          </button>
+          <button
+            type="button"
+            className="px-4 py-2 rounded-lg text-sm sm:text-base font-medium text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-colors"
+            onClick={() => {
+              onConfirm?.();
+              onClose?.();
+            }}>
+            {t("dialogBox.confirm") || "Confirm"}
+          </button>
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 };
 
-export default Dialog;
+export default DialogBox;

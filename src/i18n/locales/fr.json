@@ -46,7 +46,6 @@
     "settings": "Paramètres",
     "new_thread": "Nouveau Fil",
     "logout": "Déconnexion"
-
   },
   "rightbar": {
     "who_to_follow": "Qui suivre",
@@ -113,6 +112,11 @@
     "uploading": "Téléchargement...",
     "upload_new_picture": "Télécharger une nouvelle photo",
     "delete": "Supprimer",
+    "profile_info": "Informations du profil",
+    "credentials_info": "Identifiants",
+    "username": "Nom d'utilisateur",
+    "full_name": "Nom complet",
+    "bio": "Biographie",
     "personal_information": "Informations personnelles",
     "first_name": "Prénom",
     "last_name": "Nom de famille",
@@ -129,9 +133,28 @@
     "last_updated": "Dernière mise à jour",
     "cancel": "Annuler",
     "save": "Enregistrer",
+    "save_all": "Tout enregistrer",
+    "edit_profile": "Modifier le profil",
+    "cancel_edit": "Annuler la modification",
+    "editing_profile": "Modification de vos informations de profil",
+    "view_profile": "Consultez vos informations de profil",
+    "enter_username": "Entrez le nom d'utilisateur",
+    "enter_full_name": "Entrez le nom complet",
+    "enter_bio": "Entrez la biographie",
     "enter_first_name": "Entrez le prénom",
     "enter_last_name": "Entrez le nom de famille",
     "enter_email_address": "Entrez l'adresse email",
-    "enter_password": "Entrez le mot de passe"
+    "enter_email": "Entrez l'email",
+    "enter_password": "Entrez le mot de passe",
+    "not_set": "Non défini",
+    "no_bio": "Aucune biographie ajoutée"
+  },
+  "delete": {
+    "title": "Supprimer Votre Compte",
+    "subtitle": "Cette etape va supprimez votre compte et tous vos données !"
+  },
+  "dialogBox": {
+    "cancel": "Annuler",
+    "confirm": "Confirmer"
   }
 }

@@ -43,9 +43,9 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-bg-primary">
+    <div className="h-full w-full bg-bg-primary">
       {/* Profile Card with External Border */}
-      <div className="w-full bg-bg-secondary border border-border overflow-hidden p-8">
+      <div className="w-full bg-bg-secondary border border-border overflow-hidden">
         {/* Cover Banner */}
         <div className="relative h-32 md:h-44 bg-linear-to-r from-accent/40 via-accent/20 to-accent/40" />
 

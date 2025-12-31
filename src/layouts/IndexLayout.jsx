@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 
 export default function IndexLayout() {
   return (
-    <div className="min-h-screen bg-bg-primary">
+    <div className="min-h-screen bg-bg-surface">
       <Navbar />
       <main>
         <Outlet />

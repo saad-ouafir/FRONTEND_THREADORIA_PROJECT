@@ -27,8 +27,8 @@ const NavMenu = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const navItems = [
@@ -122,10 +122,9 @@ const NavMenu = () => {
             </p>
             <p className="text-xs text-text-muted truncate">{user.username}</p>
           </div>
-          <button 
+          <button
             className="p-1.5 text-text-muted hover:text-text-secondary rounded-lg hover:bg-bg-tertiary transition-colors"
-            onClick={() => setShowUserMenu(!showUserMenu)}
-          >
+            onClick={() => setShowUserMenu(!showUserMenu)}>
             <FiMoreHorizontal className="w-5 h-5" />
           </button>
 
@@ -135,13 +134,12 @@ const NavMenu = () => {
               <button
                 onClick={() => {
                   // Handle logout logic here
-                  localStorage.removeItem('authToken');
-                  navigate('/auth/login');
+                  localStorage.removeItem("authToken");
+                  navigate("/auth/login");
                 }}
-                className="w-full text-left px-3 py-2 text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center gap-3"
-              >
-                <FiLogOut className="w-4 h-4" />
-                {t('navmenu.logout')}
+                className="w-full text-left px-3 py-2 text-sm font-semibold hover:bg-bg-tertiary text-red-500 transition-colors flex items-center gap-3">
+                <FiLogOut className="w-4 h-4 text-red-500 font-bold" />
+                {t("navmenu.logout")}
               </button>
             </div>
           )}
