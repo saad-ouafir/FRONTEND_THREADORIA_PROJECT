@@ -227,30 +227,30 @@ export default function Register() {
               <label className="block text-sm font-medium text-text-primary mb-2">
                 {t("register.private_account") || "Private account"}
               </label>
-              <button
-                type="button"
-                onClick={handlePrivateToggle}
-                className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors duration-300 focus:outline-none ${
-                  values.is_private ? "bg-accent" : "bg-gray-300"
-                }`}
-                aria-pressed={values.is_private}
-                aria-label={t("register.private_account") || "Private account"}>
-                <span
-                  className={`inline-block h-6 w-6 transform rounded-full bg-white shadow transition-transform duration-300 ${
-                    values.is_private ? "translate-x-8" : "translate-x-1"
-                  }`}
-                />
-                <span className="absolute left-2 text-xs text-text-muted select-none">
-                  {t("register.no")}
-                </span>
-                <span className="absolute right-2 text-xs text-white select-none">
-                  {t("register.yes")}
-                </span>
-              </button>
-              <p className="mt-1 text-xs text-text-muted">
-                {t("register.private_account_description") ||
-                  "Only approved followers can see your posts"}
+              <p className="text-xs text-text-muted">
+                {t("register.private_account_description")}
               </p>
+              <div className="mt-2 flex items-center gap-2">
+                <p className="text-sm text-blue-400">{t("register.no")}</p>
+                <button
+                  type="button"
+                  onClick={handlePrivateToggle}
+                  className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors duration-300 focus:outline-none ${
+                    values.is_private ? "bg-accent" : "bg-gray-300"
+                  }`}
+                  aria-pressed={values.is_private}
+                  aria-label={
+                    t("register.private_account") || "Private account"
+                  }>
+                  <span
+                    className={`inline-block h-6 w-6 transform rounded-full bg-white shadow transition-transform duration-300 ${
+                      values.is_private ? "translate-x-8" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+                <p className="text-sm text-blue-400">{t("register.yes")}</p>
+              </div>
+
               {errors.is_private && (
                 <p className="mt-1 text-xs text-red-500">{errors.is_private}</p>
               )}
