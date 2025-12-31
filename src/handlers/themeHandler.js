@@ -1,10 +1,6 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-/**
- * Custom hook for theme management using next-themes
- * Separates theme logic from components
- */
 export const useThemeHandler = () => {
   const { theme, setTheme, resolvedTheme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -14,34 +10,17 @@ export const useThemeHandler = () => {
     setMounted(true);
   }, []);
 
-  /**
-   * Toggle between light and dark themes
-   */
+  // Toggle between light and dark themes
   const toggleTheme = () => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
   };
 
-  /**
-   * Set a specific theme
-   * @param {string} newTheme - 'light', 'dark', or 'system'
-   */
   const changeTheme = (newTheme) => {
     setTheme(newTheme);
   };
 
-  /**
-   * Check if current theme is dark
-   */
   const isDark = resolvedTheme === "dark";
-
-  /**
-   * Check if current theme is light
-   */
   const isLight = resolvedTheme === "light";
-
-  /**
-   * Get current theme name (resolved, not 'system')
-   */
   const currentTheme = resolvedTheme;
 
   return {
