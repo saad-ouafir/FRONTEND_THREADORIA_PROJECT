@@ -208,7 +208,7 @@ export default function AccountSettingsPage() {
   const fullName = `${firstName} ${lastName}`;
 
   return (
-    <main className="mx-auto flex max-w-2xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
+    <main className="mx-auto flex max-w-4xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8 flex-grow min-h-full">
       <header>
         <h1 className="text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">
           {t('settings.account_settings')}
@@ -275,9 +275,9 @@ export default function AccountSettingsPage() {
           </SettingsSection>
 
           <div className="border-t border-border pt-6">
-            <h3 className="mb-3 text-sm font-semibold text-red-600 dark:text-red-400">
+            {/* <h3 className="mb-3 text-sm font-semibold text-red-600 dark:text-red-400">
               {t('settings.danger_zone')}
-            </h3>
+            </h3> */}
             <button
               type="button"
               className="rounded-lg border border-red-200 text-red-700 px-4 py-2 text-sm font-medium hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/40 focus:outline-none focus:ring-2 focus:ring-red-400 dark:focus:ring-red-600 transition-colors"
@@ -287,9 +287,9 @@ export default function AccountSettingsPage() {
           </div>
         </div>
 
-        <footer className="border-t border-border px-6 py-4 text-xs text-text-muted sm:px-8">
+        {/* <footer className="border-t border-border px-6 py-4 text-xs text-text-muted sm:px-8">
           {t('settings.last_updated')}: {new Date().toLocaleDateString()}
-        </footer>
+        </footer> */}
       </section>
     </main>
   );
