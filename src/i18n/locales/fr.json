@@ -44,7 +44,9 @@
     "notifications": "Notifications",
     "profile": "Profil",
     "settings": "Paramètres",
-    "new_thread": "Nouveau Fil"
+    "new_thread": "Nouveau Fil",
+    "logout": "Déconnexion"
+
   },
   "rightbar": {
     "who_to_follow": "Qui suivre",
@@ -102,5 +104,34 @@
     "creating": "Création en cours...",
     "have_account": "Vous avez déjà un compte ?",
     "sign_in": "Se connecter"
+  },
+  "settings": {
+    "account_settings": "Paramètres du compte",
+    "account_settings_subtitle": "Gérez votre profil et vos préférences de compte.",
+    "profile_picture": "Photo de profil",
+    "profile_picture_subtitle": "PNG ou JPEG jusqu'à 15MB",
+    "uploading": "Téléchargement...",
+    "upload_new_picture": "Télécharger une nouvelle photo",
+    "delete": "Supprimer",
+    "personal_information": "Informations personnelles",
+    "first_name": "Prénom",
+    "last_name": "Nom de famille",
+    "contact_email": "Email de contact",
+    "contact_email_subtitle": "Email utilisé pour les factures et notifications.",
+    "email_address": "Adresse email",
+    "add_another_email": "Ajouter un autre email",
+    "security": "Sécurité",
+    "security_subtitle": "Mettez à jour votre mot de passe régulièrement.",
+    "password": "Mot de passe",
+    "password_subtitle": "Modifiez votre mot de passe actuel.",
+    "danger_zone": "Zone de danger",
+    "delete_account": "Supprimer le compte",
+    "last_updated": "Dernière mise à jour",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "enter_first_name": "Entrez le prénom",
+    "enter_last_name": "Entrez le nom de famille",
+    "enter_email_address": "Entrez l'adresse email",
+    "enter_password": "Entrez le mot de passe"
   }
 }

@@ -8,7 +8,7 @@ import MainLayout from "../layouts/MainLayout";
 import ThreadsLayout from "../layouts/ThreadsLayout";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
-
+import SettingsLayout from "../layouts/SettingsLayout";
 export default function PublicRoutes() {
   const routes = createBrowserRouter([
     {
@@ -56,6 +56,12 @@ export default function PublicRoutes() {
           path: "profile/:username",
           element: <Profile />,
         },
+        {
+          path: "settings",
+          element: <SettingsLayout />,
+        },
+        
+        
       ],
     },
   ]);

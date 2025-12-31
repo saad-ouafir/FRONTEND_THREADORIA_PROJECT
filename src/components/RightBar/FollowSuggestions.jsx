@@ -21,6 +21,24 @@ const suggestedUsers = [
     username: "@7adda",
     avatar: "https://i.pravatar.cc/150?img=5",
   },
+  {
+    id: 4,
+    name: "henry sanchez",
+    username: "@henrySanchez",
+    avatar: "https://i.pravatar.cc/150?img=7",
+  },
+  {
+    id: 5,
+    name: "monica tesla",
+    username: "@monicaTesla",
+    avatar: "https://i.pravatar.cc/150?img=9",
+  },
+  {
+    id: 6,
+    name: "mark ",
+    username: "@Markelo",
+    avatar: "https://i.pravatar.cc/150?img=11",
+  },
 ];
 
 const FollowSuggestions = () => {
@@ -46,8 +64,8 @@ const FollowSuggestions = () => {
         </h1>
       </div>
 
-      {/* User List */}
-      <div className="">
+      {/* User List - Scrollable */}
+      <div className="max-h-58 overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
         {suggestedUsers.map((user) => (
           <div
             key={user.id}
@@ -93,6 +111,8 @@ const FollowSuggestions = () => {
           {t("rightbar.see_more")}
         </button>
       </div>
+
+
     </div>
   );
 };

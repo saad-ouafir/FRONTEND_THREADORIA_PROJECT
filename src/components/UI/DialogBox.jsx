@@ -7,7 +7,7 @@ const Dialog = () => {
     <>
       {dialogOpen && (
         <div
-          className="bg-[#00000027] z-[2000000000] fixed flex
+          className="bg-[#00000027] z-2000000000 fixed flex
                   items-center justify-center top-0 left-0 w-full h-screen">
           <div
             className="absolute top-0 left-0 h-full w-full cursor-pointer backdrop-blur-[2px]"

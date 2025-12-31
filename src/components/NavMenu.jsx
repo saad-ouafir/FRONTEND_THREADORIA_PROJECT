@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import {
   FiHome,
@@ -8,12 +8,28 @@ import {
   FiSettings,
   FiEdit3,
   FiMoreHorizontal,
+  FiLogOut,
 } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
 const NavMenu = () => {
   const { t } = useTranslation();
   const [hasNotifications] = useState(true);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const navigate = useNavigate();
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const navItems = [
     {
@@ -82,7 +98,7 @@ const NavMenu = () => {
       </nav>
 
       {/* User Profile */}
-      <div className="p-4 border-t border-border/50">
+      <div className="p-4 border-t border-border/50 relative" ref={dropdownRef}>
         <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-bg-tertiary transition-colors cursor-pointer">
           <div className="w-10 h-10 rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shrink-0">
             {user.avatar ? (
@@ -106,9 +122,29 @@ const NavMenu = () => {
             </p>
             <p className="text-xs text-text-muted truncate">{user.username}</p>
           </div>
-          <button className="p-1.5 text-text-muted hover:text-text-secondary rounded-lg hover:bg-bg-tertiary transition-colors">
+          <button 
+            className="p-1.5 text-text-muted hover:text-text-secondary rounded-lg hover:bg-bg-tertiary transition-colors"
+            onClick={() => setShowUserMenu(!showUserMenu)}
+          >
             <FiMoreHorizontal className="w-5 h-5" />
           </button>
+
+          {/* User Dropdown Menu */}
+          {showUserMenu && (
+            <div className="absolute bottom-full left-4 mb-2 w-48 bg-surface border border-border rounded-lg shadow-lg py-1 z-50">
+              <button
+                onClick={() => {
+                  // Handle logout logic here
+                  localStorage.removeItem('authToken');
+                  navigate('/auth/login');
+                }}
+                className="w-full text-left px-3 py-2 text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center gap-3"
+              >
+                <FiLogOut className="w-4 h-4" />
+                {t('navmenu.logout')}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </aside>
