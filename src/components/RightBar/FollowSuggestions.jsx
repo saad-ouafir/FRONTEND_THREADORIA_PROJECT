@@ -78,7 +78,7 @@ const FollowSuggestions = () => {
   }, [showModal]);
 
   return (
-    <div className="bg-bg-secondary rounded-xl overflow-hidden shadow-sm">
+    <div className="bg-bg-secondary rounded-md overflow-hidden border border-border">
       {/* Header */}
       <div className="px-4 sm:px-5 py-3">
         <h2 className="text-text-primary font-semibold text-base sm:text-lg text-center">
@@ -87,11 +87,11 @@ const FollowSuggestions = () => {
       </div>
 
       {/* User List - Scrollable */}
-      <div className="max-h-96 overflow-y-auto">
+      <div className="">
         {suggestedUsers.slice(0, 3).map((user, index) => (
           <div
             key={user.id}
-            className={`px-4 sm:px-5 py-3 sm:py-3.5 flex items-center gap-3 sm:gap-4 hover:bg-bg-tertiary/50 transition-colors duration-200 ${
+            className={`border-b border-border/30 px-4 py-2.5 flex items-center gap-2 hover:bg-bg-tertiary/50 transition-colors duration-200 ${
               index !== 2 ? "" : ""
             }`}>
             {/* Avatar */}
@@ -105,10 +105,10 @@ const FollowSuggestions = () => {
 
             {/* User Info */}
             <div className="flex-1 min-w-0">
-              <p className="text-text-primary font-semibold text-sm sm:text-base truncate leading-tight">
+              <p className="text-text-primary font-semibold text-sm truncate leading-tight">
                 {user.name}
               </p>
-              <p className="text-text-muted text-xs sm:text-sm truncate mt-0.5">
+              <p className="text-text-muted text-xs truncate mt-0.5">
                 {user.username}
               </p>
             </div>
@@ -116,7 +116,7 @@ const FollowSuggestions = () => {
             {/* Follow Button */}
             <button
               onClick={() => handleFollow(user.id)}
-              className={`shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/50 ${
+              className={`shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-200 rounded-lg ${
                 isFollowing(user.id)
                   ? "bg-bg-tertiary text-text-secondary hover:bg-bg-tertiary/80"
                   : "bg-accent text-white hover:bg-accent-hover active:scale-[0.97]"
@@ -148,7 +148,7 @@ const FollowSuggestions = () => {
 
           {/* Modal Content */}
           <div
-            className="relative bg-bg-secondary rounded-2xl shadow-2xl w-full max-w-md sm:max-w-lg lg:max-w-xl max-h-[85vh] flex flex-col animate-scaleIn"
+            className="p-4 relative bg-bg-secondary rounded-xl w-full max-w-md sm:max-w-lg lg:max-w-xl max-h-[85vh] flex flex-col animate-scaleIn"
             onClick={(e) => e.stopPropagation()}>
             {/* Header */}
             <div className="flex items-center justify-between px-5 sm:px-6 py-4 flex-shrink-0">
@@ -179,7 +179,7 @@ const FollowSuggestions = () => {
               {suggestedUsers.map((user, index) => (
                 <div
                   key={user.id}
-                  className={`px-5 sm:px-6 py-4 sm:py-4.5 flex items-center gap-4 hover:bg-bg-tertiary/50 transition-colors duration-200 ${
+                  className={`px-5 border-b border-border/30 sm:px-6 py-2 sm:py-2.5 flex items-center gap-2 hover:bg-bg-tertiary/50 transition-colors duration-200 ${
                     index !== suggestedUsers.length - 1 ? "" : ""
                   }`}>
                   {/* Avatar */}
@@ -204,7 +204,7 @@ const FollowSuggestions = () => {
                   {/* Follow Button */}
                   <button
                     onClick={() => handleFollow(user.id)}
-                    className={`shrink-0 px-4 sm:px-5 py-2 text-sm font-medium transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/50 ${
+                    className={`shrink-0 px-4 py-2 sm:px-5 text-sm font-medium transition-all duration-200 rounded-lg ${
                       isFollowing(user.id)
                         ? "bg-bg-tertiary text-text-secondary hover:bg-bg-tertiary/80"
                         : "bg-accent text-white hover:bg-accent-hover active:scale-[0.97]"
@@ -219,8 +219,6 @@ const FollowSuggestions = () => {
           </div>
         </div>
       )}
-
-
     </div>
   );
 };
