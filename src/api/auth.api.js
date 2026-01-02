@@ -19,7 +19,10 @@ api.interceptors.response.use(
 
 export async function login(data) {
   const response = await api.post("/api/auth/login", data);
-  return response.data;
+  return {
+    status: response.status,
+    message: response.data.message,
+  };
 }
 
 export async function register(data) {
@@ -33,15 +36,24 @@ export async function register(data) {
     profile_picture_provider: null,
   };
   const response = await api.post("/api/auth/register", payload);
-  return response.data;
+  return {
+    status: response.status,
+    message: response.data.message,
+  };
 }
 
 export async function logout() {
   const response = await api.post("/api/auth/logout");
-  return response.data;
+  return {
+    status: response.status,
+    message: response.data.message,
+  };
 }
 
 export async function refreshToken() {
-  const response = await api.post("/api/auth/refresh-token");
-  return response.data;
+  const response = await api.post("/api/auth/refresh");
+  return {
+    status: response.status,
+    message: response.data.message,
+  };
 }

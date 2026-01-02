@@ -1,32 +1,32 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import useForm from "../../hooks/useForm.js";
-import { validateLogin } from "../../utils/authValidation.js";
-import { login } from "../../api/auth.api.js";
+
 import AlertMessage from "../../components/UI/AlertMessage.jsx";
-import submitHandler from "../../handlers/submitHandler.js";
+
+import useLoginForm from "../../hooks/forms/useAppForm.js";
+import { useFormSubmitter } from "../../hooks/forms/useFormSubmitter.js";
+
+import { login } from "../../api/auth.api.js";
 
 export default function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [alert, setAlert] = useState(null);
   const { t } = useTranslation();
 
-  const { values, errors, setErrors, isLoading, setIsLoading, handleChange } =
-    useForm({ email: "", password: "", rememberMe: false });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useLoginForm();
 
-  const handleSubmit = (e) => {
-    submitHandler({
-      e,
-      values,
-      validate: validateLogin,
-      setErrors,
-      apiCall: login,
-      setAlert,
-      setIsLoading,
-      onSuccess: () => navigate("/home"),
-    });
+  const { alert, isSubmitting, submit, clearAlert } = useFormSubmitter(login, {
+    successMessage: t("login.success"),
+    onSuccess: () => navigate("/home"),
+  });
+
+  const onSubmit = async (data) => {
+    await submit(data);
   };
 
   return (
@@ -37,7 +37,7 @@ export default function Login() {
             type={alert.type}
             message={alert.message}
             statusCode={alert.statusCode}
-            onClose={() => setAlert(null)}
+            onClose={clearAlert}
           />
         )}
         <div className="bg-bg-secondary border border-border rounded-2xl shadow-lg px-8 py-10">
@@ -52,7 +52,7 @@ export default function Login() {
           </div>
 
           {/* Form */}
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             {/* Email */}
             <div>
               <label
@@ -62,17 +62,17 @@ export default function Login() {
               </label>
               <input
                 id="email"
-                name="email"
                 type="email"
-                value={values.email}
-                onChange={handleChange}
+                {...register("email")}
                 className={`mt-1 block w-full rounded-lg border ${
                   errors.email ? "border-red-500" : "border-border"
                 } bg-bg-tertiary text-text-primary px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent placeholder:text-text-muted`}
                 placeholder={t("login.email_placeholder")}
               />
               {errors.email && (
-                <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -93,32 +93,22 @@ export default function Login() {
               </div>
               <input
                 id="password"
-                name="password"
                 type={showPassword ? "text" : "password"}
-                value={values.password}
-                onChange={handleChange}
+                {...register("password")}
                 className={`mt-1 block w-full rounded-lg border ${
                   errors.password ? "border-red-500" : "border-border"
                 } bg-bg-tertiary text-text-primary px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent placeholder:text-text-muted`}
                 placeholder={t("login.password_placeholder")}
               />
               {errors.password && (
-                <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
             {/* Remember + Forgot */}
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-xs text-text-secondary">
-                <input
-                  type="checkbox"
-                  name="rememberMe"
-                  checked={values.rememberMe}
-                  onChange={handleChange}
-                  className="h-4 w-4 rounded border-border text-accent focus:ring-accent"
-                />
-                <span>{t("login.remember_me")}</span>
-              </label>
               <button
                 type="button"
                 className="text-xs text-text-muted hover:text-text-primary">
@@ -129,9 +119,9 @@ export default function Login() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isSubmitting}
               className="w-full rounded-lg bg-accent py-2.5 text-sm font-medium text-white hover:bg-accent-hover disabled:opacity-50">
-              {isLoading ? t("login.signing_in") : t("login.sign_in")}
+              {isSubmitting ? t("login.signing_in") : t("login.sign_in")}
             </button>
           </form>
 

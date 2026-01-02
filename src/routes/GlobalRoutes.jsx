@@ -60,8 +60,6 @@ export default function PublicRoutes() {
           path: "settings",
           element: <SettingsLayout />,
         },
-        
-        
       ],
     },
   ]);

@@ -77,7 +77,8 @@ const NavMenu = () => {
                       ? "bg-accent/10 text-accent font-medium"
                       : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary"
                   }`
-                }>
+                }
+              >
                 <item.icon className="w-5 h-5" />
                 <span>{item.label}</span>
                 {item.hasBadge && (
@@ -124,7 +125,8 @@ const NavMenu = () => {
           </div>
           <button
             className="p-1.5 text-text-muted hover:text-text-secondary rounded-lg hover:bg-bg-tertiary transition-colors"
-            onClick={() => setShowUserMenu(!showUserMenu)}>
+            onClick={() => setShowUserMenu(!showUserMenu)}
+          >
             <FiMoreHorizontal className="w-5 h-5" />
           </button>
 
@@ -137,7 +139,8 @@ const NavMenu = () => {
                   localStorage.removeItem("authToken");
                   navigate("/auth/login");
                 }}
-                className="w-full text-left px-3 py-2 text-sm font-semibold hover:bg-bg-tertiary text-red-500 transition-colors flex items-center gap-3">
+                className="w-full text-left px-3 py-2 text-sm font-semibold hover:bg-bg-tertiary text-red-500 transition-colors flex items-center gap-3"
+              >
                 <FiLogOut className="w-4 h-4 text-red-500 font-bold" />
                 {t("navmenu.logout")}
               </button>
