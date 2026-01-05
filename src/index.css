@@ -178,3 +178,72 @@ a {
 .animate-scaleIn {
   animation: scaleIn 0.3s ease-out;
 }
+
+/* ===== Mobile Navigation Styles ===== */
+
+/* Safe area padding for devices with notch/home indicator */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Active nav item pulse animation */
+@keyframes pulse-scale {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.nav-item-active {
+  animation: pulse-scale 0.3s ease-out;
+}
+
+/* Touch feedback for mobile nav items */
+@media (hover: none) and (pointer: coarse) {
+  .touch-feedback:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
+
+/* Smooth transitions for mobile drawer */
+.drawer-enter {
+  transform: translateX(100%);
+}
+
+.drawer-enter-active {
+  transform: translateX(0);
+  transition: transform 300ms ease-out;
+}
+
+.drawer-exit {
+  transform: translateX(0);
+}
+
+.drawer-exit-active {
+  transform: translateX(100%);
+  transition: transform 300ms ease-in;
+}
+
+/* Backdrop blur fallback for older browsers */
+@supports not (backdrop-filter: blur(12px)) {
+  .backdrop-blur-lg {
+    background-color: var(--color-bg-secondary);
+  }
+
+  .backdrop-blur-md {
+    background-color: var(--color-bg-secondary);
+  }
+}
+
+/* Bottom nav shadow for visual separation */
+.bottom-nav-shadow {
+  box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.05);
+}
+
+.dark .bottom-nav-shadow {
+  box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.2);
+}

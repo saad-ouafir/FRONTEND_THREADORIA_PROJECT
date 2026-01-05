@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FiSun, FiMoon, FiGlobe, FiMenu, FiX } from "react-icons/fi";
 import handleLanguageChange from "../handlers/handleLanguageChange";
 import { useTranslation } from "react-i18next";
-import useThemeHandler from "../handlers/themeHandler";
+import useThemeHandler from "../hooks/ui/useThemeHandler";
 
 // Inline SVG Logo component for proper dark mode support
 const Logo = ({ className }) => (

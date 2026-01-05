@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function useFormSubmitter(action, options = {}) {
+export default function useFormSubmitter(action, options = {}) {
   const [alert, setAlert] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

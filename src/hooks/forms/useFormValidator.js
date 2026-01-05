@@ -8,7 +8,7 @@ const useValidatedForm = (resolver) => {
 };
 
 // login form
-export default function useLoginForm() {
+export function useValidateLoginForm() {
   return useValidatedForm(async (values) => {
     const errors = {};
 
@@ -34,14 +34,20 @@ export default function useLoginForm() {
   });
 }
 // register form
-export const useRegisterForm = () =>
-  useValidatedForm(async (values) => {
+export function useValidateRegisterForm() {
+  return useValidatedForm(async (values) => {
     const errors = {};
+
+    if (!values.full_name) {
+      errors.full_name = { message: "Full name is required" };
+    } else if (values.full_name.length < 2 || values.full_name.length > 100) {
+      errors.full_name = { message: "Full name must be 2–100 characters" };
+    }
 
     if (!values.username) {
       errors.username = { message: "Username is required" };
-    } else if (!/^[a-zA-Z0-9_]{3,20}$/.test(values.username)) {
-      errors.username = { message: "3–20 chars, letters/numbers only" };
+    } else if (!/^[a-zA-Z0-9_]{3,50}$/.test(values.username)) {
+      errors.username = { message: "3–50 chars, letters/numbers/underscores only" };
     }
 
     if (!values.email) {
@@ -67,5 +73,9 @@ export const useRegisterForm = () =>
     return {
       values: Object.keys(errors).length ? {} : values,
       errors,
+      isValid: Object.keys(errors).length === 0,
     };
   });
+}
+
+export default { useValidateLoginForm, useValidateRegisterForm };

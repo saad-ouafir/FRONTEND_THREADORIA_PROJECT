@@ -45,13 +45,15 @@
     "profile": "Profil",
     "settings": "Paramètres",
     "new_thread": "Nouveau Fil",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "menu": "Menu"
   },
   "rightbar": {
     "who_to_follow": "Qui suivre",
     "follow": "Suivre",
     "following": "Suivi",
-    "see_more": "Voir plus"
+    "see_more": "Voir plus",
+    "search": "Rechercher"
   },
   "profile": {
     "follow": "Suivre",
@@ -147,11 +149,24 @@
     "enter_email": "Entrez l'email",
     "enter_password": "Entrez le mot de passe",
     "not_set": "Non défini",
-    "no_bio": "Aucune biographie ajoutée"
+    "no_bio": "Aucune biographie ajoutée",
+    "appearance": "Apparence",
+    "light_mode": "Mode Clair",
+    "dark_mode": "Mode Sombre",
+    "language": "Langue"
   },
   "delete": {
     "title": "Supprimer Votre Compte",
     "subtitle": "Cette etape va supprimez votre compte et tous vos données !"
+  },
+  "blocked": {
+    "title": "Vous etes temporairement bloqué !",
+    "description": "Trop de tentatives. Veuillez patienter avant de réessayer.",
+    "unblocked_title": "Vous êtes débloqué !",
+    "unblocked_desc": "Vous pouvez maintenant continuer à utiliser l'application.",
+    "wait_time": "Temps d'attente",
+    "continue": "Continuer",
+    "please_wait": "Veuillez patienter..."
   },
   "dialogBox": {
     "cancel": "Annuler",

@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../../hooks/api/useAuth.js";
 import AlertMessage from "../../components/UI/AlertMessage.jsx";
+import { useValidateLoginForm } from "../../hooks/forms/useFormValidator.js";
+import useFormSubmitter from "../../hooks/forms/useFormSubmitter.js";
 
-import useLoginForm from "../../hooks/forms/useAppForm.js";
-import { useFormSubmitter } from "../../hooks/forms/useFormSubmitter.js";
-
-import { login } from "../../api/auth.api.js";
+import { login as loginApi } from "../../api/auth.api.js";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const { t } = useTranslation();
 
@@ -18,12 +18,18 @@ export default function Login() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useLoginForm();
+  } = useValidateLoginForm();
 
-  const { alert, isSubmitting, submit, clearAlert } = useFormSubmitter(login, {
-    successMessage: t("login.success"),
-    onSuccess: () => navigate("/home"),
-  });
+  const { alert, isSubmitting, submit, clearAlert } = useFormSubmitter(
+    loginApi,
+    {
+      successMessage: t("login.success"),
+      onSuccess: (response) => {
+        login(response.accessToken, response.user);
+        navigate("/home");
+      },
+    }
+  );
 
   const onSubmit = async (data) => {
     await submit(data);

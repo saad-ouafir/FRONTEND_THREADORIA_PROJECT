@@ -45,13 +45,15 @@
     "profile": "Profile",
     "settings": "Settings",
     "new_thread": "New Thread",
-    "logout": "Logout"
+    "logout": "Logout",
+    "menu": "Menu"
   },
   "rightbar": {
     "who_to_follow": "Who to follow",
     "follow": "Follow",
     "following": "Following",
-    "see_more": "See more"
+    "see_more": "See more",
+    "search": "Search"
   },
   "profile": {
     "follow": "Follow",
@@ -147,11 +149,24 @@
     "enter_email": "Enter email",
     "enter_password": "Enter password",
     "not_set": "Not set",
-    "no_bio": "No bio added"
+    "no_bio": "No bio added",
+    "appearance": "Appearance",
+    "light_mode": "Light Mode",
+    "dark_mode": "Dark Mode",
+    "language": "Language"
   },
   "delete": {
     "title": "Delete Account",
     "subtitle": "All your Account and its data will be permanently deleted !"
+  },
+  "blocked": {
+    "title": "You are temporarily Blocked !",
+    "description": "Too many attempts. Please wait before trying again.",
+    "unblocked_title": "You're unblocked!",
+    "unblocked_desc": "You can now continue using the app.",
+    "wait_time": "Wait time",
+    "continue": "Continue",
+    "please_wait": "Please wait..."
   },
   "dialogBox": {
     "cancel": "Cancel",

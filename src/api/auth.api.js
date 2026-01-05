@@ -1,33 +1,19 @@
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
-  headers: { "Content-Type": "application/json" },
-});
-
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const data = error.response?.data;
-    return Promise.reject({
-      status: data?.status || error.response?.status || 500,
-      message: data?.message || "Something went wrong",
-    });
-  }
-);
+import axiosInstance from "./axiosInstance";
 
 export async function login(data) {
-  const response = await api.post("/api/auth/login", data);
+  const response = await axiosInstance.post("/auth/login", data);
   return {
     status: response.status,
     message: response.data.message,
+    accessToken: response.data.accessToken,
+    user: response.data.user,
   };
 }
 
-export async function register(data) {
+export async function signUp(data) {
   const payload = {
     username: data.username,
+    full_name: data.full_name,
     email: data.email,
     password: data.password,
     is_private: data.is_private || false,
@@ -35,15 +21,17 @@ export async function register(data) {
     profile_picture_cdn: null,
     profile_picture_provider: null,
   };
-  const response = await api.post("/api/auth/register", payload);
+  const response = await axiosInstance.post("/auth/register", payload);
   return {
     status: response.status,
     message: response.data.message,
+    accessToken: response.data.accessToken,
+    user: response.data.user,
   };
 }
 
 export async function logout() {
-  const response = await api.post("/api/auth/logout");
+  const response = await axiosInstance.post("/auth/logout");
   return {
     status: response.status,
     message: response.data.message,
@@ -51,9 +39,10 @@ export async function logout() {
 }
 
 export async function refreshToken() {
-  const response = await api.post("/api/auth/refresh");
+  const response = await axiosInstance.post("/auth/refresh");
   return {
     status: response.status,
     message: response.data.message,
+    accessToken: response.data.accessToken,
   };
 }

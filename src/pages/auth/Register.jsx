@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useRegisterForm } from "../../hooks/forms/useAppForm.js";
-import { useFormSubmitter } from "../../hooks/forms/useFormSubmitter.js";
-import { register } from "../../api/auth.api.js";
+import { useAuth } from "../../hooks/api/useAuth.js";
+
+// Custom Hooks for global form validation & submit
+import { useValidateRegisterForm } from "../../hooks/forms/useFormValidator.js";
+import useFormSubmitter from "../../hooks/forms/useFormSubmitter.js";
+import { signUp } from "../../api/auth.api.js";
+
 import AlertMessage from "../../components/UI/AlertMessage.jsx";
 
 export default function Register() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const { t } = useTranslation();
@@ -16,17 +21,17 @@ export default function Register() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useRegisterForm();
+  } = useValidateRegisterForm();
 
-  const { alert, isSubmitting, submit, clearAlert } = useFormSubmitter(
-    register,
-    {
-      successMessage: t("register.success"),
-      onSuccess: () => navigate("/home"),
-    }
-  );
+  const { alert, isSubmitting, submit, clearAlert } = useFormSubmitter(signUp, {
+    successMessage: t("register.success"),
+    onSuccess: response => {
+      login(response.accessToken, response.user);
+      navigate("/home");
+    },
+  });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async data => {
     await submit(data);
   };
 
@@ -58,7 +63,8 @@ export default function Register() {
           <div className="mb-6">
             <label
               htmlFor="profile_picture_url"
-              className="block text-sm font-medium text-text-primary mb-2">
+              className="block text-sm font-medium text-text-primary mb-2"
+            >
               {t("register.profile_picture") || "Profile Picture"}
             </label>
             <input
@@ -72,11 +78,38 @@ export default function Register() {
 
           {/* Section 2: Account Information */}
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            {/* Full Name */}
+            <div>
+              <label
+                htmlFor="full_name"
+                className="block text-sm font-medium text-text-primary"
+              >
+                {t("register.full_name") || "Full Name"}
+              </label>
+              <input
+                id="full_name"
+                type="text"
+                {...register("full_name")}
+                className={`mt-1 block w-full rounded-lg border ${
+                  errors.full_name ? "border-red-500" : "border-border"
+                } bg-bg-tertiary text-text-primary px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent placeholder:text-text-muted`}
+                placeholder={
+                  t("register.full_name_placeholder") || "Enter your full name"
+                }
+              />
+              {errors.full_name && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.full_name.message}
+                </p>
+              )}
+            </div>
+
             {/* Username */}
             <div>
               <label
                 htmlFor="username"
-                className="block text-sm font-medium text-text-primary">
+                className="block text-sm font-medium text-text-primary"
+              >
                 {t("register.username") || "Username"}
               </label>
               <input
@@ -101,7 +134,8 @@ export default function Register() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-text-primary">
+                className="block text-sm font-medium text-text-primary"
+              >
                 {t("register.email")}
               </label>
               <input
@@ -125,13 +159,15 @@ export default function Register() {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-text-primary">
+                  className="block text-sm font-medium text-text-primary"
+                >
                   {t("register.password")}
                 </label>
                 <button
                   type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="text-xs text-text-muted hover:text-text-primary">
+                  onClick={() => setShowPassword(v => !v)}
+                  className="text-xs text-text-muted hover:text-text-primary"
+                >
                   {showPassword ? t("register.hide") : t("register.show")}
                 </button>
               </div>
@@ -156,13 +192,15 @@ export default function Register() {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-text-primary">
+                  className="block text-sm font-medium text-text-primary"
+                >
                   {t("register.confirm_password")}
                 </label>
                 <button
                   type="button"
-                  onClick={() => setShowConfirm((v) => !v)}
-                  className="text-xs text-text-muted hover:text-text-primary">
+                  onClick={() => setShowConfirm(v => !v)}
+                  className="text-xs text-text-muted hover:text-text-primary"
+                >
                   {showConfirm ? t("register.hide") : t("register.show")}
                 </button>
               </div>
@@ -195,7 +233,7 @@ export default function Register() {
                 <button
                   type="button"
                   {...register("is_private")}
-                  onClick={(e) => {
+                  onClick={e => {
                     e.preventDefault();
                     // Toggle logic will be handled by react-hook-form
                   }}
@@ -205,7 +243,8 @@ export default function Register() {
                   aria-pressed={false}
                   aria-label={
                     t("register.private_account") || "Private account"
-                  }>
+                  }
+                >
                   <span
                     className={`inline-block h-6 w-6 transform rounded-full bg-white shadow transition-transform duration-300 ${
                       false ? "translate-x-8" : "translate-x-1"
@@ -245,7 +284,8 @@ export default function Register() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full rounded-lg bg-accent py-2.5 px-4 text-sm font-medium text-white hover:bg-accent-hover disabled:opacity-50 transition-colors duration-200">
+              className="w-full rounded-lg bg-accent py-2.5 px-4 text-sm font-medium text-white hover:bg-accent-hover disabled:opacity-50 transition-colors duration-200"
+            >
               {isSubmitting ? t("register.creating") : t("register.submit")}
             </button>
           </form>
@@ -257,7 +297,8 @@ export default function Register() {
               <button
                 type="button"
                 className="font-medium text-accent hover:text-accent-hover transition-colors duration-200"
-                onClick={() => navigate("/login")}>
+                onClick={() => navigate("/login")}
+              >
                 {t("register.sign_in")}
               </button>
             </p>
