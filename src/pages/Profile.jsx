@@ -1,47 +1,26 @@
-import { useState } from "react";
+import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { FiCalendar, FiEdit2 } from "react-icons/fi";
-
-// Sample user data - in a real app, this would come from an API
-const sampleUser = {
-  id: 1,
-  name: "Sarah Chen",
-  username: "@sarahchen",
-  avatar: "https://i.pravatar.cc/300?img=1",
-  bio: "Full-stack developer | Open source enthusiast | Coffee lover ☕ | Building cool things with React & Node.js",
-  joinedDate: "2023-03-15",
-  followers: 2847,
-  following: 892,
-  posts: 156,
-};
+import { formatNumber } from "../utils/numberUtils.js";
+import { formatDate } from "../utils/dateUtils.js";
+import { AuthContext } from "../context/AuthContext.js";
 
 export default function Profile() {
   const { t } = useTranslation();
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [user] = useState(sampleUser);
+  const { user } = useContext(AuthContext);
 
-  const handleFollow = () => {
-    setIsFollowing(!isFollowing);
-  };
+  // If no user is logged in, show a loading or login prompt
+  if (!user) {
+    return (
+      <div className="h-full w-full bg-bg-primary flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-text-muted text-lg">Please log in to view your profile</p>
+        </div>
+      </div>
+    );
+  }
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString(undefined, {
-      month: "long",
-      year: "numeric",
-    });
-  };
-
-  const formatNumber = (num) => {
-    if (num >= 1000000) {
-      return (num / 1000000).toFixed(1) + "M";
-    }
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + "K";
-    }
-    return num.toString();
-  };
-
+  
   return (
     <div className="h-full w-full bg-bg-primary">
       {/* Profile Card with External Border */}
@@ -55,25 +34,29 @@ export default function Profile() {
           <div className="relative flex justify-between items-end -mt-16 md:-mt-20 mb-4">
             {/* Avatar */}
             <div className="relative">
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="w-28 h-28 md:w-36 md:h-36 rounded-full border-4 border-bg-secondary object-cover shadow-lg"
-              />
+              {user.profile_picture_url ? (
+                <img
+                  src={user.profile_picture_url}
+                  alt={user.full_name}
+                  className="w-28 h-28 md:w-36 md:h-36 rounded-full border-4 border-bg-secondary object-cover shadow-lg"
+                />
+              ) : (
+                <div className="w-28 h-28 md:w-36 md:h-36 rounded-full border-4 border-bg-secondary bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shadow-lg">
+                  <span className="text-white text-2xl md:text-3xl font-bold">
+                    {user.full_name
+                      ? user.full_name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                      : "U"}
+                  </span>
+                </div>
+              )}
               <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 rounded-full border-2 border-bg-secondary" />
             </div>
 
             {/* Action Buttons */}
             <div className="flex gap-3 pb-2">
-              <button
-                onClick={handleFollow}
-                className={`px-6 py-2 rounded-full font-semibold text-sm transition-all duration-200 ${
-                  isFollowing
-                    ? "bg-bg-tertiary text-text-primary border border-border/70 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30"
-                    : "bg-accent text-white hover:bg-accent/90 active:scale-95"
-                }`}>
-                {isFollowing ? t("profile.following") : t("profile.follow")}
-              </button>
               <button className="p-2 rounded-full bg-bg-tertiary border border-border/70 text-text-secondary hover:bg-bg-tertiary/80 transition-colors duration-200">
                 <FiEdit2 className="w-5 h-5" />
               </button>
@@ -83,9 +66,9 @@ export default function Profile() {
           {/* User Info */}
           <div className="mb-4">
             <h1 className="text-2xl md:text-3xl font-bold text-text-primary">
-              {user.name}
+              {user.full_name || "Unknown User"}
             </h1>
-            <p className="text-text-muted text-base">{user.username}</p>
+            <p className="text-text-muted text-base">@{user.username || "user"}</p>
           </div>
 
           {/* Bio */}
@@ -100,7 +83,7 @@ export default function Profile() {
             <div className="flex items-center gap-1.5">
               <FiCalendar className="w-4 h-4" />
               <span>
-                {t("profile.joined")} {formatDate(user.joinedDate)}
+                {t("profile.joined")} {user.created_at ? formatDate(user.created_at) : "Recently"}
               </span>
             </div>
           </div>
@@ -109,19 +92,19 @@ export default function Profile() {
           <div className="flex gap-6 pb-5 border-b border-border">
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-text-primary">
-                {formatNumber(user.posts)}
+                {formatNumber(user.posts_count || 0)}
               </span>
               <span className="text-text-muted">{t("profile.posts")}</span>
             </div>
             <button className="flex items-center gap-1.5 hover:underline">
               <span className="font-bold text-text-primary">
-                {formatNumber(user.following)}
+                {formatNumber(user.following_count || 0)}
               </span>
               <span className="text-text-muted">{t("profile.following")}</span>
             </button>
             <button className="flex items-center gap-1.5 hover:underline">
               <span className="font-bold text-text-primary">
-                {formatNumber(user.followers)}
+                {formatNumber(user.follower_count || 0)}
               </span>
               <span className="text-text-muted">{t("profile.followers")}</span>
             </button>

@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext.js";
 
 import {
   FiHome,
@@ -14,6 +15,7 @@ import { useTranslation } from "react-i18next";
 
 const NavMenu = () => {
   const { t } = useTranslation();
+  const { user, logout } = useContext(AuthContext);
   const [hasNotifications] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
@@ -54,12 +56,7 @@ const NavMenu = () => {
       href: "/settings",
     },
   ];
-
-  const user = {
-    name: "Jane Doe",
-    username: "@janedesign",
-    avatar: null,
-  };
+  
 
   return (
     <aside className="bg-bg-secondary border-r border-border/50 h-full flex flex-col">
@@ -99,30 +96,33 @@ const NavMenu = () => {
       </nav>
 
       {/* User Profile */}
-      <div className="p-4 border-t border-border/50 relative" ref={dropdownRef}>
-        <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-bg-tertiary transition-colors cursor-pointer">
-          <div className="w-10 h-10 rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shrink-0">
-            {user.avatar ? (
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="w-full h-full rounded-full object-cover"
-              />
-            ) : (
-              <span className="text-white text-sm font-semibold">
-                {user.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </span>
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-text-primary truncate">
-              {user.name}
-            </p>
-            <p className="text-xs text-text-muted truncate">{user.username}</p>
-          </div>
+      {user && (
+        <div className="p-4 border-t border-border/50 relative" ref={dropdownRef}>
+          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-bg-tertiary transition-colors cursor-pointer">
+            <div className="w-10 h-10 rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shrink-0">
+              {user.profile_picture_url ? (
+                <img
+                  src={user.profile_picture_url}
+                  alt={user.full_name}
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                <span className="text-white text-sm font-semibold">
+                  {user.full_name
+                    ? user.full_name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                    : "U"}
+                </span>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-text-primary truncate">
+                {user.full_name || "Unknown User"}
+              </p>
+              <p className="text-xs text-text-muted truncate">{user.username || "user"}</p>
+            </div>
           <button
             className="p-1.5 text-text-muted hover:text-text-secondary rounded-lg hover:bg-bg-tertiary transition-colors"
             onClick={() => setShowUserMenu(!showUserMenu)}
@@ -134,9 +134,8 @@ const NavMenu = () => {
           {showUserMenu && (
             <div className="absolute bottom-full left-4 mb-2 w-48 bg-surface border border-border rounded-lg shadow-lg py-1 z-50">
               <button
-                onClick={() => {
-                  // Handle logout logic here
-                  localStorage.removeItem("authToken");
+                onClick={async () => {
+                  await logout();
                   navigate("/auth/login");
                 }}
                 className="w-full text-left px-3 py-2 text-sm font-semibold hover:bg-bg-tertiary text-red-500 transition-colors flex items-center gap-3"
@@ -148,6 +147,7 @@ const NavMenu = () => {
           )}
         </div>
       </div>
+      )}
     </aside>
   );
 };
