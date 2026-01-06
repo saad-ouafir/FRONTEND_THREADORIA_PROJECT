@@ -2,9 +2,6 @@
   "navbar": {
     "home": "Accueil",
     "about": "À propos",
-    "services": "Services",
-    "freelancers": "Freelances",
-    "dashboard": "Tableau de bord",
     "login": "Connexion",
     "register": "Sinscrire",
     "logout": "Déconnexion"
@@ -171,5 +168,8 @@
   "dialogBox": {
     "cancel": "Annuler",
     "confirm": "Confirmer"
+  },
+  "profileInfo": {
+    "non_logedin": "Veuillez vous connecter pour voir votre profil"
   }
 }

@@ -7,7 +7,6 @@ import { useAuth } from "../hooks/api/useAuth";
 
 import Index from "../pages/Index";
 import NotFound from "../pages/NotFound";
-import Profile from "../pages/Profile";
 import Notifications from "../pages/Notifications";
 import NewThread from "../pages/NewThread";
 import RateLimitBlocked from "../pages/RateLimitBlocked";
@@ -18,6 +17,7 @@ import ThreadsLayout from "../layouts/ThreadsLayout";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import SettingsLayout from "../layouts/SettingsLayout";
+import ProfileLayout from "../layouts/ProfileLayout";
 
 // Simple protected route wrapper
 function ProtectedRoute({ children }) {
@@ -101,8 +101,8 @@ export default function GlobalRoutes() {
             </ProtectedRoute>
           ),
         },
-        { path: "profile", element: <Profile /> },
-        { path: "profile/:username", element: <Profile /> },
+        { path: "profile", element: <ProfileLayout /> },
+        { path: "profile/:username", element: <ProfileLayout /> },
       ],
     },
   ]);

@@ -3,8 +3,6 @@
     "home": "Home",
     "about": "About",
     "services": "Services",
-    "freelancers": "Freelancers",
-    "dashboard": "Dashboard",
     "login": "Login",
     "register": "Register",
     "logout": "Logout"
@@ -171,5 +169,8 @@
   "dialogBox": {
     "cancel": "Cancel",
     "confirm": "Confirm"
+  },
+  "profileInfo": {
+    "non_logedin": "Please log in to see your profile"
   }
 }

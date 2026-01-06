@@ -15,63 +15,37 @@ export function AuthProvider({ children }) {
     setAxiosToken(accessToken);
   }, [accessToken]);
 
-  // On app load, try to get user data from localStorage first, then refresh token
+  // On app load, try to get a new access token using refresh token cookie
   useEffect(() => {
-    const initializeAuth = async () => {
+    const fetchAccessToken = async () => {
       try {
-        // Try to get data from localStorage first
-        const storedToken = localStorage.getItem('accessToken');
-        const storedUserData = localStorage.getItem('userData');
-        
-        if (storedToken && storedUserData) {
-          setAccessToken(storedToken);
-          setUser(JSON.parse(storedUserData));
-          
-          // Try to refresh the token to validate it
-          const response = await axiosInstance.post("/auth/refresh");
-          setAccessToken(response.data.accessToken || null);
-          if (response.data.user) {
-            setUser(response.data.user);
-            localStorage.setItem('userData', JSON.stringify(response.data.user));
-          }
-        } else {
-          // Fallback to refresh token only
-          const response = await axiosInstance.post("/auth/refresh");
-          setAccessToken(response.data.accessToken || null);
-        }
+        const response = await axiosInstance.post("/auth/refresh");
+        setAccessToken(response.data.accessToken || null);
+        setUser(response.data.user || null);
       } catch {
         setAccessToken(null);
         setUser(null);
-        // Clear invalid localStorage data
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('userData');
       } finally {
         setLoading(false);
       }
     };
 
-    initializeAuth();
+    fetchAccessToken();
   }, []);
 
-  // Login - save token and user data in memory and localStorage
+  // Login - save token in memory
   const login = (token, userData) => {
     setAccessToken(token);
     setUser(userData);
-    // Store in localStorage
-    localStorage.setItem('accessToken', token);
-    localStorage.setItem('userData', JSON.stringify(userData));
   };
 
-  // Logout - clear memory + call API to clear cookie + localStorage
+  // Logout - clear memory + call API to clear cookie
   const logout = async () => {
     await axiosInstance.post("/auth/logout").catch(error => {
       console.error(error);
     });
     setAccessToken(null);
     setUser(null);
-    // Clear localStorage
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('userData');
   };
 
   return (
