@@ -1,9 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Navigate,
-} from "react-router-dom";
-import { useAuth } from "../hooks/api/useAuth";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 
 import Index from "../pages/Index";
 import NotFound from "../pages/NotFound";
@@ -13,25 +8,14 @@ import RateLimitBlocked from "../pages/RateLimitBlocked";
 
 import IndexLayout from "../layouts/IndexLayout";
 import MainLayout from "../layouts/MainLayout";
-import ThreadsLayout from "../layouts/ThreadsLayout";
+import HomeLayout from "../layouts/HomeLayout";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import SettingsLayout from "../layouts/SettingsLayout";
 import ProfileLayout from "../layouts/ProfileLayout";
+import SearchLayout from "../layouts/SearchLayout";
 
-// Simple protected route wrapper
-function ProtectedRoute({ children }) {
-  const { isAuthenticated, loading } = useAuth();
-  if (loading) return null;
-  return isAuthenticated ? children : <Navigate to="/auth/login" replace />;
-}
-
-// Redirect if already logged in
-function GuestRoute({ children }) {
-  const { isAuthenticated, loading } = useAuth();
-  if (loading) return null;
-  return isAuthenticated ? <Navigate to="/home" replace /> : children;
-}
+import ProtectedRoutes from "./ProtectedRoutes";
 
 export default function GlobalRoutes() {
   const routes = createBrowserRouter([
@@ -47,19 +31,11 @@ export default function GlobalRoutes() {
           children: [
             {
               path: "login",
-              element: (
-                <GuestRoute>
-                  <Login />
-                </GuestRoute>
-              ),
+              element: <Login />,
             },
             {
               path: "register",
-              element: (
-                <GuestRoute>
-                  <Register />
-                </GuestRoute>
-              ),
+              element: <Register />,
             },
           ],
         },
@@ -71,38 +47,42 @@ export default function GlobalRoutes() {
       children: [
         {
           path: "home",
-          element: (
-            <ProtectedRoute>
-              <ThreadsLayout />
-            </ProtectedRoute>
-          ),
+          element: <HomeLayout />,
         },
         {
           path: "new-thread",
           element: (
-            <ProtectedRoute>
+            <ProtectedRoutes>
               <NewThread />
-            </ProtectedRoute>
+            </ProtectedRoutes>
           ),
         },
         {
           path: "notifications",
           element: (
-            <ProtectedRoute>
+            <ProtectedRoutes>
               <Notifications />
-            </ProtectedRoute>
+            </ProtectedRoutes>
           ),
         },
         {
           path: "settings",
           element: (
-            <ProtectedRoute>
+            <ProtectedRoutes>
               <SettingsLayout />
-            </ProtectedRoute>
+            </ProtectedRoutes>
           ),
         },
-        { path: "profile", element: <ProfileLayout /> },
-        { path: "profile/:username", element: <ProfileLayout /> },
+        {
+          path: "profile",
+          element: (
+            <ProtectedRoutes>
+              <ProfileLayout />
+            </ProtectedRoutes>
+          ),
+        },
+        { path: "profile/:id", element: <ProfileLayout /> },
+        { path: "search", element: <SearchLayout /> },
       ],
     },
   ]);

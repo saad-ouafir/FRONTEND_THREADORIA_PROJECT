@@ -4,9 +4,11 @@ import Navbar from "../components/Navbar";
 import RightBarLayout from "./RightBarLayout";
 import { BottomNavBar, MobileDrawer } from "../components/Mobile";
 import useMobileNavigation from "../hooks/ui/useMobileNavigation";
+import useProfile from "../hooks/states/useProfile";
 
 export default function MainLayout() {
   const { isDrawerOpen, openDrawer, closeDrawer } = useMobileNavigation();
+  const user = useProfile();
 
   return (
     <div className="h-screen bg-bg-surface flex flex-col overflow-hidden">
@@ -14,7 +16,7 @@ export default function MainLayout() {
       <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Left Sidebar - Hidden on mobile */}
         <aside className="hidden lg:block w-64 shrink-0 h-full overflow-y-auto">
-          <NavMenu />
+          <NavMenu user={user} />
         </aside>
 
         {/* Main Content - Takes full height and scrolls */}

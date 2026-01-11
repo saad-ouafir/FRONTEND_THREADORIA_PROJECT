@@ -1,13 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  FaHeart,
-  FaComment,
-  FaImage,
-  FaVideo,
-  FaDownload,
-  FaExpand,
-  FaShare,
-} from "react-icons/fa";
+import { FaHeart, FaComment, FaImage, FaVideo, FaDownload, FaExpand, FaShare } from "react-icons/fa";
 
 import { useTranslation } from "react-i18next";
 
@@ -64,9 +56,7 @@ export default function ThreadsCard({ thread = testThread }) {
     !thread && (
       <div className="py-16 text-center">
         <p className="text-text-muted text-lg">{t("profile.no_threads")}</p>
-        <p className="text-text-muted/70 text-sm mt-2">
-          {t("profile.no_threads_description")}
-        </p>
+        <p className="text-text-muted/70 text-sm mt-2">{t("profile.no_threads_description")}</p>
       </div>
     );
   }
@@ -148,17 +138,10 @@ export default function ThreadsCard({ thread = testThread }) {
     return (
       <div className="mt-3 space-y-2">
         {thread.media.map((mediaItem, index) => (
-          <div
-            key={mediaItem.id || index}
-            className="relative rounded-xl overflow-hidden"
-          >
+          <div key={mediaItem.id || index} className="relative rounded-xl overflow-hidden">
             {mediaItem.media_type === "IMAGE" && (
               <>
-                <img
-                  src={mediaItem.url}
-                  alt="Thread media"
-                  className="w-full h-auto max-h-96 object-cover"
-                />
+                <img src={mediaItem.url} alt="Thread media" className="w-full h-auto max-h-96 object-cover" />
                 <div className="absolute top-2 right-2 flex gap-2">
                   <button
                     onClick={() => handleFullscreen(mediaItem)}
@@ -168,12 +151,7 @@ export default function ThreadsCard({ thread = testThread }) {
                     <FaExpand className="text-sm" />
                   </button>
                   <button
-                    onClick={() =>
-                      handleDownload(
-                        mediaItem.url,
-                        `image-${mediaItem.id || "thread"}.jpg`
-                      )
-                    }
+                    onClick={() => handleDownload(mediaItem.url, `image-${mediaItem.id || "thread"}.jpg`)}
                     className="bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
                     title="Download image"
                   >
@@ -184,11 +162,7 @@ export default function ThreadsCard({ thread = testThread }) {
             )}
             {mediaItem.media_type === "VIDEO" && (
               <div className="relative">
-                <video
-                  src={mediaItem.url}
-                  className="w-full h-auto max-h-96 object-cover"
-                  controls
-                />
+                <video src={mediaItem.url} className="w-full h-auto max-h-96 object-cover" controls />
                 <div className="absolute top-2 left-2 bg-black/50 text-white px-2 py-1 rounded-full text-xs flex items-center gap-1">
                   <FaVideo className="text-xs" />
                   Video
@@ -202,12 +176,7 @@ export default function ThreadsCard({ thread = testThread }) {
                     <FaExpand className="text-sm" />
                   </button>
                   <button
-                    onClick={() =>
-                      handleDownload(
-                        mediaItem.url,
-                        `video-${mediaItem.id || "thread"}.mp4`
-                      )
-                    }
+                    onClick={() => handleDownload(mediaItem.url, `video-${mediaItem.id || "thread"}.mp4`)}
                     className="bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
                     title="Download video"
                   >
@@ -242,19 +211,13 @@ export default function ThreadsCard({ thread = testThread }) {
             <span className="font-semibold text-text-primary hover:underline cursor-pointer">
               {thread.author?.full_name || "Unknown User"}
             </span>
-            <span className="text-text-muted text-sm">
-              @{thread.author?.username || "unknown"}
-            </span>
+            <span className="text-text-muted text-sm">@{thread.author?.username || "unknown"}</span>
             <span className="text-text-muted text-sm">·</span>
-            <span className="text-text-muted text-sm">
-              {formatTimestamp(thread.created_at)}
-            </span>
+            <span className="text-text-muted text-sm">{formatTimestamp(thread.created_at)}</span>
           </div>
 
           {/* Thread Content */}
-          <div className="mt-1 text-text-primary whitespace-pre-wrap">
-            {thread.content}
-          </div>
+          <div className="mt-1 text-text-primary whitespace-pre-wrap">{thread.content}</div>
 
           {/* Media */}
           {renderMedia()}
@@ -266,9 +229,7 @@ export default function ThreadsCard({ thread = testThread }) {
               <div className="p-2 rounded-full group-hover:bg-blue-500/10 transition-colors">
                 <FaComment className="text-lg" />
               </div>
-              <span className="text-sm font-medium">
-                {thread.replies_count || 0}
-              </span>
+              <span className="text-sm font-medium">{thread.replies_count || 0}</span>
             </button>
 
             {/* Like Button */}
@@ -283,9 +244,7 @@ export default function ThreadsCard({ thread = testThread }) {
                   isLiked ? "bg-red-500/10" : "group-hover:bg-red-500/10"
                 }`}
               >
-                <FaHeart
-                  className={`text-lg ${isLiked ? "fill-current" : ""}`}
-                />
+                <FaHeart className={`text-lg ${isLiked ? "fill-current" : ""}`} />
               </div>
               <span className="text-sm font-medium">{likesCount}</span>
             </button>
@@ -298,9 +257,7 @@ export default function ThreadsCard({ thread = testThread }) {
               <div className="p-2 rounded-full group-hover:bg-green-500/10 transition-colors">
                 <FaShare className="text-lg" />
               </div>
-              <span className="text-sm font-medium">
-                {thread.shares_count || 0}
-              </span>
+              <span className="text-sm font-medium">{thread.shares_count || 0}</span>
             </button>
           </div>
 
@@ -317,27 +274,14 @@ export default function ThreadsCard({ thread = testThread }) {
 
       {/* Fullscreen Modal */}
       {isFullscreen && fullscreenMedia && (
-        <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
-          onClick={closeFullscreen}
-        >
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onClick={closeFullscreen}>
           <button
             onClick={closeFullscreen}
             className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
             title="Close fullscreen"
           >
-            <svg
-              className="w-8 h-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
 

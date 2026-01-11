@@ -1,13 +1,11 @@
-import { formatNumber } from "../../utils/formatNumber.js";
-import { formatDate } from "../../utils/formatDate.js";
-import { AuthContext } from "../../context/AuthContext.js";
+import { formatNumber } from "../../utils/formatters/formatNumber.js";
+import { formatDate } from "../../utils/formatters/formatDate.js";
 import { useTranslation } from "react-i18next";
-import { useContext } from "react";
 import { FiCalendar, FiEdit2 } from "react-icons/fi";
-
+import useProfile from "../../hooks/states/useProfile.js";
 export default function ProfileInfo() {
   const { t } = useTranslation();
-  const { user } = useContext(AuthContext);
+  const user = useProfile();
 
   if (!user) {
     return (
@@ -57,50 +55,35 @@ export default function ProfileInfo() {
 
           {/* User Info */}
           <div className="mb-4">
-            <h1 className="text-2xl md:text-3xl font-bold text-text-primary">
-              {user.full_name || "Unknown User"}
-            </h1>
-            <p className="text-text-muted text-base">
-              @{user.username || "user"}
-            </p>
+            <h1 className="text-2xl md:text-3xl font-bold text-text-primary">{user.full_name || "Unknown User"}</h1>
+            <p className="text-text-muted text-base">@{user.username || "user"}</p>
           </div>
 
           {/* Bio */}
-          {user.bio && (
-            <p className="text-text-secondary text-base leading-relaxed mb-4">
-              {user.bio}
-            </p>
-          )}
+          {user.bio && <p className="text-text-secondary text-base leading-relaxed mb-4">{user.bio}</p>}
 
           {/* Meta Info */}
           <div className="flex flex-wrap gap-4 text-text-muted text-sm mb-5">
             <div className="flex items-center gap-1.5">
               <FiCalendar className="w-4 h-4" />
               <span>
-                {t("profile.joined")}{" "}
-                {user.created_at ? formatDate(user.created_at) : "Recently"}
+                {t("profile.joined")} {user.created_at ? formatDate(user.created_at) : "Recently"}
               </span>
             </div>
           </div>
 
           {/* Stats */}
-          <div className="flex gap-6 pb-2 border-b border-border">
+          <div className="flex gap-6 border-border">
             <div className="flex items-center gap-1.5">
-              <span className="font-bold text-text-primary">
-                {formatNumber(user.posts_count || 0)}
-              </span>
+              <span className="font-bold text-text-primary">{formatNumber(user.posts_count || 0)}</span>
               <span className="text-text-muted">{t("profile.posts")}</span>
             </div>
             <button className="flex items-center gap-1.5 hover:underline">
-              <span className="font-bold text-text-primary">
-                {formatNumber(user.following_count || 0)}
-              </span>
+              <span className="font-bold text-text-primary">{formatNumber(user.following_count || 0)}</span>
               <span className="text-text-muted">{t("profile.following")}</span>
             </button>
             <button className="flex items-center gap-1.5 hover:underline">
-              <span className="font-bold text-text-primary">
-                {formatNumber(user.follower_count || 0)}
-              </span>
+              <span className="font-bold text-text-primary">{formatNumber(user.follower_count || 0)}</span>
               <span className="text-text-muted">{t("profile.followers")}</span>
             </button>
           </div>

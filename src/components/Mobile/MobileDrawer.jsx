@@ -1,17 +1,9 @@
 import { useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import {
-  FiX,
-  FiSettings,
-  FiLogOut,
-  FiSearch,
-  FiSun,
-  FiMoon,
-  FiGlobe,
-} from "react-icons/fi";
+import { FiX, FiSettings, FiLogOut, FiSearch, FiSun, FiMoon, FiGlobe } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import useThemeHandler from "../../hooks/ui/useThemeHandler";
-import handleLanguageChange from "../../handlers/handleLanguageChange";
+import languageHandler from "../../handlers/languageHandler";
 
 const MobileDrawer = ({ isOpen, onClose }) => {
   const { t, i18n } = useTranslation();
@@ -76,17 +68,17 @@ const MobileDrawer = ({ isOpen, onClose }) => {
         }`}
         aria-label="Mobile menu"
         role="dialog"
-        aria-modal="true">
+        aria-modal="true"
+      >
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border/50">
-            <h2 className="text-lg font-semibold text-text-primary">
-              {t("navmenu.menu") || "Menu"}
-            </h2>
+            <h2 className="text-lg font-semibold text-text-primary">{t("navmenu.menu") || "Menu"}</h2>
             <button
               onClick={onClose}
               className="p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
-              aria-label="Close menu">
+              aria-label="Close menu"
+            >
               <FiX className="w-5 h-5" />
             </button>
           </div>
@@ -96,27 +88,19 @@ const MobileDrawer = ({ isOpen, onClose }) => {
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shrink-0">
                 {user.avatar ? (
-                  <img
-                    src={user.avatar}
-                    alt={user.name}
-                    className="w-full h-full rounded-full object-cover"
-                  />
+                  <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
                 ) : (
                   <span className="text-white text-base font-semibold">
                     {user.name
                       .split(" ")
-                      .map((n) => n[0])
+                      .map(n => n[0])
                       .join("")}
                   </span>
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-text-primary truncate">
-                  {user.name}
-                </p>
-                <p className="text-sm text-text-muted truncate">
-                  {user.username}
-                </p>
+                <p className="font-medium text-text-primary truncate">{user.name}</p>
+                <p className="text-sm text-text-muted truncate">{user.username}</p>
               </div>
             </div>
           </div>
@@ -135,7 +119,8 @@ const MobileDrawer = ({ isOpen, onClose }) => {
                           ? "bg-accent/10 text-accent font-medium"
                           : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary"
                       }`
-                    }>
+                    }
+                  >
                     <item.icon className="w-5 h-5" />
                     <span>{item.label}</span>
                   </NavLink>
@@ -153,16 +138,11 @@ const MobileDrawer = ({ isOpen, onClose }) => {
                 <li>
                   <button
                     onClick={toggleTheme}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors">
-                    {isDark ? (
-                      <FiSun className="w-5 h-5" />
-                    ) : (
-                      <FiMoon className="w-5 h-5" />
-                    )}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+                  >
+                    {isDark ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
                     <span>
-                      {isDark
-                        ? t("settings.light_mode") || "Light Mode"
-                        : t("settings.dark_mode") || "Dark Mode"}
+                      {isDark ? t("settings.light_mode") || "Light Mode" : t("settings.dark_mode") || "Dark Mode"}
                     </span>
                   </button>
                 </li>
@@ -170,16 +150,15 @@ const MobileDrawer = ({ isOpen, onClose }) => {
                 <li>
                   <button
                     onClick={() => {
-                      handleLanguageChange();
+                      languageHandler();
                     }}
-                    className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors">
+                    className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+                  >
                     <div className="flex items-center gap-3">
                       <FiGlobe className="w-5 h-5" />
                       <span>{t("settings.language") || "Language"}</span>
                     </div>
-                    <span className="text-sm font-medium text-text-muted">
-                      {i18n.language.toUpperCase()}
-                    </span>
+                    <span className="text-sm font-medium text-text-muted">{i18n.language.toUpperCase()}</span>
                   </button>
                 </li>
               </ul>
@@ -190,7 +169,8 @@ const MobileDrawer = ({ isOpen, onClose }) => {
           <div className="p-4 border-t border-border/50">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-500/10 transition-colors">
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-500/10 transition-colors"
+            >
               <FiLogOut className="w-5 h-5" />
               <span className="font-medium">{t("navmenu.logout")}</span>
             </button>

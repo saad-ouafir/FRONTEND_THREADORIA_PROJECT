@@ -1,19 +1,20 @@
 import { useTranslation } from "react-i18next";
 import { useState, useRef } from "react";
+import useProfile from "../../hooks/states/useProfile";
 
 export default function ProfilePicture() {
   const { t } = useTranslation();
   const [profilePicture, setProfilePicture] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
+  const user = useProfile();
 
-  // Get user initials from localStorage or use default
+  // Get user initials
   const getUserInitials = () => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
     const fullName = user.full_name || user.username || "User";
     return fullName
       .split(" ")
-      .map((word) => word[0])
+      .map(word => word[0])
       .join("")
       .toUpperCase()
       .slice(0, 2);
@@ -21,7 +22,7 @@ export default function ProfilePicture() {
 
   const initials = getUserInitials();
 
-  const handleFileUpload = async (event) => {
+  const handleFileUpload = async event => {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -50,7 +51,7 @@ export default function ProfilePicture() {
       // await uploadProfilePicture(formData);
 
       // Simulate upload delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
     } catch (error) {
       console.error("Upload failed:", error);
       alert("Upload failed. Please try again.");
@@ -77,31 +78,21 @@ export default function ProfilePicture() {
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-bg-tertiary text-lg font-semibold text-text-primary">
             {profilePicture ? (
-              <img
-                src={profilePicture}
-                alt="Profile"
-                className="h-full w-full object-cover"
-              />
+              <img src={profilePicture} alt="Profile" className="h-full w-full object-cover" />
             ) : (
               initials
             )}
           </div>
 
           <div>
-            <p className="text-sm font-medium text-text-primary">
-              {t("settings.profile_picture")}
-            </p>
-            <p className="text-xs text-text-muted">
-              {t("settings.profile_picture_subtitle")}
-            </p>
+            <p className="text-sm font-medium text-text-primary">{t("settings.profile_picture")}</p>
+            <p className="text-xs text-text-muted">{t("settings.profile_picture_subtitle")}</p>
           </div>
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-text-primary hover:bg-bg-tertiary focus-within:outline-none focus-within:ring-2 focus-within:ring-accent/50 transition-colors">
-            {isUploading
-              ? t("settings.uploading")
-              : t("settings.upload_new_picture")}
+            {isUploading ? t("settings.uploading") : t("settings.upload_new_picture")}
             <input
               ref={fileInputRef}
               type="file"

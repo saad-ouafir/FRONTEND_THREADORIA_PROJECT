@@ -169,6 +169,13 @@
     "cancel": "Annuler",
     "confirm": "Confirmer"
   },
+  "search": {
+    "no_users_found": "Aucun utilisateur trouvé",
+    "followers": "abonnés",
+    "following": "suivis",
+    "follow": "Suivre",
+    "following_btn": "Suivi"
+  },
   "profileInfo": {
     "non_logedin": "Veuillez vous connecter pour voir votre profil"
   }

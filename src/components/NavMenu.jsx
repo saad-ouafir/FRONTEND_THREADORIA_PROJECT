@@ -1,34 +1,34 @@
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext.js";
-
-import {
-  FiHome,
-  FiBell,
-  FiUser,
-  FiSettings,
-  FiEdit3,
-  FiMoreHorizontal,
-  FiLogOut,
-} from "react-icons/fi";
+import { FiHome, FiBell, FiUser, FiSettings, FiEdit3, FiMoreHorizontal, FiLogOut } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
+import useProfile from "../hooks/states/useProfile";
+import { logout } from "../api/auth.api";
+import AlertMessage from "./UI/AlertMessage";
+import submitHandler from "../handlers/submitHandler";
+import { useSelector } from "react-redux";
 
 const NavMenu = () => {
   const { t } = useTranslation();
-  const { user, logout } = useContext(AuthContext);
   const [hasNotifications] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [alert, setAlert] = useState(null);
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
+  const isAuth = useSelector(state => state.auth.isAuth);
+  const userData = useProfile() || {};
+  let user = null;
+  if (isAuth) {
+    user = userData;
+  }
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = event => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowUserMenu(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -56,7 +56,10 @@ const NavMenu = () => {
       href: "/settings",
     },
   ];
-  
+
+  const onLogout = async () => {
+    submitHandler(setAlert, logout, null, navigate, "/");
+  };
 
   return (
     <aside className="bg-bg-secondary border-r border-border/50 h-full flex flex-col">
@@ -78,9 +81,7 @@ const NavMenu = () => {
               >
                 <item.icon className="w-5 h-5" />
                 <span>{item.label}</span>
-                {item.hasBadge && (
-                  <span className="w-2 h-2 bg-red-500 rounded-full ml-auto" />
-                )}
+                {item.hasBadge && <span className="w-2 h-2 bg-red-500 rounded-full ml-auto" />}
               </NavLink>
             </li>
           ))}
@@ -111,42 +112,37 @@ const NavMenu = () => {
                   {user.full_name
                     ? user.full_name
                         .split(" ")
-                        .map((n) => n[0])
+                        .map(n => n[0])
                         .join("")
                     : "U"}
                 </span>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-text-primary truncate">
-                {user.full_name || "Unknown User"}
-              </p>
+              <p className="text-sm font-medium text-text-primary truncate">{user.full_name || "Unknown User"}</p>
               <p className="text-xs text-text-muted truncate">{user.username || "user"}</p>
             </div>
-          <button
-            className="p-1.5 text-text-muted hover:text-text-secondary rounded-lg hover:bg-bg-tertiary transition-colors"
-            onClick={() => setShowUserMenu(!showUserMenu)}
-          >
-            <FiMoreHorizontal className="w-5 h-5" />
-          </button>
+            <button
+              className="p-1.5 text-text-muted hover:text-text-secondary rounded-lg hover:bg-bg-tertiary transition-colors"
+              onClick={() => setShowUserMenu(!showUserMenu)}
+            >
+              <FiMoreHorizontal className="w-5 h-5" />
+            </button>
 
-          {/* User Dropdown Menu */}
-          {showUserMenu && (
-            <div className="absolute bottom-full left-4 mb-2 w-48 bg-surface border border-border rounded-lg shadow-lg py-1 z-50">
-              <button
-                onClick={async () => {
-                  await logout();
-                  navigate("/auth/login");
-                }}
-                className="w-full text-left px-3 py-2 text-sm font-semibold hover:bg-bg-tertiary text-red-500 transition-colors flex items-center gap-3"
-              >
-                <FiLogOut className="w-4 h-4 text-red-500 font-bold" />
-                {t("navmenu.logout")}
-              </button>
-            </div>
-          )}
+            {/* User Dropdown Menu */}
+            {showUserMenu && (
+              <div className="absolute bottom-full left-4 mb-2 w-48 bg-surface border border-border rounded-lg shadow-lg py-1 z-50">
+                <button
+                  onClick={onLogout}
+                  className="w-full text-left px-3 py-2 text-sm font-semibold hover:bg-bg-tertiary text-red-500 transition-colors flex items-center gap-3"
+                >
+                  <FiLogOut className="w-4 h-4 text-red-500 font-bold" />
+                  {t("navmenu.logout")}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
       )}
     </aside>
   );

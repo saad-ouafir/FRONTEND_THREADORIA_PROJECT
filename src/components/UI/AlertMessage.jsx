@@ -1,35 +1,24 @@
-import {
-  IoCheckmarkDoneCircleOutline,
-  IoWarningOutline,
-} from "react-icons/io5";
+import { IoCheckmarkDoneCircleOutline, IoWarningOutline } from "react-icons/io5";
 import { MdErrorOutline, MdOutlineInfo } from "react-icons/md";
 import { HiOutlineXMark } from "react-icons/hi2";
 import { useState, useEffect } from "react";
 
 export default function AlertMessage({ type, message, statusCode, onClose }) {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [countdown, setCountdown] = useState(5);
 
-  // Auto-determine alert type based on status code
   const getAlertTypeFromStatus = () => {
     if (!statusCode) return type;
-
-    if (statusCode >= 200 && statusCode < 300) {
-      return "success";
-    } else if (statusCode >= 300 && statusCode < 400) {
-      return "info";
-    } else if (statusCode >= 400 && statusCode < 500) {
-      return "error";
-    } else if (statusCode >= 500) {
-      return "error";
-    }
+    if (statusCode >= 200 && statusCode < 300) return "success";
+    if (statusCode >= 300 && statusCode < 400) return "info";
+    if (statusCode >= 400 && statusCode < 500) return "error";
+    if (statusCode >= 500) return "error";
     return type;
   };
 
   const alertType = getAlertTypeFromStatus();
 
-  // Format message to include status code if provided
   const getDisplayMessage = () => {
     if (statusCode && !message.includes(`(${statusCode})`)) {
       return `${message}`;
@@ -38,26 +27,25 @@ export default function AlertMessage({ type, message, statusCode, onClose }) {
   };
 
   useEffect(() => {
+    if (!message) return;
+
+    setIsVisible(true);
+    setIsExiting(false);
+    setCountdown(5);
     const timer = setTimeout(() => {
       setIsExiting(true);
       setTimeout(() => setIsVisible(false), 300);
     }, 5000);
 
     const countdownTimer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(countdownTimer);
-          return 0;
-        }
-        return prev - 1;
-      });
+      setCountdown(prev => (prev > 1 ? prev - 1 : 0));
     }, 1000);
 
     return () => {
       clearTimeout(timer);
       clearInterval(countdownTimer);
     };
-  }, []);
+  }, [message, statusCode]);
 
   const handleClose = () => {
     setIsExiting(true);
@@ -70,39 +58,38 @@ export default function AlertMessage({ type, message, statusCode, onClose }) {
     switch (alertType) {
       case "success":
         return {
-          bg: "bg-emerald-500/10",
-          icon: "text-emerald-600",
-          text: "text-emerald-600",
+          bg: "bg-emerald-200",
+          icon: "text-emerald-700",
+          text: "text-emerald-700",
           iconComponent: IoCheckmarkDoneCircleOutline,
         };
       case "error":
         return {
-          bg: "bg-red-500/10",
-          icon: "text-red-600",
-          text: "text-red-600",
+          bg: "bg-red-200",
+          icon: "text-red-700",
+          text: "text-red-700",
           iconComponent: MdErrorOutline,
         };
       case "warning":
         return {
-          bg: "bg-yellow-500/10",
-          icon: "text-yellow-600",
-          text: "text-yellow-600",
+          bg: "bg-yellow-200",
+          icon: "text-yellow-700",
+          text: "text-yellow-700",
           iconComponent: IoWarningOutline,
         };
 
       case "info":
         return {
-          bg: "bg-blue-500/10",
-          // border: "border-blue-500",
-          icon: "text-blue-600",
-          text: "text-blue-600",
+          bg: "bg-blue-200",
+          icon: "text-blue-700",
+          text: "text-blue-700",
           iconComponent: MdOutlineInfo,
         };
       default:
         return {
-          bg: "bg-gray-500/10",
-          icon: "text-gray-600",
-          text: "text-gray-600",
+          bg: "bg-gray-200",
+          icon: "text-gray-700",
+          text: "text-gray-700",
           iconComponent: MdOutlineInfo,
         };
     }
@@ -112,25 +99,19 @@ export default function AlertMessage({ type, message, statusCode, onClose }) {
   const IconComponent = styles.iconComponent;
 
   return (
-    <div className="w-full mb-4 px-4 ">
+    <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full px-4">
       <div
         className={`p-4 ${
           styles.bg
-        } flex items-center justify-between rounded-lg shadow-md transition-all duration-300 transform ${
-          isExiting
-            ? "opacity-0 translate-x-full scale-95"
-            : "opacity-100 translate-x-0 scale-100"
-        }`}>
+        } flex items-center justify-between rounded-lg transition-all duration-300 transform border border-border ${
+          isExiting ? "opacity-0 translate-x-full scale-95" : "opacity-100 translate-x-0 scale-100"
+        }`}
+      >
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <IconComponent
-            className={`${styles.icon} text-[1.25rem] sm:text-[1.5rem] flex-shrink-0`}
-          />
-          <p
-            className={`${styles.text} text-sm sm:text-base font-semibold leading-tight`}>
-            {getDisplayMessage()}
-          </p>
+          <IconComponent className={`${styles.icon} text-[1.25rem] sm:text-[1.5rem] shrink-0`} />
+          <p className={`${styles.text} text-sm sm:text-base font-semibold leading-tight`}>{getDisplayMessage()}</p>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+        <div className="flex items-center gap-2 shrink-0 ml-3">
           <div className={`text-lg ${styles.text}`}>{countdown}s</div>
           <HiOutlineXMark
             onClick={handleClose}

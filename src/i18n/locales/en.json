@@ -170,6 +170,13 @@
     "cancel": "Cancel",
     "confirm": "Confirm"
   },
+  "search": {
+    "no_users_found": "No users found",
+    "followers": "followers",
+    "following": "following",
+    "follow": "Follow",
+    "following_btn": "Following"
+  },
   "profileInfo": {
     "non_logedin": "Please log in to see your profile"
   }
