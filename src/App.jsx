@@ -1,14 +1,14 @@
 import { ThemeProvider } from "next-themes";
-import { AuthProvider } from "./context/AuthProvider";
 import GlobalRoutes from "./routes/GlobalRoutes";
-
+import AuthStore from "./context/GlobalStore";
+import { Provider } from "react-redux";
 function App() {
   return (
-    <AuthProvider>
-      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange={false}>
+    <Provider store={AuthStore}>
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange={false}>
         <GlobalRoutes />
       </ThemeProvider>
-    </AuthProvider>
+    </Provider>
   );
 }
 

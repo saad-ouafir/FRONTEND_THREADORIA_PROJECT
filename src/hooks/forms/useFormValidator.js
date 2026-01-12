@@ -1,15 +1,16 @@
 import { useForm } from "react-hook-form";
 
-const useValidatedForm = (resolver) => {
+const useValidatedForm = (resolver, options = {}) => {
   return useForm({
     mode: "onSubmit",
     resolver,
+    ...options,
   });
 };
 
 // login form
 export function useValidateLoginForm() {
-  return useValidatedForm(async (values) => {
+  return useValidatedForm(async values => {
     const errors = {};
 
     if (!values.email) {
@@ -35,7 +36,7 @@ export function useValidateLoginForm() {
 }
 // register form
 export function useValidateRegisterForm() {
-  return useValidatedForm(async (values) => {
+  return useValidatedForm(async values => {
     const errors = {};
 
     if (!values.full_name) {
@@ -78,4 +79,31 @@ export function useValidateRegisterForm() {
   });
 }
 
-export default { useValidateLoginForm, useValidateRegisterForm };
+// profile form
+export function useValidateProfileForm(options = {}) {
+  return useValidatedForm(async values => {
+    const errors = {};
+
+    if (values.full_name && values.full_name.length < 2) {
+      errors.full_name = { message: "Name must be at least 2 characters" };
+    } else if (values.full_name && values.full_name.length > 100) {
+      errors.full_name = { message: "Name must not exceed 100 characters" };
+    }
+
+    if (values.username && !/^[a-zA-Z0-9_]{3,50}$/.test(values.username)) {
+      errors.username = { message: "3–50 chars, letters/numbers/underscores only" };
+    }
+
+    if (values.bio && values.bio.length > 160) {
+      errors.bio = { message: "Bio must not exceed 160 characters" };
+    }
+
+    return {
+      values: Object.keys(errors).length ? {} : values,
+      errors,
+      isValid: Object.keys(errors).length === 0,
+    };
+  }, options);
+}
+
+export default { useValidateLoginForm, useValidateRegisterForm, useValidateProfileForm };

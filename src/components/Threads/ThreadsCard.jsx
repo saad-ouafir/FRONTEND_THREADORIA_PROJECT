@@ -1,49 +1,83 @@
 import { useState, useEffect } from "react";
-import {
-  FaHeart,
-  FaComment,
-  FaImage,
-  FaVideo,
-  FaDownload,
-  FaExpand,
-  FaShare,
-} from "react-icons/fa";
+import { FaHeart, FaComment, FaImage, FaVideo, FaDownload, FaExpand, FaShare } from "react-icons/fa";
 
-export default function ThreadsCard() {
+import { useTranslation } from "react-i18next";
+
+// Random test object for development/testing
+const testThread = {
+  id: 1,
+  author_id: 123,
+  content:
+    "Just shipped a new feature! 🚀 Working on this project has been an incredible journey. The team's dedication and user feedback made all the difference. What's your favorite productivity hack?",
+  likes_count: 342,
+  replies_count: 28,
+  shares_count: 15,
+  created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+  deleted_at: null,
+  author: {
+    id: 123,
+    full_name: "Alex Chen",
+    username: "alexchen",
+    email: "alex@example.com",
+    profile_picture_url: "https://picsum.photos/seed/user1/40/40.jpg",
+    profile_metadata: null,
+    bio: "Full-stack developer passionate about React and Node.js",
+    follower_count: 1250,
+    following_count: 342,
+    is_private: false,
+    created_at: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  media: [
+    {
+      id: 1,
+      thread_id: 1,
+      url: "https://picsum.photos/seed/thread1/600/400.jpg",
+      media_type: "IMAGE",
+      metadata: { width: 600, height: 400, provider: "picsum" },
+      created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    },
+  ],
+  reactions: [],
+  tags: [],
+  replies: [],
+  parent: null,
+};
+
+export default function ThreadsCard({ thread = testThread }) {
   const [isLiked, setIsLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(6);
+  const [likesCount, setLikesCount] = useState(thread.likes_count || 0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
 
-  // Generic thread data
-  const thread = {
-    id: 1,
-    author: {
-      name: "Alex Chen",
-      username: "alexchen",
-      avatar: "https://picsum.photos/seed/user1/40/40.jpg",
-      isVerified: true,
-    },
-    timestamp: "2h",
-    content:
-      "Just shipped a new feature! 🚀 Working on this project has been an incredible journey. The team's dedication and user feedback made all the difference. What's your favorite productivity hack?",
-    media: [
-      {
-        type: "image",
-        url: "https://picsum.photos/seed/thread1/600/400.jpg",
-        alt: "Project screenshot",
-      },
-    ],
-    stats: {
-      likes: 342,
-      comments: 28,
-      shares: 15,
-    },
+  const { t } = useTranslation();
+
+  {
+    !thread && (
+      <div className="py-16 text-center">
+        <p className="text-text-muted text-lg">{t("profile.no_threads")}</p>
+        <p className="text-text-muted/70 text-sm mt-2">{t("profile.no_threads_description")}</p>
+      </div>
+    );
+  }
+
+  // Format timestamp for display
+  const formatTimestamp = createdAt => {
+    const now = new Date();
+    const threadDate = new Date(createdAt);
+    const diffMs = now - threadDate;
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffHours < 1) return "just now";
+    if (diffHours < 24) return `${diffHours}h`;
+    if (diffDays < 7) return `${diffDays}d`;
+    return threadDate.toLocaleDateString();
   };
 
   const handleLike = () => {
     setIsLiked(!isLiked);
-    setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
+    setLikesCount(prev => (isLiked ? prev - 1 : prev + 1));
   };
 
   const handleDownload = (mediaUrl, fileName) => {
@@ -55,7 +89,7 @@ export default function ThreadsCard() {
     document.body.removeChild(link);
   };
 
-  const handleFullscreen = (media) => {
+  const handleFullscreen = media => {
     setFullscreenMedia(media);
     setIsFullscreen(true);
   };
@@ -67,7 +101,7 @@ export default function ThreadsCard() {
 
   const handleShare = async () => {
     const shareData = {
-      title: `Post by ${thread.author.name}`,
+      title: `Post by ${thread.author?.full_name || "Unknown User"}`,
       text: thread.content,
       url: window.location.href,
     };
@@ -103,63 +137,49 @@ export default function ThreadsCard() {
 
     return (
       <div className="mt-3 space-y-2">
-        {thread.media.map((item, index) => (
-          <div key={index} className="relative rounded-xl overflow-hidden">
-            {item.type === "image" && (
+        {thread.media.map((mediaItem, index) => (
+          <div key={mediaItem.id || index} className="relative rounded-xl overflow-hidden">
+            {mediaItem.media_type === "IMAGE" && (
               <>
-                <img
-                  src={item.url}
-                  alt={item.alt || "Thread media"}
-                  className="w-full h-auto max-h-96 object-cover"
-                />
+                <img src={mediaItem.url} alt="Thread media" className="w-full h-auto max-h-96 object-cover" />
                 <div className="absolute top-2 right-2 flex gap-2">
                   <button
-                    onClick={() => handleFullscreen(item)}
+                    onClick={() => handleFullscreen(mediaItem)}
                     className="bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                    title="View fullscreen">
+                    title="View fullscreen"
+                  >
                     <FaExpand className="text-sm" />
                   </button>
                   <button
-                    onClick={() =>
-                      handleDownload(
-                        item.url,
-                        `image-${item.alt || "thread"}.jpg`
-                      )
-                    }
+                    onClick={() => handleDownload(mediaItem.url, `image-${mediaItem.id || "thread"}.jpg`)}
                     className="bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                    title="Download image">
+                    title="Download image"
+                  >
                     <FaDownload className="text-sm" />
                   </button>
                 </div>
               </>
             )}
-            {item.type === "video" && (
+            {mediaItem.media_type === "VIDEO" && (
               <div className="relative">
-                <video
-                  src={item.url}
-                  className="w-full h-auto max-h-96 object-cover"
-                  controls
-                />
+                <video src={mediaItem.url} className="w-full h-auto max-h-96 object-cover" controls />
                 <div className="absolute top-2 left-2 bg-black/50 text-white px-2 py-1 rounded-full text-xs flex items-center gap-1">
                   <FaVideo className="text-xs" />
                   Video
                 </div>
                 <div className="absolute top-2 right-2 flex gap-2">
                   <button
-                    onClick={() => handleFullscreen(item)}
+                    onClick={() => handleFullscreen(mediaItem)}
                     className="bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                    title="View fullscreen">
+                    title="View fullscreen"
+                  >
                     <FaExpand className="text-sm" />
                   </button>
                   <button
-                    onClick={() =>
-                      handleDownload(
-                        item.url,
-                        `video-${item.alt || "thread"}.mp4`
-                      )
-                    }
+                    onClick={() => handleDownload(mediaItem.url, `video-${mediaItem.id || "thread"}.mp4`)}
                     className="bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                    title="Download video">
+                    title="Download video"
+                  >
                     <FaDownload className="text-sm" />
                   </button>
                 </div>
@@ -178,8 +198,8 @@ export default function ThreadsCard() {
         {/* Avatar */}
         <div className="shrink-0">
           <img
-            src={thread.author.avatar}
-            alt={thread.author.name}
+            src={thread.author?.profile_picture_url || "/default-avatar.png"}
+            alt={thread.author?.full_name || "User"}
             className="w-10 h-10 rounded-full object-cover"
           />
         </div>
@@ -189,31 +209,15 @@ export default function ThreadsCard() {
           {/* Author Info */}
           <div className="flex items-center space-x-1">
             <span className="font-semibold text-text-primary hover:underline cursor-pointer">
-              {thread.author.name}
+              {thread.author?.full_name || "Unknown User"}
             </span>
-            {thread.author.isVerified && (
-              <svg
-                className="w-4 h-4 text-blue-500"
-                fill="currentColor"
-                viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            )}
-            <span className="text-text-muted text-sm">
-              @{thread.author.username}
-            </span>
+            <span className="text-text-muted text-sm">@{thread.author?.username || "unknown"}</span>
             <span className="text-text-muted text-sm">·</span>
-            <span className="text-text-muted text-sm">{thread.timestamp}</span>
+            <span className="text-text-muted text-sm">{formatTimestamp(thread.created_at)}</span>
           </div>
 
           {/* Thread Content */}
-          <div className="mt-1 text-text-primary whitespace-pre-wrap">
-            {thread.content}
-          </div>
+          <div className="mt-1 text-text-primary whitespace-pre-wrap">{thread.content}</div>
 
           {/* Media */}
           {renderMedia()}
@@ -225,9 +229,7 @@ export default function ThreadsCard() {
               <div className="p-2 rounded-full group-hover:bg-blue-500/10 transition-colors">
                 <FaComment className="text-lg" />
               </div>
-              <span className="text-sm font-medium">
-                {thread.stats.comments}
-              </span>
+              <span className="text-sm font-medium">{thread.replies_count || 0}</span>
             </button>
 
             {/* Like Button */}
@@ -235,14 +237,14 @@ export default function ThreadsCard() {
               onClick={handleLike}
               className={`flex items-center space-x-2 transition-colors group ${
                 isLiked ? "text-red-500" : "text-text-muted hover:text-red-500"
-              }`}>
+              }`}
+            >
               <div
                 className={`p-2 rounded-full transition-colors ${
                   isLiked ? "bg-red-500/10" : "group-hover:bg-red-500/10"
-                }`}>
-                <FaHeart
-                  className={`text-lg ${isLiked ? "fill-current" : ""}`}
-                />
+                }`}
+              >
+                <FaHeart className={`text-lg ${isLiked ? "fill-current" : ""}`} />
               </div>
               <span className="text-sm font-medium">{likesCount}</span>
             </button>
@@ -250,64 +252,55 @@ export default function ThreadsCard() {
             {/* Share Button */}
             <button
               onClick={handleShare}
-              className="flex items-center space-x-2 text-text-muted hover:text-green-500 transition-colors group">
+              className="flex items-center space-x-2 text-text-muted hover:text-green-500 transition-colors group"
+            >
               <div className="p-2 rounded-full group-hover:bg-green-500/10 transition-colors">
                 <FaShare className="text-lg" />
               </div>
-              <span className="text-sm font-medium">{thread.stats.shares}</span>
+              <span className="text-sm font-medium">{thread.shares_count || 0}</span>
             </button>
           </div>
 
           {/* Statistics */}
           <div className="mt-3 text-xs text-text-muted">
-            <span>{thread.stats.likes} likes</span>
+            <span>{thread.likes_count || 0} likes</span>
             <span className="mx-1">·</span>
-            <span>{thread.stats.comments} comments</span>
+            <span>{thread.replies_count || 0} comments</span>
             <span className="mx-1">·</span>
-            <span>{thread.stats.shares} shares</span>
+            <span>{thread.shares_count || 0} shares</span>
           </div>
         </div>
       </div>
 
       {/* Fullscreen Modal */}
       {isFullscreen && fullscreenMedia && (
-        <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
-          onClick={closeFullscreen}>
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onClick={closeFullscreen}>
           <button
             onClick={closeFullscreen}
             className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
-            title="Close fullscreen">
-            <svg
-              className="w-8 h-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+            title="Close fullscreen"
+          >
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
 
-          {fullscreenMedia.type === "image" && (
+          {fullscreenMedia.media_type === "IMAGE" && (
             <img
               src={fullscreenMedia.url}
-              alt={fullscreenMedia.alt || "Fullscreen media"}
+              alt="Fullscreen media"
               className="max-w-full max-h-full object-contain"
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             />
           )}
 
-          {fullscreenMedia.type === "video" && (
+          {fullscreenMedia.media_type === "VIDEO" && (
             <video
               src={fullscreenMedia.url}
               className="max-w-full max-h-full"
               controls
               autoPlay
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             />
           )}
         </div>

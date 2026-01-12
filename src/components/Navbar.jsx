@@ -1,15 +1,13 @@
 import { useState } from "react";
 import { FiSun, FiMoon, FiGlobe, FiMenu, FiX } from "react-icons/fi";
-import handleLanguageChange from "../handlers/handleLanguageChange";
+import languageHandler from "../handlers/languageHandler";
 import { useTranslation } from "react-i18next";
 import useThemeHandler from "../hooks/ui/useThemeHandler";
+import { useSelector } from "react-redux";
 
 // Inline SVG Logo component for proper dark mode support
 const Logo = ({ className }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 218 42"
-    className={className}>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 218 42" className={className}>
     <g id="logogram" transform="translate(0, 1)">
       <path
         d="M0 20C0 12.5231 0 8.78461 1.60769 6C2.66091 4.17577 4.17577 2.66091 6 1.60769C8.78461 0 12.5231 0 20 0C27.4769 0 31.2154 0 34 1.60769C35.8242 2.66091 37.3391 4.17577 38.3923 6C40 8.78461 40 12.5231 40 20C40 27.4769 40 31.2154 38.3923 34C37.3391 35.8242 35.8242 37.3391 34 38.3923C31.2154 40 27.4769 40 20 40C12.5231 40 8.78461 40 6 38.3923C4.17577 37.3391 2.66091 35.8242 1.60769 34C0 31.2154 0 27.4769 0 20Z"
@@ -35,6 +33,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { i18n } = useTranslation();
   const { isDark, toggleTheme, mounted } = useThemeHandler();
+  const isAuth = useSelector(state => state.auth.isAuth);
 
   if (!mounted) {
     return <nav className="sticky top-0 z-50 h-16 bg-bg-secondary border-b" />;
@@ -53,92 +52,88 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-1">
             {/* Language Toggle */}
             <button
-              onClick={handleLanguageChange}
+              onClick={languageHandler}
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
-              title="Change Language">
+              title="Change Language"
+            >
               <FiGlobe className="w-4 h-4" />
-              <span className="text-sm font-medium">
-                {i18n.language.toUpperCase()}
-              </span>
+              <span className="text-sm font-medium">{i18n.language.toUpperCase()}</span>
             </button>
 
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
               className="p-2.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
-              title={isDark ? "Switch to light mode" : "Switch to dark mode"}>
-              {isDark ? (
-                <FiSun className="w-5 h-5" />
-              ) : (
-                <FiMoon className="w-5 h-5" />
-              )}
+              title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {isDark ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
             </button>
 
             {/* Auth Buttons */}
-            <div className="flex items-center gap-2 ml-2 pl-3 border-l border-border/50">
+            {!isAuth && (
+              <div className="flex items-center gap-2 ml-2 pl-3 border-l border-border/50">
+                <a
+                  href="/auth/login"
+                  className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
+                >
+                  Log in
+                </a>
+                <a
+                  href="/auth/register"
+                  className="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors"
+                >
+                  Sign up
+                </a>
+              </div>
+            )}
+
+            {/* Mobile Navigation */}
+            <div className="md:hidden flex items-center gap-1">
+              <button
+                onClick={languageHandler}
+                className="p-2 rounded-lg text-text-secondary hover:bg-bg-tertiary transition-colors"
+              >
+                <FiGlobe className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-lg text-text-secondary hover:bg-bg-tertiary transition-colors"
+              >
+                {isDark ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
+              </button>
+
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 rounded-lg text-text-secondary hover:bg-bg-tertiary transition-colors"
+              >
+                {mobileMenuOpen ? <FiX className="w-5 h-5" /> : <FiMenu className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-border bg-bg-secondary">
+            <div className="px-4 py-4 space-y-3">
               <a
                 href="/auth/login"
-                className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
+                className="block px-4 py-2.5 text-center text-sm font-medium text-text-primary rounded-lg border border-border hover:bg-bg-tertiary transition-colors"
+              >
                 Log in
               </a>
               <a
                 href="/auth/register"
-                className="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors">
+                className="block px-4 py-2.5 text-center text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors"
+              >
                 Sign up
               </a>
             </div>
           </div>
-
-          {/* Mobile Navigation */}
-          <div className="md:hidden flex items-center gap-1">
-            <button
-              onClick={handleLanguageChange}
-              className="p-2 rounded-lg text-text-secondary hover:bg-bg-tertiary transition-colors">
-              <FiGlobe className="w-5 h-5" />
-            </button>
-
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg text-text-secondary hover:bg-bg-tertiary transition-colors">
-              {isDark ? (
-                <FiSun className="w-5 h-5" />
-              ) : (
-                <FiMoon className="w-5 h-5" />
-              )}
-            </button>
-
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-text-secondary hover:bg-bg-tertiary transition-colors">
-              {mobileMenuOpen ? (
-                <FiX className="w-5 h-5" />
-              ) : (
-                <FiMenu className="w-5 h-5" />
-              )}
-            </button>
-          </div>
-        </div>
+        )}
       </div>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-bg-secondary">
-          <div className="px-4 py-4 space-y-3">
-            <a
-              href="/auth/login"
-              className="block px-4 py-2.5 text-center text-sm font-medium text-text-primary rounded-lg border border-border hover:bg-bg-tertiary transition-colors">
-              Log in
-            </a>
-            <a
-              href="/auth/register"
-              className="block px-4 py-2.5 text-center text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors">
-              Sign up
-            </a>
-          </div>
-        </div>
-      )}
     </nav>
   );
 };
-
 export default Navbar;

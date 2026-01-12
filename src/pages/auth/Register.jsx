@@ -1,20 +1,17 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/api/useAuth.js";
-
-// Custom Hooks for global form validation & submit
 import { useValidateRegisterForm } from "../../hooks/forms/useFormValidator.js";
-import useFormSubmitter from "../../hooks/forms/useFormSubmitter.js";
 import { signUp } from "../../api/auth.api.js";
-
 import AlertMessage from "../../components/UI/AlertMessage.jsx";
+import submitHandler from "../../handlers/submitHandler.js";
 
 export default function Register() {
   const navigate = useNavigate();
-  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [alert, setAlert] = useState(null);
   const { t } = useTranslation();
 
   const {
@@ -23,48 +20,26 @@ export default function Register() {
     formState: { errors },
   } = useValidateRegisterForm();
 
-  const { alert, isSubmitting, submit, clearAlert } = useFormSubmitter(signUp, {
-    successMessage: t("register.success"),
-    onSuccess: response => {
-      login(response.accessToken, response.user);
-      navigate("/home");
-    },
-  });
-
   const onSubmit = async data => {
-    await submit(data);
+    await submitHandler(setAlert, signUp, data, navigate, "/home");
   };
 
   return (
     <div className="mt-4 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
-        {alert && (
-          <AlertMessage
-            type={alert.type}
-            message={alert.message}
-            statusCode={alert.statusCode}
-            onClose={clearAlert}
-          />
-        )}
+        {alert && <AlertMessage message={alert.message} statusCode={alert.statusCode} />}
       </div>
       <div className="w-full max-w-md">
         <div className="bg-bg-secondary border border-border rounded-2xl shadow-lg px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
           {/* Title */}
           <div className="mb-8 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight text-text-primary">
-              {t("register.create_account")}
-            </h1>
-            <p className="mt-1 text-sm text-text-muted">
-              {t("register.subtitle")}
-            </p>
+            <h1 className="text-2xl font-semibold tracking-tight text-text-primary">{t("register.create_account")}</h1>
+            <p className="mt-1 text-sm text-text-muted">{t("register.subtitle")}</p>
           </div>
 
           {/* Section 1: Profile Image Upload */}
           <div className="mb-6">
-            <label
-              htmlFor="profile_picture_url"
-              className="block text-sm font-medium text-text-primary mb-2"
-            >
+            <label htmlFor="profile_picture_url" className="block text-sm font-medium text-text-primary mb-2">
               {t("register.profile_picture") || "Profile Picture"}
             </label>
             <input
@@ -80,10 +55,7 @@ export default function Register() {
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             {/* Full Name */}
             <div>
-              <label
-                htmlFor="full_name"
-                className="block text-sm font-medium text-text-primary"
-              >
+              <label htmlFor="full_name" className="block text-sm font-medium text-text-primary">
                 {t("register.full_name") || "Full Name"}
               </label>
               <input
@@ -93,49 +65,32 @@ export default function Register() {
                 className={`mt-1 block w-full rounded-lg border ${
                   errors.full_name ? "border-red-500" : "border-border"
                 } bg-bg-tertiary text-text-primary px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent placeholder:text-text-muted`}
-                placeholder={
-                  t("register.full_name_placeholder") || "Enter your full name"
-                }
+                placeholder={t("register.full_name_placeholder") || "Enter your full name"}
               />
-              {errors.full_name && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.full_name.message}
-                </p>
-              )}
+              {errors.full_name && <p className="mt-1 text-xs text-red-500">{errors.full_name.message}</p>}
             </div>
 
             {/* Username */}
             <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-text-primary"
-              >
+              <label htmlFor="username" className="block text-sm font-medium text-text-primary">
                 {t("register.username") || "Username"}
               </label>
               <input
                 id="username"
                 type="text"
+                name="username"
                 {...register("username")}
                 className={`mt-1 block w-full rounded-lg border ${
                   errors.username ? "border-red-500" : "border-border"
                 } bg-bg-tertiary text-text-primary px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent placeholder:text-text-muted`}
-                placeholder={
-                  t("register.username_placeholder") || "Enter your username"
-                }
+                placeholder={t("register.username_placeholder") || "Enter your username"}
               />
-              {errors.username && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.username.message}
-                </p>
-              )}
+              {errors.username && <p className="mt-1 text-xs text-red-500">{errors.username.message}</p>}
             </div>
 
             {/* Email */}
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-text-primary"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-text-primary">
                 {t("register.email")}
               </label>
               <input
@@ -147,20 +102,13 @@ export default function Register() {
                 } bg-bg-tertiary text-text-primary px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent placeholder:text-text-muted`}
                 placeholder={t("register.email_placeholder")}
               />
-              {errors.email && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.email.message}
-                </p>
-              )}
+              {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
             </div>
 
             {/* Password */}
             <div>
               <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-text-primary"
-                >
+                <label htmlFor="password" className="block text-sm font-medium text-text-primary">
                   {t("register.password")}
                 </label>
                 <button
@@ -180,20 +128,13 @@ export default function Register() {
                 } bg-bg-tertiary text-text-primary px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent placeholder:text-text-muted`}
                 placeholder={t("register.password_placeholder")}
               />
-              {errors.password && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
+              {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
             </div>
 
             {/* Confirm Password */}
             <div>
               <div className="flex items-center justify-between">
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-text-primary"
-                >
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-text-primary">
                   {t("register.confirm_password")}
                 </label>
                 <button
@@ -213,11 +154,7 @@ export default function Register() {
                 } bg-bg-tertiary text-text-primary px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent placeholder:text-text-muted`}
                 placeholder={t("register.password_placeholder")}
               />
-              {errors.confirmPassword && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
+              {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword.message}</p>}
             </div>
 
             {/* Private Account Toggle */}
@@ -225,40 +162,29 @@ export default function Register() {
               <label className="block text-sm font-medium text-text-primary mb-2">
                 {t("register.private_account") || "Private account"}
               </label>
-              <p className="text-xs text-text-muted">
-                {t("register.private_account_description")}
-              </p>
+              <p className="text-xs text-text-muted">{t("register.private_account_description")}</p>
               <div className="mt-2 flex items-center gap-2">
-                <p className="text-sm text-blue-400">{t("register.no")}</p>
+                <p className={`text-sm ${!isPrivate ? "text-text-primary" : "text-text-muted"}`}>{t("register.no")}</p>
                 <button
                   type="button"
-                  {...register("is_private")}
-                  onClick={e => {
-                    e.preventDefault();
-                    // Toggle logic will be handled by react-hook-form
-                  }}
+                  onClick={() => setIsPrivate(!isPrivate)}
                   className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors duration-300 focus:outline-none ${
-                    false ? "bg-accent" : "bg-gray-300"
+                    isPrivate ? "bg-accent" : "bg-gray-300"
                   }`}
-                  aria-pressed={false}
-                  aria-label={
-                    t("register.private_account") || "Private account"
-                  }
+                  aria-pressed={isPrivate}
+                  aria-label={t("register.private_account") || "Private account"}
                 >
                   <span
                     className={`inline-block h-6 w-6 transform rounded-full bg-white shadow transition-transform duration-300 ${
-                      false ? "translate-x-8" : "translate-x-1"
+                      isPrivate ? "translate-x-8" : "translate-x-1"
                     }`}
                   />
                 </button>
-                <p className="text-sm text-blue-400">{t("register.yes")}</p>
+                <p className={`text-sm ${isPrivate ? "text-text-primary" : "text-text-muted"}`}>{t("register.yes")}</p>
               </div>
+              <input type="hidden" {...register("is_private")} value={isPrivate} />
 
-              {errors.is_private && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.is_private.message}
-                </p>
-              )}
+              {errors.is_private && <p className="mt-1 text-xs text-red-500">{errors.is_private.message}</p>}
             </div>
 
             {/* Terms */}
@@ -269,24 +195,17 @@ export default function Register() {
                   {...register("terms")}
                   className="mt-0.5 h-4 w-4 rounded border-border text-accent focus:ring-accent"
                 />
-                <span className="text-xs text-text-secondary">
-                  {t("register.terms_text")}
-                </span>
+                <span className="text-xs text-text-secondary">{t("register.terms_text")}</span>
               </label>
-              {errors.terms && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.terms.message}
-                </p>
-              )}
+              {errors.terms && <p className="mt-1 text-xs text-red-500">{errors.terms.message}</p>}
             </div>
 
             {/* Submit */}
             <button
               type="submit"
-              disabled={isSubmitting}
               className="w-full rounded-lg bg-accent py-2.5 px-4 text-sm font-medium text-white hover:bg-accent-hover disabled:opacity-50 transition-colors duration-200"
             >
-              {isSubmitting ? t("register.creating") : t("register.submit")}
+              {t("register.submit")}
             </button>
           </form>
 

@@ -1,5 +1,6 @@
 import axios from "axios";
 import config from "../config/config";
+import getToken from "../utils/auth/getToken";
 
 const axiosInstance = axios.create({
   baseURL: config.API_URL,
@@ -7,23 +8,15 @@ const axiosInstance = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-let accessToken = null;
-
-export const setAccessToken = token => {
-  accessToken = token;
-};
-
-export const getAccessToken = () => accessToken;
-
 // Intercept & Attach access token to every request
 axiosInstance.interceptors.request.use(config => {
+  const accessToken = getToken();
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
   return config;
 });
 
-// Simple error handling
 axiosInstance.interceptors.response.use(
   response => response,
   error => {
@@ -33,9 +26,7 @@ axiosInstance.interceptors.response.use(
     // Handle rate limit (429) errors
     if (status === 429 && data) {
       const blockedUntilTimestamp =
-        typeof data.blockedUntil === "string"
-          ? new Date(data.blockedUntil).getTime()
-          : data.blockedUntil;
+        typeof data.blockedUntil === "string" ? new Date(data.blockedUntil).getTime() : data.blockedUntil;
 
       const blockInfo = {
         error: data.error,
