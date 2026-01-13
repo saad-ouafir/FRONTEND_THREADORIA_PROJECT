@@ -50,7 +50,8 @@
     "follow": "Suivre",
     "following": "Suivi",
     "see_more": "Voir plus",
-    "search": "Rechercher"
+    "search": "Rechercher",
+    "search_by_name_or_tag": "Rechercher par nom ou tag"
   },
   "profile": {
     "follow": "Suivre",
@@ -101,7 +102,10 @@
     "submit": "Créer un compte",
     "creating": "Création en cours...",
     "have_account": "Vous avez déjà un compte ?",
-    "sign_in": "Se connecter"
+    "sign_in": "Se connecter",
+    "profile_picture": "Photo de profil",
+    "username": "Nom d'utilisateur"
+
   },
   "settings": {
     "account_settings": "Paramètres du compte",
@@ -178,5 +182,21 @@
   },
   "profileInfo": {
     "non_logedin": "Veuillez vous connecter pour voir votre profil"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "new_followers": "Nouveaux abonnés",
+    "follow_requests": "Demandes de suivi",
+    "reactions": "Réactions",
+    "started_following": "a commencé à vous suivre",
+    "requested_follow": "a demandé à vous suivre",
+    "liked_thread": "a aimé votre fil",
+    "replied_thread": "a répondu à votre fil",
+    "reposted_thread": "a republié votre fil",
+    "accept_request": "Accepter la demande de suivi",
+    "reject_request": "Rejeter la demande de suivi",
+    "show_less": "Moins",
+    "no_other": "Aucune autre notification",
+    "no_other_desc": "Quand les gens aiment, répondent ou republient votre contenu, vous le verrez ici"
   }
 }
