@@ -6,79 +6,75 @@ import { FiBell, FiUser, FiHeart, FiMessageCircle, FiRepeat } from "react-icons/
 const sampleNotifications = [
   {
     id: 1,
-    type: 'follow',
+    type: "follow",
     user: {
       name: "Hamid Skefkef",
       username: "@hamidSkefkef",
-      avatar: "https://i.pravatar.cc/150?img=1"
+      avatar: "https://i.pravatar.cc/150?img=1",
     },
     message: "started following you",
     time: "2 hours ago",
-    read: false
+    read: false,
   },
   {
     id: 2,
-    type: 'like',
+    type: "like",
     user: {
       name: "Jhon Ait Doe",
       username: "@7imaroJo7a",
-      avatar: "https://i.pravatar.cc/150?img=3"
+      avatar: "https://i.pravatar.cc/150?img=3",
     },
     message: "liked your thread",
     time: "4 hours ago",
-    read: false
+    read: false,
   },
   {
     id: 3,
-    type: 'reply',
+    type: "reply",
     user: {
       name: "7adda Rodriguez",
       username: "@7adda",
-      avatar: "https://i.pravatar.cc/150?img=5"
+      avatar: "https://i.pravatar.cc/150?img=5",
     },
     message: "replied to your thread",
     time: "6 hours ago",
-    read: true
+    read: true,
   },
   {
     id: 4,
-    type: 'repost',
+    type: "repost",
     user: {
       name: "henry sanchez",
       username: "@henrySanchez",
-      avatar: "https://i.pravatar.cc/150?img=7"
+      avatar: "https://i.pravatar.cc/150?img=7",
     },
     message: "reposted your thread",
     time: "1 day ago",
-    read: true
-  }
+    read: true,
+  },
 ];
 
 export default function Notifications() {
   const { t } = useTranslation();
   const [notifications, setNotifications] = useState(sampleNotifications);
 
-  const getNotificationIcon = (type) => {
+  const getNotificationIcon = type => {
     switch (type) {
-      case 'follow':
+      case "follow":
         return <FiUser className="w-4 h-4 text-blue-500" />;
-      case 'like':
+      case "like":
         return <FiHeart className="w-4 h-4 text-red-500" />;
-      case 'reply':
+      case "reply":
         return <FiMessageCircle className="w-4 h-4 text-green-500" />;
-      case 'repost':
+      case "repost":
         return <FiRepeat className="w-4 h-4 text-purple-500" />;
       default:
         return <FiBell className="w-4 h-4 text-gray-500" />;
     }
   };
 
-  const markAsRead = (notificationId) => {
-    setNotifications(prev => 
-      prev.map(notif => 
-        notif.id === notificationId ? { ...notif, read: true } : notif
-      )
-    );
+  const markAsRead = notificationId => {
+    setNotifications(prev => prev.map(notif => (notif.id === notificationId ? { ...notif, read: true } : notif)));
   };
 
   return (
@@ -91,27 +87,21 @@ export default function Notifications() {
       {/* Notifications List */}
       <div className="divide-y divide-border">
         {notifications.length > 0 ? (
-          notifications.map((notification) => (
+          notifications.map(notification => (
             <div
               key={notification.id}
               className={`p-4 hover:bg-bg-tertiary/50 transition-colors cursor-pointer ${
-                !notification.read ? 'bg-accent/5' : ''
+                !notification.read ? "bg-accent/5" : ""
               }`}
               onClick={() => markAsRead(notification.id)}
             >
               <div className="flex items-start gap-3">
                 {/* Notification Icon */}
-                <div className="shrink-0 mt-1">
-                  {getNotificationIcon(notification.type)}
-                </div>
+                <div className="shrink-0 mt-1">{getNotificationIcon(notification.type)}</div>
 
                 {/* User Avatar */}
                 <div className="shrink-0">
-                  <img
-                    src={notification.user.avatar}
-                    alt={notification.user.name}
-                    className="w-10 h-10 object-cover rounded-full"
-                  />
+                  <img src={notification.user.profile_picture_url} className="w-10 h-10 object-cover rounded-full" />
                 </div>
 
                 {/* Notification Content */}
@@ -136,9 +126,7 @@ export default function Notifications() {
           <div className="p-8 text-center">
             <FiBell className="w-12 h-12 text-text-muted mx-auto mb-4" />
             <p className="text-text-muted text-lg">No notifications yet</p>
-            <p className="text-text-muted/70 text-sm mt-2">
-              When people interact with you, you'll see it here
-            </p>
+            <p className="text-text-muted/70 text-sm mt-2">When people interact with you, you'll see it here</p>
           </div>
         )}
       </div>

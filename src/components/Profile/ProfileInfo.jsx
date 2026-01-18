@@ -1,17 +1,71 @@
+import { useState, useEffect } from "react";
 import { formatNumber } from "../../utils/formatters/formatNumber.js";
 import { formatDate } from "../../utils/formatters/formatDate.js";
 import { useTranslation } from "react-i18next";
 import { FiCalendar, FiEdit2 } from "react-icons/fi";
 import useProfile from "../../hooks/states/useProfile.js";
-export default function ProfileInfo() {
+import { useNavigate } from "react-router-dom";
+import { getProfile } from "../../api/profile.api.js";
+import AlertMessage from "../UI/AlertMessage.jsx";
+
+export default function ProfileInfo({ userID }) {
+  const localUser = useProfile();
   const { t } = useTranslation();
-  const user = useProfile();
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        if (userID) {
+          const response = await getProfile(userID);
+          setUser(response.user);
+        } else {
+          setUser(localUser);
+        }
+      } catch (err) {
+        setError({
+          message: err.message || "Failed to load profile",
+          statusCode: err.status || 500,
+        });
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [userID, localUser]);
+
+  if (isLoading) {
+    return (
+      <div className="h-full w-full bg-bg-primary flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto mb-4"></div>
+          <p className="text-text-muted text-lg">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-full w-full bg-bg-primary flex items-center justify-center">
+        <AlertMessage message={error.message} statusCode={error.statusCode} onClose={() => setError(null)} />
+      </div>
+    );
+  }
 
   if (!user) {
     return (
       <div className="h-full w-full bg-bg-primary flex items-center justify-center">
         <div className="text-center">
-          <p className="text-text-muted text-lg"></p>
+          <p className="text-text-muted text-lg">Profile not found</p>
         </div>
       </div>
     );
@@ -24,33 +78,39 @@ export default function ProfileInfo() {
         <div className="px-4 sm:px-6 lg:px-8 pb-6">
           <div className="relative flex justify-between items-end -mt-16 md:-mt-20 mb-4">
             <div className="relative">
-              {user.profile_picture_url ? (
-                <img
-                  src={user.profile_picture_url}
-                  alt={user.full_name}
-                  className="w-28 h-28 md:w-36 md:h-36 rounded-full border-4 border-bg-secondary object-cover shadow-lg"
-                />
-              ) : (
-                <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shadow-lg">
+              <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shadow-lg border-4 border-bg-secondary">
+                {user.profile_picture_url ? (
+                  <img
+                    src={user.profile_picture_url}
+                    alt={user.full_name}
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
                   <span className="text-white text-2xl md:text-3xl font-bold">
                     {user.full_name
                       ? user.full_name
                           .split(" ")
                           .map(n => n[0])
                           .join("")
+                          .toUpperCase()
                       : "U"}
                   </span>
-                </div>
+                )}
+              </div>
+              {/* Only show online status for current user */}
+              {!userID && (
+                <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 rounded-full border-2 border-bg-secondary" />
               )}
-              <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 rounded-full border-2 border-bg-secondary" />
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-3 pb-2">
-              <button className="p-2 rounded-full bg-bg-tertiary border border-border/70 text-text-secondary hover:bg-bg-tertiary/80 transition-colors duration-200">
-                <FiEdit2 className="w-5 h-5" />
-              </button>
-            </div>
+            {/* Action Buttons - Only show for own profile */}
+            {!userID && (
+              <div className="flex gap-3 pb-2">
+                <button className="p-2 rounded-full bg-bg-tertiary border border-border/70 text-text-secondary hover:bg-bg-tertiary/80 transition-colors duration-200">
+                  <FiEdit2 className="w-5 h-5" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* User Info */}
@@ -78,11 +138,11 @@ export default function ProfileInfo() {
               <span className="font-bold text-text-primary">{formatNumber(user.posts_count || 0)}</span>
               <span className="text-text-muted">{t("profile.posts")}</span>
             </div>
-            <button className="flex items-center gap-1.5 hover:underline">
+            <button className="flex items-center gap-1.5 hover:underline" onClick={() => navigate("followings")}>
               <span className="font-bold text-text-primary">{formatNumber(user.following_count || 0)}</span>
               <span className="text-text-muted">{t("profile.following")}</span>
             </button>
-            <button className="flex items-center gap-1.5 hover:underline">
+            <button className="flex items-center gap-1.5 hover:underline" onClick={() => navigate("followers")}>
               <span className="font-bold text-text-primary">{formatNumber(user.follower_count || 0)}</span>
               <span className="text-text-muted">{t("profile.followers")}</span>
             </button>

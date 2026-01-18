@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import DialogBox from "../UI/DialogBox.jsx";
+import ConfirmationBox from "../UI/ConfirmationBox.jsx";
 import { useState } from "react";
 import { deleteAccount } from "../../api/auth.api.js";
 import AlertMessage from "../UI/AlertMessage.jsx";
@@ -31,24 +31,15 @@ export default function AccountDelition() {
   return (
     <div className="w-full">
       {alertMessage && (
-        <AlertMessage
-          message={alertMessage.message}
-          type={alertMessage.type}
-          onClose={() => setAlertMessage(null)}
-        />
+        <AlertMessage message={alertMessage.message} type={alertMessage.type} onClose={() => setAlertMessage(null)} />
       )}
       <div className="space-y-4 sm:space-y-6">
         <div className="flex items-center justify-between pb-3 mb-4 sm:mb-6 border-b border-border">
-          <h2 className="text-lg sm:text-xl font-bold text-text-primary">
-            {t("delete.title")}
-          </h2>
+          <h2 className="text-lg sm:text-xl font-bold text-text-primary">{t("delete.title")}</h2>
         </div>
         {isDeleting && (
-          <DialogBox
-            message={
-              t("delete.subtitle") ||
-              "Are you sure you want to delete your account?"
-            }
+          <ConfirmationBox
+            message={t("delete.subtitle") || "Are you sure you want to delete your account?"}
             onClose={() => setIsDeleting(false)}
             onConfirm={() => {
               handleDelete();

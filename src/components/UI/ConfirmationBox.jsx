@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-const DialogBox = ({ message, onClose, onConfirm }) => {
+const ConfirmationBox = ({ message, onClose, onConfirm }) => {
   const { t } = useTranslation();
 
   // Close dialog on Escape key
   useEffect(() => {
-    const handleEscape = (e) => {
+    const handleEscape = e => {
       if (e.key === "Escape") {
         onClose?.();
       }
@@ -21,7 +21,7 @@ const DialogBox = ({ message, onClose, onConfirm }) => {
     };
   }, [onClose]);
 
-  const handleBackdropClick = (e) => {
+  const handleBackdropClick = e => {
     if (e.target === e.currentTarget) {
       onClose?.();
     }
@@ -30,22 +30,21 @@ const DialogBox = ({ message, onClose, onConfirm }) => {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-      onClick={handleBackdropClick}>
+      onClick={handleBackdropClick}
+    >
       <div
         className="max-w-md w-[90vw] bg-bg-secondary border border-border rounded-lg shadow-lg relative z-10 px-4 sm:px-6 py-4 sm:py-5"
-        onClick={(e) => e.stopPropagation()}>
-        <h2 className="text-lg sm:text-xl font-semibold text-text-primary mb-3">
-          Attention !
-        </h2>
-        <p className="text-sm sm:text-base text-text-muted mb-4 sm:mb-5">
-          {message}
-        </p>
+        onClick={e => e.stopPropagation()}
+      >
+        <h2 className="text-lg sm:text-xl font-semibold text-text-primary mb-3">Attention !</h2>
+        <p className="text-sm sm:text-base text-text-muted mb-4 sm:mb-5">{message}</p>
         <div className="w-full flex items-center justify-end gap-3">
           <button
             type="button"
             className="px-4 py-2 rounded-lg border border-border text-sm sm:text-base font-medium text-text-primary bg-bg-tertiary hover:bg-bg-tertiary/80 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-colors"
-            onClick={onClose}>
-            {t("dialogBox.cancel") || "Cancel"}
+            onClick={onClose}
+          >
+            {t("ConfirmationBox.cancel") || "Cancel"}
           </button>
           <button
             type="button"
@@ -53,8 +52,9 @@ const DialogBox = ({ message, onClose, onConfirm }) => {
             onClick={() => {
               onConfirm?.();
               onClose?.();
-            }}>
-            {t("dialogBox.confirm") || "Confirm"}
+            }}
+          >
+            {t("ConfirmationBox.confirm") || "Confirm"}
           </button>
         </div>
       </div>
@@ -62,4 +62,4 @@ const DialogBox = ({ message, onClose, onConfirm }) => {
   );
 };
 
-export default DialogBox;
+export default ConfirmationBox;

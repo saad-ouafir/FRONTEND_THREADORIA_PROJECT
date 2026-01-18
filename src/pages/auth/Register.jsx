@@ -10,7 +10,6 @@ export default function Register() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [isPrivate, setIsPrivate] = useState(false);
   const [alert, setAlert] = useState(null);
   const { t } = useTranslation();
 
@@ -18,7 +17,10 @@ export default function Register() {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useValidateRegisterForm();
+
+  const isPrivate = watch("is_private");
 
   const onSubmit = async data => {
     await submitHandler(setAlert, signUp, data, navigate, "/home");
@@ -165,24 +167,20 @@ export default function Register() {
               <p className="text-xs text-text-muted">{t("register.private_account_description")}</p>
               <div className="mt-2 flex items-center gap-2">
                 <p className={`text-sm ${!isPrivate ? "text-text-primary" : "text-text-muted"}`}>{t("register.no")}</p>
-                <button
-                  type="button"
-                  onClick={() => setIsPrivate(!isPrivate)}
-                  className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors duration-300 focus:outline-none ${
+                <label
+                  className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors duration-300 cursor-pointer ${
                     isPrivate ? "bg-accent" : "bg-gray-300"
                   }`}
-                  aria-pressed={isPrivate}
-                  aria-label={t("register.private_account") || "Private account"}
                 >
+                  <input type="checkbox" {...register("is_private")} className="hidden" />
                   <span
                     className={`inline-block h-6 w-6 transform rounded-full bg-white shadow transition-transform duration-300 ${
                       isPrivate ? "translate-x-8" : "translate-x-1"
                     }`}
                   />
-                </button>
+                </label>
                 <p className={`text-sm ${isPrivate ? "text-text-primary" : "text-text-muted"}`}>{t("register.yes")}</p>
               </div>
-              <input type="hidden" {...register("is_private")} value={isPrivate} />
 
               {errors.is_private && <p className="mt-1 text-xs text-red-500">{errors.is_private.message}</p>}
             </div>

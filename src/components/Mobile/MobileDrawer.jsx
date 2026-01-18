@@ -88,7 +88,7 @@ const MobileDrawer = ({ isOpen, onClose }) => {
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shrink-0">
                 {user.avatar ? (
-                  <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
+                  <img src={user.avatar} className="w-full h-full rounded-full object-cover" />
                 ) : (
                   <span className="text-white text-base font-semibold">
                     {user.name

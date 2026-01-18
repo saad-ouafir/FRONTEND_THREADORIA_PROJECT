@@ -1,13 +1,13 @@
 import HeaderComponent from "../components/HeaderComponent";
+import SuggestedThreads from "../components/Threads/SuggestedThreads";
 import ThreadForm from "../components/Threads/ThreadForm";
-import ThreadsCard from "../components/Threads/ThreadsCard";
 
 export default function HomeLayout() {
   return (
     <div>
       <HeaderComponent page="Home" />
       <ThreadForm />
-      <ThreadsCard />
+      <SuggestedThreads />
     </div>
   );
 }

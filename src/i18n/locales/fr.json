@@ -10,7 +10,7 @@
     "hero_title": "Partagez Votre",
     "hero_highlight": "Fil",
     "hero_description": "Rejoignez la plateforme sociale conçue pour des connexions significatives. Partagez vos pensées, découvrez un contenu incroyable et connectez-vous avec des personnes partageant les mêmes idées.",
-    "hero_getStarted": "Commencer Gratuitement",
+    "hero_getStarted": "Explorer",
     "hero_explore": "Explorer les Fils",
     "hero_joinUsers": "Rejoignez 1M+ dutilisateurs actifs dans le monde",
     "stats_users": "Utilisateurs Actifs",
@@ -165,7 +165,7 @@
     "continue": "Continuer",
     "please_wait": "Veuillez patienter..."
   },
-  "dialogBox": {
+  "ConfirmationBox": {
     "cancel": "Annuler",
     "confirm": "Confirmer"
   },

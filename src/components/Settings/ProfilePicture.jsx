@@ -77,11 +77,7 @@ export default function ProfilePicture() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-bg-tertiary text-lg font-semibold text-text-primary">
-            {profilePicture ? (
-              <img src={profilePicture} alt="Profile" className="h-full w-full object-cover" />
-            ) : (
-              initials
-            )}
+            {profilePicture ? <img src={profilePicture} className="h-full w-full object-cover" /> : initials}
           </div>
 
           <div>

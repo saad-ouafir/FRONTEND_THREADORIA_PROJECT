@@ -11,7 +11,7 @@
     "hero_title": "Share Your",
     "hero_highlight": "Thread",
     "hero_description": "Join the social platform built for meaningful connections. Share your thoughts, discover amazing content, and connect with like-minded people.",
-    "hero_getStarted": "Get Started Free",
+    "hero_getStarted": "Explore now",
     "hero_explore": "Explore Threads",
     "hero_joinUsers": "Join 1M+ active users worldwide",
     "stats_users": "Active Users",
@@ -166,7 +166,7 @@
     "continue": "Continue",
     "please_wait": "Please wait..."
   },
-  "dialogBox": {
+  "ConfirmationBox": {
     "cancel": "Cancel",
     "confirm": "Confirm"
   },

@@ -102,11 +102,7 @@ const NavMenu = () => {
           <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-bg-tertiary transition-colors cursor-pointer">
             <div className="w-10 h-10 rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shrink-0">
               {user.profile_picture_url ? (
-                <img
-                  src={user.profile_picture_url}
-                  alt={user.full_name}
-                  className="w-full h-full rounded-full object-cover"
-                />
+                <img src={user.profile_picture_url} className="w-full h-full rounded-full object-cover" />
               ) : (
                 <span className="text-white text-sm font-semibold">
                   {user.full_name

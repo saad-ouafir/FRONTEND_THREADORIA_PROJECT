@@ -16,7 +16,8 @@ import ProfileLayout from "../layouts/ProfileLayout";
 import SearchLayout from "../layouts/SearchLayout";
 
 import ProtectedRoutes from "./ProtectedRoutes";
-
+import Follows from "../components/Profile/Follows";
+import ProfileThreads from "../components/Profile/ProfileThreads";
 export default function GlobalRoutes() {
   const routes = createBrowserRouter([
     {
@@ -74,14 +75,45 @@ export default function GlobalRoutes() {
           ),
         },
         {
+          path: "profile/:id",
+          element: (
+            <ProtectedRoutes>
+              <ProfileLayout />
+            </ProtectedRoutes>
+          ),
+          children: [
+            {
+              path: "followers",
+              element: <Follows opt="followers" />,
+            },
+            {
+              path: "followings",
+              element: <Follows opt="following" />,
+            },
+          ],
+        },
+        {
           path: "profile",
           element: (
             <ProtectedRoutes>
               <ProfileLayout />
             </ProtectedRoutes>
           ),
+          children: [
+            {
+              index: true,
+              element: <ProfileThreads />,
+            },
+            {
+              path: "followers",
+              element: <Follows opt="followers" />,
+            },
+            {
+              path: "followings",
+              element: <Follows opt="following" />,
+            },
+          ],
         },
-        { path: "profile/:id", element: <ProfileLayout /> },
         { path: "search", element: <SearchLayout /> },
       ],
     },

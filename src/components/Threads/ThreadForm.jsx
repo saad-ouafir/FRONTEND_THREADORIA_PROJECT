@@ -1,5 +1,10 @@
 import { useState, useRef } from "react";
 import { FiImage, FiHash, FiX } from "react-icons/fi";
+import useProfile from "../../hooks/states/useProfile";
+import submitHandler from "../../handlers/submitHandler";
+import { createTread } from "../../api/thread.api";
+import { useValidateThreadForm } from "../../hooks/forms/useFormValidator";
+import AlertMessage from "../UI/AlertMessage";
 
 export default function ThreadForm() {
   const [content, setContent] = useState("");
@@ -8,13 +13,31 @@ export default function ThreadForm() {
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
   const [showTagInput, setShowTagInput] = useState(false);
+  const [alert, setAlert] = useState(null);
   const tagInputRef = useRef(null);
+  useValidateThreadForm();
 
-  const handleSubmit = () => {
-    if (!content.trim()) return;
-    console.log("Thread content:", content);
-    console.log("Files:", files);
-    console.log("Tags:", tags);
+  const handleSubmit = async () => {
+    if (!content.trim()) {
+      setAlert({ message: "Thread content is required", statusCode: 400 });
+      return;
+    }
+
+    const charLimit = 500;
+    if (content.length > charLimit) {
+      setAlert({ message: `Content must not exceed ${charLimit} characters`, statusCode: 400 });
+      return;
+    }
+
+    const submitData = {
+      content,
+      media: files.map(f => f.file),
+      tags,
+    };
+
+    await submitHandler(setAlert, createTread, submitData, null, "/home");
+
+    // Reset form on success
     setContent("");
     setFiles([]);
     setTags([]);
@@ -22,12 +45,32 @@ export default function ThreadForm() {
 
   const handleFileSelect = e => {
     const selectedFiles = Array.from(e.target.files);
-    const newFiles = selectedFiles.map(file => ({
-      file,
-      id: Math.random().toString(36).substr(2, 9),
-      preview: URL.createObjectURL(file),
-    }));
-    setFiles(prev => [...prev, ...newFiles]);
+    const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
+
+    const validFiles = [];
+    const invalidFiles = [];
+
+    selectedFiles.forEach(file => {
+      if (file.size > MAX_FILE_SIZE) {
+        invalidFiles.push(file.name);
+      } else {
+        validFiles.push({
+          file,
+          id: Math.random().toString(36).substr(2, 9),
+          preview: URL.createObjectURL(file),
+        });
+      }
+    });
+
+    if (invalidFiles.length > 0) {
+      setAlert({
+        message: `File(s) "${invalidFiles.join(", ")}" exceed 15MB limit`,
+        statusCode: 400,
+      });
+      return;
+    }
+
+    setFiles(prev => [...prev, ...validFiles]);
   };
 
   const removeFile = id => {
@@ -61,18 +104,29 @@ export default function ThreadForm() {
     setTags(prev => prev.filter(tag => tag !== tagToRemove));
   };
 
-  const charLimit = 500;
-  const charCount = content.length;
-  const isNearLimit = charCount > charLimit * 0.8;
-  const isOverLimit = charCount > charLimit;
-
+  const user = useProfile();
   return (
-    <div className="border-b border-border">
+    <div className="border-b border-border bg-bg-secondary">
+      {alert && <AlertMessage message={alert.message} statusCode={alert.statusCode} onClose={() => setAlert(null)} />}
       <div className="p-4">
         <div className="flex items-start space-x-3">
           {/* Avatar */}
           <div className="relative w-12 h-12 rounded-full flex items-center justify-center shrink-0">
-            <span className="font-bold text-lg">U</span>
+            <span className="text-white w-full h-full font-bold text-lg rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shrink-0">
+              {user.profile_picture_url ? (
+                <img src={user.profile_picture_url} className="w-full h-full rounded-full object-cover" />
+              ) : (
+                <span className="text-sm font-semibold ">
+                  {user.full_name
+                    ? user.full_name
+                        .toUpperCase()
+                        .split(" ")
+                        .map(n => n[0])
+                        .join("")
+                    : "U"}
+                </span>
+              )}
+            </span>
             <div className="absolute inset-0 rounded-full opacity-0 hover:opacity-10 transition-opacity"></div>
           </div>
 
@@ -89,7 +143,7 @@ export default function ThreadForm() {
                 }
               }}
               placeholder="What's on your mind?"
-              className="w-full resize-none bg-transparent text-text-primary text-base leading-relaxed transition-all focus:outline-none focus:border-none"
+              className="w-full resize-none bg-transparent text-text-primary text-base focus:outline-transparent focus:border-transparent"
               rows={isFocused ? 4 : 3}
             />
 
@@ -106,7 +160,7 @@ export default function ThreadForm() {
                     <button
                       type="button"
                       onClick={() => removeFile(id)}
-                      className="absolute -top-2 -right-2 w-6 h-6 text-red-500 hover:text-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="bg-red-500 absolute -top-2 -right-2 w-6 h-6 text-white hover:text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                       title="Remove image"
                     >
                       <FiX className="w-4 h-4" />
@@ -128,7 +182,7 @@ export default function ThreadForm() {
                     <button
                       type="button"
                       onClick={() => removeTag(tag)}
-                      className="p-0.5 hover:text-accent-hover transition-colors"
+                      className="p-0.5 aspect-square transition-colors hover:bg-red-500 rounded-full hover:text-white"
                     >
                       <FiX className="w-3 h-3" />
                     </button>
@@ -198,12 +252,12 @@ export default function ThreadForm() {
             {content.length > 0 && (
               <div
                 className={`text-sm font-medium transition-colors ${
-                  isOverLimit ? "text-red-500" : isNearLimit ? "text-orange-500" : "text-text-primary"
+                  content.length > 500 ? "text-red-500" : content.length > 400 ? "text-orange-500" : "text-text-primary"
                 }`}
               >
-                <span className="tabular-nums">{charCount}</span>
+                <span className="tabular-nums">{content.length}</span>
                 <span>/</span>
-                <span>{charLimit}</span>
+                <span>500</span>
               </div>
             )}
 
@@ -211,12 +265,12 @@ export default function ThreadForm() {
             <button
               type="button"
               onClick={handleSubmit}
-              className={`font-semibold px-6 py-2.5 rounded-full transition-all duration-200 ${
-                content.trim() && !isOverLimit
-                  ? "text-accent hover:text-accent-hover hover:bg-accent/10"
-                  : "text-text-muted cursor-not-allowed"
+              className={`text-white font-semibold px-6 py-2.5 rounded-full transition-all duration-200 bg-blue-500 ${
+                content.trim() && content.length <= 500
+                  ? "hover:text-text/10"
+                  : "text-text-muted cursor-not-allowed bg-blue-500/50"
               }`}
-              disabled={!content.trim() || isOverLimit}
+              disabled={!content.trim() || content.length > 500}
             >
               Post
             </button>

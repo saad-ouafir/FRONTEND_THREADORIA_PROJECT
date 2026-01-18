@@ -1,5 +1,5 @@
 import HeaderComponent from "../components/HeaderComponent";
-import ProfileResultsCard from "../components/Search/ProfileResultsCard";
+import ProfilesCard from "../components/Profile/ProfilesCard";
 import SearchResultBar from "../components/Search/SearchResultBar";
 export default function SearchLayout({ results }) {
   const testUsers = [
@@ -17,7 +17,7 @@ export default function SearchLayout({ results }) {
     <div>
       <HeaderComponent page={"Search"} />
       <SearchResultBar />
-      <ProfileResultsCard fetchedUsers={testUsers} />
+      <ProfilesCard fetchedUsers={testUsers} />
       {/* < */}
     </div>
   );

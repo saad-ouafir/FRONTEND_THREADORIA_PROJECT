@@ -106,4 +106,34 @@ export function useValidateProfileForm(options = {}) {
   }, options);
 }
 
-export default { useValidateLoginForm, useValidateRegisterForm, useValidateProfileForm };
+// thread form
+export function useValidateThreadForm() {
+  return useValidatedForm(async values => {
+    const errors = {};
+    const MAX_CONTENT_LENGTH = 500;
+    const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
+
+    if (!values.content || !values.content.trim()) {
+      errors.content = { message: "Thread content is required" };
+    } else if (values.content.length > MAX_CONTENT_LENGTH) {
+      errors.content = { message: `Content must not exceed ${MAX_CONTENT_LENGTH} characters` };
+    }
+
+    if (values.files && Array.isArray(values.files)) {
+      for (let file of values.files) {
+        if (file.size > MAX_FILE_SIZE) {
+          errors.files = { message: `File size must not exceed 15MB. File "${file.name}" is too large.` };
+          break;
+        }
+      }
+    }
+
+    return {
+      values: Object.keys(errors).length ? {} : values,
+      errors,
+      isValid: Object.keys(errors).length === 0,
+    };
+  });
+}
+
+export default { useValidateLoginForm, useValidateRegisterForm, useValidateProfileForm, useValidateThreadForm };

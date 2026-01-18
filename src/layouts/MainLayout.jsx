@@ -15,7 +15,7 @@ export default function MainLayout() {
       <Navbar />
       <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Left Sidebar - Hidden on mobile */}
-        <aside className="hidden lg:block w-64 shrink-0 h-full overflow-y-auto">
+        <aside className="hidden lg:block w-1/6 shrink-0 h-full overflow-y-auto">
           <NavMenu user={user} />
         </aside>
 
@@ -25,7 +25,7 @@ export default function MainLayout() {
         </main>
 
         {/* Right Sidebar - Hidden on mobile, shown on lg+ with responsive width */}
-        <aside className="hidden lg:block lg:w-64 xl:w-80 shrink-0 h-full overflow-y-auto p-4">
+        <aside className="hidden lg:block w-1/5 shrink-0 h-full overflow-y-auto p-4">
           <RightBarLayout />
         </aside>
       </div>
