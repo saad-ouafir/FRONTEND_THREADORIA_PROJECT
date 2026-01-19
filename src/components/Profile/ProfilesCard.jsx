@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FiUser, FiUsers, FiUserCheck, FiUserPlus } from "react-icons/fi";
 import { followUser, unfollowUser } from "../../api/follow.api";
 import AlertMessage from "../UI/AlertMessage";
+import { getValidProfilePictureUrl, getUserInitials } from "../../utils/profile/profileUtils";
 
 export default function ProfilesCard({ fetchedUsers, title = "Profiles" }) {
   const { t } = useTranslation();
@@ -97,18 +98,13 @@ export default function ProfilesCard({ fetchedUsers, title = "Profiles" }) {
                 {/* Profile Picture */}
                 <div className="relative shrink-0">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shrink-0 ring-2 ring-bg-tertiary group-hover:ring-accent/50 transition-all duration-300">
-                    {user.profile_picture_url ? (
-                      <img src={user.profile_picture_url} className="w-full h-full rounded-full object-cover" />
+                    {getValidProfilePictureUrl(user.profile_picture_url) ? (
+                      <img
+                        src={getValidProfilePictureUrl(user.profile_picture_url)}
+                        className="w-full h-full rounded-full object-cover"
+                      />
                     ) : (
-                      <span className="text-white text-sm sm:text-base font-semibold">
-                        {user.full_name
-                          ? user.full_name
-                              .split(" ")
-                              .map(n => n[0])
-                              .join("")
-                              .toUpperCase()
-                          : "U"}
-                      </span>
+                      <span className="text-white text-sm sm:text-base font-semibold">{getUserInitials(user)}</span>
                     )}
                   </div>
                 </div>

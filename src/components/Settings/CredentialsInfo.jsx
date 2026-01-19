@@ -10,11 +10,11 @@ export default function CredentialsInfo() {
     password: "",
   });
 
-  const handleChange = (e) => {
-    setFields((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = e => {
+    setFields(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleEditField = (fieldName) => {
+  const handleEditField = fieldName => {
     setEditingField(fieldName);
   };
 
@@ -23,7 +23,7 @@ export default function CredentialsInfo() {
   };
 
   const credentialsFields = [
-    { name: "email", label: t("settings.email") || "Email" },
+    { name: "email", label: "Email" },
     { name: "password", label: t("settings.password") || "Password" },
   ];
 
@@ -31,19 +31,15 @@ export default function CredentialsInfo() {
     <div className="w-full">
       <div className="space-y-6">
         <div className="flex items-center justify-between pb-3 mb-4 sm:mb-6 border-b border-border">
-          <h2 className="text-lg sm:text-xl font-bold text-text-primary">
-            {t("settings.credentials_info")}
-          </h2>
+          <h2 className="text-lg sm:text-xl font-bold text-text-primary">{t("settings.credentials_info")}</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-          {credentialsFields.map((field) => (
+          {credentialsFields.map(field => (
             <div key={field.name} className="space-y-2 sm:space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm sm:text-base font-medium text-text-primary">
-                    {field.label}
-                  </p>
+                  <p className="text-sm sm:text-base font-medium text-text-primary">{field.label}</p>
                 </div>
               </div>
 
@@ -55,12 +51,10 @@ export default function CredentialsInfo() {
                         fields[field.name] ? (
                           "••••••••"
                         ) : (
-                          <span className="text-text-muted">Not set</span>
+                          <span className="text-text-muted">***************</span>
                         )
                       ) : (
-                        fields[field.name] || (
-                          <span className="text-text-muted">Not set</span>
-                        )
+                        fields[field.name] || <span className="text-text-muted">*************</span>
                       )}
                     </span>
                   </div>
@@ -83,13 +77,8 @@ export default function CredentialsInfo() {
                     value={fields[field.name]}
                     onChange={handleChange}
                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-border text-sm sm:text-base text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent/50 transition-colors"
-                    placeholder={
-                      t(`settings.enter_${field.name}`) ||
-                      `Enter ${field.label}`
-                    }
-                    autoComplete={
-                      field.name === "password" ? "new-password" : "email"
-                    }
+                    placeholder={t(`settings.enter_${field.name}`) || `Enter ${field.label}`}
+                    autoComplete={field.name === "password" ? "new-password" : "email"}
                     autoFocus
                   />
                   <div className="flex items-center justify-end gap-2 pt-1">

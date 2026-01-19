@@ -1,26 +1,19 @@
 import { useTranslation } from "react-i18next";
 import { useState, useRef } from "react";
 import useProfile from "../../hooks/states/useProfile";
+import { uploadProfilePicture, deleteProfilePicture } from "../../api/media.api";
+import AlertMessage from "../UI/AlertMessage";
+import { getValidProfilePictureUrl, getUserInitials } from "../../utils/profile/profileUtils";
 
 export default function ProfilePicture() {
   const { t } = useTranslation();
   const [profilePicture, setProfilePicture] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [alert, setAlert] = useState(null);
   const fileInputRef = useRef(null);
   const user = useProfile();
 
-  // Get user initials
-  const getUserInitials = () => {
-    const fullName = user.full_name || user.username || "User";
-    return fullName
-      .split(" ")
-      .map(word => word[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
-  const initials = getUserInitials();
+  const initials = getUserInitials(user);
 
   const handleFileUpload = async event => {
     const file = event.target.files[0];
@@ -28,33 +21,37 @@ export default function ProfilePicture() {
 
     // Validate file type and size
     if (!file.type.match(/image\/(jpeg|png)/)) {
-      alert("Please upload a PNG or JPEG image");
+      setAlert({ message: "Please upload a PNG or JPEG image", statusCode: 400 });
       return;
     }
 
     if (file.size > 15 * 1024 * 1024) {
       // 15MB
-      alert("File size must be less than 15MB");
+      setAlert({ message: "File size must be less than 15MB", statusCode: 400 });
       return;
     }
 
     setIsUploading(true);
+    setAlert(null);
 
     try {
       // Create preview URL
       const previewUrl = URL.createObjectURL(file);
       setProfilePicture(previewUrl);
 
-      // TODO: Upload to server
-      // const formData = new FormData();
-      // formData.append('profilePicture', file);
-      // await uploadProfilePicture(formData);
+      // Upload to server
+      const result = await uploadProfilePicture(file);
 
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (result.status === 200) {
+        setAlert({ message: "Profile picture updated successfully", statusCode: 200 });
+        // Update the profile picture URL in the preview
+        if (result.profilePictureUrl) {
+          setProfilePicture(result.profilePictureUrl);
+        }
+      }
     } catch (error) {
       console.error("Upload failed:", error);
-      alert("Upload failed. Please try again.");
+      setAlert({ message: "Upload failed. Please try again.", statusCode: 500 });
       // Revert to previous state on error
       setProfilePicture(null);
     } finally {
@@ -66,18 +63,34 @@ export default function ProfilePicture() {
     }
   };
 
-  const handleDelete = () => {
-    setProfilePicture(null);
-    // TODO: Delete from server
-    // await deleteProfilePicture();
+  const handleDelete = async () => {
+    try {
+      setAlert(null);
+      const result = await deleteProfilePicture();
+
+      if (result.status === 200) {
+        setProfilePicture(null);
+        setAlert({ message: "Profile picture removed successfully", statusCode: 200 });
+      }
+    } catch (error) {
+      console.error("Delete failed:", error);
+      setAlert({ message: "Failed to remove profile picture. Please try again.", statusCode: 500 });
+    }
   };
 
   return (
     <div>
+      {alert && <AlertMessage message={alert.message} statusCode={alert.statusCode} />}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-bg-tertiary text-lg font-semibold text-text-primary">
-            {profilePicture ? <img src={profilePicture} className="h-full w-full object-cover" /> : initials}
+            {profilePicture ? (
+              <img src={profilePicture} className="h-full w-full object-cover" />
+            ) : getValidProfilePictureUrl(user.profile_picture_url) ? (
+              <img src={getValidProfilePictureUrl(user.profile_picture_url)} className="h-full w-full object-cover" />
+            ) : (
+              initials
+            )}
           </div>
 
           <div>
@@ -99,7 +112,7 @@ export default function ProfilePicture() {
             />
           </label>
 
-          {profilePicture && (
+          {(profilePicture || getValidProfilePictureUrl(user.profile_picture_url)) && (
             <button
               type="button"
               onClick={handleDelete}

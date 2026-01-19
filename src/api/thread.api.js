@@ -29,7 +29,7 @@ async function suggestThreads(tags, limit) {
 }
 
 async function deleteThread(threadId) {
-  const response = await axiosInstance.delete(`/threads/${threadId}`);
+  const response = await axiosInstance.delete(`/threads/delete/${threadId}`);
   return {
     status: response.status,
     message: response.data.message,

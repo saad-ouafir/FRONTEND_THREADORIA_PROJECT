@@ -7,6 +7,7 @@ import useProfile from "../../hooks/states/useProfile.js";
 import { useNavigate } from "react-router-dom";
 import { getProfile } from "../../api/profile.api.js";
 import AlertMessage from "../UI/AlertMessage.jsx";
+import { getValidProfilePictureUrl, getUserInitials } from "../../utils/profile/profileUtils.js";
 
 export default function ProfileInfo({ userID }) {
   const localUser = useProfile();
@@ -79,22 +80,14 @@ export default function ProfileInfo({ userID }) {
           <div className="relative flex justify-between items-end -mt-16 md:-mt-20 mb-4">
             <div className="relative">
               <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shadow-lg border-4 border-bg-secondary">
-                {user.profile_picture_url ? (
+                {getValidProfilePictureUrl(user.profile_picture_url) ? (
                   <img
-                    src={user.profile_picture_url}
+                    src={getValidProfilePictureUrl(user.profile_picture_url)}
                     alt={user.full_name}
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (
-                  <span className="text-white text-2xl md:text-3xl font-bold">
-                    {user.full_name
-                      ? user.full_name
-                          .split(" ")
-                          .map(n => n[0])
-                          .join("")
-                          .toUpperCase()
-                      : "U"}
-                  </span>
+                  <span className="text-white text-2xl md:text-3xl font-bold">{getUserInitials(user)}</span>
                 )}
               </div>
               {/* Only show online status for current user */}

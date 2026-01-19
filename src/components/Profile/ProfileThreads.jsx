@@ -27,10 +27,14 @@ export default function ProfileThreads() {
     }
     fetchThreas();
   }, [user?.id, userID]);
+  const handleDeleteThread = threadId => {
+    setThreads(prevThreads => prevThreads.filter(thread => thread.id !== threadId));
+  };
+
   return (
     <>
       {alert && <AlertMessage message={alert.message} statusCode={alert.statusCode} />}
-      <ThreadsCard threads={threads} allowDelete={true} />
+      <ThreadsCard threads={threads} allowDelete={true} onDelete={handleDeleteThread} />
     </>
   );
 }

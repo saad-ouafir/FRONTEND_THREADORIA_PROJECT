@@ -26,20 +26,20 @@ const Modal = ({ isOpen, onClose, children }) => {
       <div className="fixed inset-0 transition-opacity duration-300 opacity-20" onClick={onClose} aria-hidden="true" />
 
       {/* Modal Content */}
-      <div className="relative bg-bg-secondary rounded-lg shadow-xl w-2/5 mx-4 h-fit overflow-y-auto z-10">
+      <div className="relative bg-bg-secondary rounded-xl shadow-2xl w-4/6 max-w-none mx-4 max-h-150 z-10 transform transition-all duration-300 ease-out flex flex-col">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-text-muted hover:text-text-primary transition-colors"
+          className="absolute top-4 right-4 text-text-muted hover:text-text-primary transition-colors p-1 hover:bg-bg-primary rounded-full z-20"
           aria-label="Close modal"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
-        {/* Modal Body - Renders the passed component */}
-        <div className="p-6">{children}</div>
+        {/* Modal Body - Fixed padding, scrollable content */}
+        <div className="p-6 overflow-y-auto flex-1">{children}</div>
       </div>
     </div>
   );

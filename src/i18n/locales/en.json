@@ -179,5 +179,21 @@
   },
   "profileInfo": {
     "non_logedin": "Please log in to see your profile"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "new_followers": "New followers",
+    "follow_requests": "Follow Requests",
+    "reactions": "Reactions",
+    "started_following": "started following you",
+    "requested_follow": "requested to follow you",
+    "liked_thread": "liked your thread",
+    "replied_thread": "replied to your thread",
+    "reposted_thread": "reposted your thread",
+    "accept_request": "Accept follow request",
+    "reject_request": "Reject follow request",
+    "show_less": "Show less",
+    "no_other": "No other notifications",
+    "no_other_desc": "When people like, reply, or repost your content, you'll see it here"
   }
 }

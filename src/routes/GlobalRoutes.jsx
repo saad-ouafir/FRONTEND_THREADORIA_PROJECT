@@ -2,7 +2,6 @@ import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom"
 
 import Index from "../pages/Index";
 import NotFound from "../pages/NotFound";
-import Notifications from "../pages/Notifications";
 import NewThread from "../pages/NewThread";
 import RateLimitBlocked from "../pages/RateLimitBlocked";
 
@@ -14,10 +13,12 @@ import Register from "../pages/auth/Register";
 import SettingsLayout from "../layouts/SettingsLayout";
 import ProfileLayout from "../layouts/ProfileLayout";
 import SearchLayout from "../layouts/SearchLayout";
+import NotificationsLayout from "../layouts/NotificationsLayout";
 
-import ProtectedRoutes from "./ProtectedRoutes";
 import Follows from "../components/Profile/Follows";
 import ProfileThreads from "../components/Profile/ProfileThreads";
+
+import ProtectedRoutes from "./ProtectedRoutes";
 export default function GlobalRoutes() {
   const routes = createBrowserRouter([
     {
@@ -62,7 +63,7 @@ export default function GlobalRoutes() {
           path: "notifications",
           element: (
             <ProtectedRoutes>
-              <Notifications />
+              <NotificationsLayout />
             </ProtectedRoutes>
           ),
         },

@@ -1,10 +1,11 @@
 import { useState, useRef } from "react";
 import { FiImage, FiHash, FiX } from "react-icons/fi";
 import useProfile from "../../hooks/states/useProfile";
-import submitHandler from "../../handlers/submitHandler";
 import { createTread } from "../../api/thread.api";
+import { uploadThreadMedia } from "../../api/media.api";
 import { useValidateThreadForm } from "../../hooks/forms/useFormValidator";
 import AlertMessage from "../UI/AlertMessage";
+import { getValidProfilePictureUrl, getUserInitials } from "../../utils/profile/profileUtils";
 
 export default function ThreadForm() {
   const [content, setContent] = useState("");
@@ -29,18 +30,41 @@ export default function ThreadForm() {
       return;
     }
 
-    const submitData = {
-      content,
-      media: files.map(f => f.file),
-      tags,
-    };
+    try {
+      // First create the thread
+      const threadData = { content };
+      if (tags.length > 0) {
+        threadData.tags = tags;
+      }
 
-    await submitHandler(setAlert, createTread, submitData, null, "/home");
+      const threadResponse = await createTread(threadData);
+      const threadId = threadResponse.thread.id;
 
-    // Reset form on success
-    setContent("");
-    setFiles([]);
-    setTags([]);
+      // Then upload media if files are present
+      if (files.length > 0) {
+        const mediaFormData = new FormData();
+        files.forEach(f => mediaFormData.append("media", f.file));
+
+        await uploadThreadMedia(threadId, mediaFormData);
+      }
+
+      // Reset form on success
+      setContent("");
+      setFiles([]);
+      setTags([]);
+      setAlert({ message: "Thread created successfully!", statusCode: 200 });
+
+      // Optional: redirect or refresh
+      setTimeout(() => {
+        window.location.href = "/home";
+      }, 1000);
+    } catch (error) {
+      console.error("Error creating thread:", error);
+      setAlert({
+        message: error.response?.data?.message || "Failed to create thread",
+        statusCode: error.response?.status || 500,
+      });
+    }
   };
 
   const handleFileSelect = e => {
@@ -113,18 +137,13 @@ export default function ThreadForm() {
           {/* Avatar */}
           <div className="relative w-12 h-12 rounded-full flex items-center justify-center shrink-0">
             <span className="text-white w-full h-full font-bold text-lg rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shrink-0">
-              {user.profile_picture_url ? (
-                <img src={user.profile_picture_url} className="w-full h-full rounded-full object-cover" />
+              {getValidProfilePictureUrl(user.profile_picture_url) ? (
+                <img
+                  src={getValidProfilePictureUrl(user.profile_picture_url)}
+                  className="w-full h-full rounded-full object-cover"
+                />
               ) : (
-                <span className="text-sm font-semibold ">
-                  {user.full_name
-                    ? user.full_name
-                        .toUpperCase()
-                        .split(" ")
-                        .map(n => n[0])
-                        .join("")
-                    : "U"}
-                </span>
+                <span className="text-sm font-semibold ">{getUserInitials(user)}</span>
               )}
             </span>
             <div className="absolute inset-0 rounded-full opacity-0 hover:opacity-10 transition-opacity"></div>

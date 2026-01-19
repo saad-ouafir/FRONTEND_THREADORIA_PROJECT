@@ -7,6 +7,7 @@ import { logout } from "../api/auth.api";
 import AlertMessage from "./UI/AlertMessage";
 import submitHandler from "../handlers/submitHandler";
 import { useSelector } from "react-redux";
+import { getValidProfilePictureUrl, getUserInitials } from "../utils/profile/profileUtils";
 
 const NavMenu = () => {
   const { t } = useTranslation();
@@ -63,6 +64,7 @@ const NavMenu = () => {
 
   return (
     <aside className="bg-bg-secondary border-r border-border/50 h-full flex flex-col">
+      {alert && <AlertMessage message={alert.message} statusCode={alert.statusCode} />}
       {/* Navigation */}
       <nav className="flex-1 p-4">
         <ul className="space-y-1">
@@ -101,17 +103,13 @@ const NavMenu = () => {
         <div className="p-4 border-t border-border/50 relative" ref={dropdownRef}>
           <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-bg-tertiary transition-colors cursor-pointer">
             <div className="w-10 h-10 rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center shrink-0">
-              {user.profile_picture_url ? (
-                <img src={user.profile_picture_url} className="w-full h-full rounded-full object-cover" />
+              {getValidProfilePictureUrl(user.profile_picture_url) ? (
+                <img
+                  src={getValidProfilePictureUrl(user.profile_picture_url)}
+                  className="w-full h-full rounded-full object-cover"
+                />
               ) : (
-                <span className="text-white text-sm font-semibold">
-                  {user.full_name
-                    ? user.full_name
-                        .split(" ")
-                        .map(n => n[0])
-                        .join("")
-                    : "U"}
-                </span>
+                <span className="text-white text-sm font-semibold">{getUserInitials(user)}</span>
               )}
             </div>
             <div className="flex-1 min-w-0">

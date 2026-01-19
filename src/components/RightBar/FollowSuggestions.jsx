@@ -5,6 +5,7 @@ import { suggestProfiles } from "../../api/profile.api";
 import { followUser, unfollowUser } from "../../api/follow.api";
 import { Link } from "react-router-dom";
 import AlertMessage from "../UI/AlertMessage";
+import { getValidProfilePictureUrl, getUserInitials } from "../../utils/profile/profileUtils";
 
 const FollowSuggestions = () => {
   const { t } = useTranslation();
@@ -152,11 +153,17 @@ const FollowSuggestions = () => {
               >
                 {/* Avatar */}
                 <div className="shrink-0 relative">
-                  <img
-                    src={user.profile_picture_url || user.avatar_url}
-                    alt={user.full_name || user.fullName || user.name || "Unknown"}
-                    className="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-full"
-                  />
+                  {getValidProfilePictureUrl(user.profile_picture_url || user.avatar_url) ? (
+                    <img
+                      src={getValidProfilePictureUrl(user.profile_picture_url || user.avatar_url)}
+                      alt={user.full_name || user.fullName || user.name || "Unknown"}
+                      className="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-full"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-linear-to-br from-accent to-purple-500 flex items-center justify-center">
+                      <span className="text-white text-sm sm:text-base font-semibold">{getUserInitials(user)}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* User Info */}
