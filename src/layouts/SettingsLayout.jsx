@@ -4,8 +4,10 @@ import ProfileInfo from "../components/Settings/ProfileInfo";
 import CredentialsInfo from "../components/Settings/CredentialsInfo";
 import AccountDelition from "../components/Settings/AccountDelition";
 import useProfile from "../hooks/states/useProfile";
+
 export default function SettingsLayout() {
   const user = useProfile() || {};
+
   return (
     <div>
       <HeaderComponent page="Account Settings" />

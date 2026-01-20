@@ -103,7 +103,7 @@ export default function AlertMessage({ type, message, statusCode, onClose }) {
       <div
         className={`p-4 ${
           styles.bg
-        } flex items-center justify-between rounded-lg transition-all duration-300 transform border border-border ${
+        } flex items-center justify-between rounded-lg transition-all duration-300 transform ${
           isExiting ? "opacity-0 translate-x-full scale-95" : "opacity-100 translate-x-0 scale-100"
         }`}
       >

@@ -7,7 +7,7 @@ import { useValidateThreadForm } from "../../hooks/forms/useFormValidator";
 import AlertMessage from "../UI/AlertMessage";
 import { getValidProfilePictureUrl, getUserInitials } from "../../utils/profile/profileUtils";
 
-export default function ThreadForm() {
+export default function ThreadForm({ parentID = null, onThreadCreated }) {
   const [content, setContent] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [files, setFiles] = useState([]);
@@ -32,15 +32,15 @@ export default function ThreadForm() {
 
     try {
       // First create the thread
-      const threadData = { content };
-      if (tags.length > 0) {
-        threadData.tags = tags;
-      }
+      const threadContent = content;
+      const threadData = {
+        content: threadContent,
+        parent_id: parentID || null,
+      };
 
+      console.log(threadContent, threadData);
       const threadResponse = await createTread(threadData);
       const threadId = threadResponse.thread.id;
-
-      // Then upload media if files are present
       if (files.length > 0) {
         const mediaFormData = new FormData();
         files.forEach(f => mediaFormData.append("media", f.file));
@@ -52,18 +52,21 @@ export default function ThreadForm() {
       setContent("");
       setFiles([]);
       setTags([]);
+      setAlert(null);
       setAlert({ message: "Thread created successfully!", statusCode: 200 });
 
-      // Optional: redirect or refresh
-      setTimeout(() => {
-        window.location.href = "/home";
-      }, 1000);
+      // Trigger refetch of threads
+      if (onThreadCreated) {
+        onThreadCreated();
+      }
     } catch (error) {
+      setAlert(null);
       console.error("Error creating thread:", error);
       setAlert({
-        message: error.response?.data?.message || "Failed to create thread",
-        statusCode: error.response?.status || 500,
+        message: error.message || "Failed to create thread",
+        statusCode: error.status || 500,
       });
+      this.setState({ loading: false });
     }
   };
 

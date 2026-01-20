@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { formatDate } from "../utils/formatters/formatDate";
 
 const getInitialState = () => {
   try {
@@ -15,6 +16,7 @@ const getInitialState = () => {
           follower_count: 0,
           following_count: 0,
           is_private: false,
+          created_at: null,
         };
   } catch {
     return {
@@ -27,6 +29,7 @@ const getInitialState = () => {
       follower_count: 0,
       following_count: 0,
       is_private: false,
+      created_at: null,
     };
   }
 };
@@ -46,6 +49,7 @@ const profileSlice = createSlice({
       state.follower_count = data.follower_count;
       state.following_count = data.following_count;
       state.is_private = data.is_private;
+      state.created_at = formatDate(data.created_at);
       localStorage.setItem("userProfile", JSON.stringify(state));
     },
     clearProfileData(state) {
@@ -58,6 +62,7 @@ const profileSlice = createSlice({
       state.follower_count = 0;
       state.following_count = 0;
       state.is_private = false;
+      state.created_at = null;
       localStorage.removeItem("userProfile");
     },
   },

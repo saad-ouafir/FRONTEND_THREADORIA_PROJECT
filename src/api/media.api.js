@@ -1,4 +1,5 @@
 import axiosInstance from "./axiosInstance";
+import setProfile from "../utils/profile/setProfile";
 
 // Get Thread Media (Public)
 async function getThreadMedia(threadID) {
@@ -19,6 +20,12 @@ async function uploadProfilePicture(profilePictureFile) {
       "Content-Type": "multipart/form-data",
     },
   });
+
+  // Update profile in Redux store if user data is returned
+  if (response.data.user) {
+    setProfile(response.data.user);
+  }
+
   return {
     status: response.status,
     message: response.data.message,
@@ -57,6 +64,12 @@ async function deleteThreadMedia(threadID) {
 // Delete Profile Picture (Auth Required)
 async function deleteProfilePicture() {
   const response = await axiosInstance.delete("/media/profile");
+
+  // Update profile in Redux store if user data is returned
+  if (response.data.user) {
+    setProfile(response.data.user);
+  }
+
   return {
     status: response.status,
     message: response.data.message,

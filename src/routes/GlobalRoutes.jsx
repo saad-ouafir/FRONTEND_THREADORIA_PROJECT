@@ -19,6 +19,7 @@ import Follows from "../components/Profile/Follows";
 import ProfileThreads from "../components/Profile/ProfileThreads";
 
 import ProtectedRoutes from "./ProtectedRoutes";
+import ThreadLayout from "../layouts/ThreadLayout";
 export default function GlobalRoutes() {
   const routes = createBrowserRouter([
     {
@@ -84,6 +85,10 @@ export default function GlobalRoutes() {
           ),
           children: [
             {
+              index: true,
+              element: <ProfileThreads />,
+            },
+            {
               path: "followers",
               element: <Follows opt="followers" />,
             },
@@ -116,6 +121,10 @@ export default function GlobalRoutes() {
           ],
         },
         { path: "search", element: <SearchLayout /> },
+        {
+          path: "thread/:threadID",
+          element: <ThreadLayout />,
+        },
       ],
     },
   ]);

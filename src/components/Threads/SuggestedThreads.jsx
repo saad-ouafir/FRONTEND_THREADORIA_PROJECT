@@ -2,7 +2,7 @@ import { suggestThreads } from "../../api/thread.api";
 import ThreadsCard from "./ThreadsCard";
 import { useEffect, useState } from "react";
 
-export default function SuggestedThreads() {
+export default function SuggestedThreads({ refreshTrigger }) {
   const [threads, setThreads] = useState([]);
   useEffect(() => {
     async function fetchThreads() {
@@ -14,7 +14,7 @@ export default function SuggestedThreads() {
       }
     }
     fetchThreads();
-  }, []);
+  }, [refreshTrigger]);
   return (
     <>
       <ThreadsCard threads={threads} />

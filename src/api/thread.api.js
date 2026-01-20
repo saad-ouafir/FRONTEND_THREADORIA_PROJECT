@@ -9,6 +9,14 @@ async function createTread(threadData) {
   };
 }
 
+async function getThreadById(threadID) {
+  const response = await axiosInstance.get(`/threads/thread/${threadID}`);
+  return {
+    status: response.status,
+    thread: response.data.thread,
+  };
+}
+
 async function getThreadsByUserID(userId) {
   const response = await axiosInstance.get(`/threads/user/${userId}`);
   return {
@@ -36,4 +44,12 @@ async function deleteThread(threadId) {
   };
 }
 
-export { createTread, getThreadsByUserID, suggestThreads, deleteThread };
+async function getSubThreads(parentID) {
+  const response = await axiosInstance.get(`/threads/subThreads/${parentID}`);
+  return {
+    status: response.status,
+    threads: response.data.threads,
+  };
+}
+
+export { createTread, getThreadsByUserID, suggestThreads, deleteThread, getThreadById, getSubThreads };

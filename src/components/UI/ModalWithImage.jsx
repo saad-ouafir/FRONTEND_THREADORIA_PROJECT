@@ -43,10 +43,10 @@ export default function ModalWithImage({ thread }) {
 
         <div className="p-4">
           <div className="flex items-center gap-3">
-            <Avatar size="sm" variant="circular" alt={author?.name || "user"} src={author?.avatar_url} />
+            <Avatar size="sm" variant="circular" alt={author?.full_name || "user"} src={author?.avatar_url} />
             <div className="-mt-px flex flex-col">
               <Typography variant="small" color="blue-gray" className="font-medium">
-                {author?.name || "Unknown"}
+                {author?.full_name || "Unknown"}
               </Typography>
               <Typography variant="small" color="gray" className="text-xs font-normal">
                 @{author?.username || "unknown"}
@@ -62,10 +62,10 @@ export default function ModalWithImage({ thread }) {
       <Dialog size="xl" open={open} handler={handleOpen}>
         <DialogHeader className="justify-between">
           <div className="flex items-center gap-3">
-            <Avatar size="sm" variant="circular" alt={author?.name || "user"} src={author?.avatar_url} />
+            <Avatar size="sm" variant="circular" alt={author?.full_name || "user"} src={author?.avatar_url} />
             <div className="-mt-px flex flex-col">
               <Typography variant="small" color="blue-gray" className="font-medium">
-                {author?.name || "Unknown"}
+                {author?.full_name || "Unknown"}
               </Typography>
               <Typography variant="small" color="gray" className="text-xs font-normal">
                 @{author?.username || "unknown"}

@@ -6,12 +6,6 @@ export default function setProfile(userData) {
 }
 
 // Utility functions for profile-related operations
-
-/**
- * Validates and returns a proper profile picture URL
- * @param {string} profilePictureUrl - The profile picture URL from the database
- * @returns {string|null} - Valid URL or null if invalid
- */
 export function getValidProfilePictureUrl(profilePictureUrl) {
   if (!profilePictureUrl || typeof profilePictureUrl !== "string") {
     return null;

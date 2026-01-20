@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { formatNumber } from "../../utils/formatters/formatNumber.js";
 import { formatDate } from "../../utils/formatters/formatDate.js";
 import { useTranslation } from "react-i18next";
-import { FiCalendar, FiEdit2 } from "react-icons/fi";
+import { FiCalendar } from "react-icons/fi";
 import useProfile from "../../hooks/states/useProfile.js";
 import { useNavigate } from "react-router-dom";
 import { getProfile } from "../../api/profile.api.js";
+import { followUser, unfollowUser } from "../../api/follow.api.js";
 import AlertMessage from "../UI/AlertMessage.jsx";
 import { getValidProfilePictureUrl, getUserInitials } from "../../utils/profile/profileUtils.js";
 
@@ -17,6 +18,8 @@ export default function ProfileInfo({ userID }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -26,6 +29,11 @@ export default function ProfileInfo({ userID }) {
         if (userID) {
           const response = await getProfile(userID);
           setUser(response.user);
+          // Check if current user is following this user
+          if (localUser && response.user) {
+            // For now, we'll assume follow status - you might want to add an API endpoint to check this
+            setIsFollowing(false); // TODO: Implement proper follow status check
+          }
         } else {
           setUser(localUser);
         }
@@ -42,6 +50,26 @@ export default function ProfileInfo({ userID }) {
 
     fetchUserProfile();
   }, [userID, localUser]);
+
+  const handleFollowToggle = async () => {
+    if (!user || !localUser || followLoading) return;
+
+    try {
+      setFollowLoading(true);
+      if (isFollowing) {
+        await unfollowUser({ userId: user.id });
+        setIsFollowing(false);
+      } else {
+        await followUser({ followingId: user.id });
+        setIsFollowing(true);
+      }
+    } catch (err) {
+      console.error("Follow/Unfollow error:", err);
+      // You might want to show an error message here
+    } finally {
+      setFollowLoading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -96,11 +124,19 @@ export default function ProfileInfo({ userID }) {
               )}
             </div>
 
-            {/* Action Buttons - Only show for own profile */}
-            {!userID && (
+            {/* Follow Button - Only show for other users */}
+            {userID && localUser && localUser.id !== user?.id && (
               <div className="flex gap-3 pb-2">
-                <button className="p-2 rounded-full bg-bg-tertiary border border-border/70 text-text-secondary hover:bg-bg-tertiary/80 transition-colors duration-200">
-                  <FiEdit2 className="w-5 h-5" />
+                <button
+                  onClick={handleFollowToggle}
+                  disabled={followLoading}
+                  className={`px-6 py-2 rounded-full font-semibold transition-colors duration-200 ${
+                    isFollowing
+                      ? "bg-bg-tertiary border border-border/70 text-text-secondary hover:bg-bg-tertiary/80"
+                      : "bg-accent text-white hover:bg-accent/90"
+                  } ${followLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                >
+                  {followLoading ? "Loading..." : isFollowing ? "Following" : "Follow"}
                 </button>
               </div>
             )}
@@ -120,7 +156,7 @@ export default function ProfileInfo({ userID }) {
             <div className="flex items-center gap-1.5">
               <FiCalendar className="w-4 h-4" />
               <span>
-                {t("profile.joined")} {user.created_at ? formatDate(user.created_at) : "Recently"}
+                {t("profile.joined")} {formatDate(user.created_at)}
               </span>
             </div>
           </div>

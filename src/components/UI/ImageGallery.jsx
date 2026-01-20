@@ -135,7 +135,7 @@ const ImageGallery = ({
         stopAutoPlay();
       }
     },
-    [nextMedia, prevMedia, stopAutoPlay]
+    [nextMedia, prevMedia, stopAutoPlay],
   );
 
   // **Image preloading for better performance**
@@ -195,12 +195,12 @@ const ImageGallery = ({
       {/* Responsive Grid Gallery */}
       <div className="w-full px-2 sm:px-4">
         <div
-          className={`grid gap-1 rounded-xl overflow-hidden ${
+          className={`grid gap-1 overflow-hidden ${
             gridCols === 1
               ? "grid-cols-1"
               : gridCols === 2
-              ? "grid-cols-2"
-              : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-3"
+                ? "grid-cols-2"
+                : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-3"
           }`}
         >
           {visibleMedia.map((item, index) => {
@@ -320,7 +320,7 @@ const ImageGallery = ({
                   src={currentMedia.url}
                   controls
                   autoPlay
-                  className="max-w-full max-h-[80vh] sm:max-h-[85vh] rounded-lg"
+                  className="max-w-full max-h-[80vh] sm:max-h-[85vh]"
                   poster={currentMedia.poster}
                   onLoadedData={handleMediaLoad}
                 />
@@ -329,7 +329,7 @@ const ImageGallery = ({
                   key={currentIndex}
                   src={currentMedia.url}
                   alt={currentMedia.alt || `Media ${currentIndex + 1}`}
-                  className="max-w-full max-h-[80vh] sm:max-h-[85vh] rounded-lg object-contain"
+                  className="max-w-full max-h-[80vh] sm:max-h-[85vh] object-contain"
                   onLoad={handleMediaLoad}
                 />
               )}

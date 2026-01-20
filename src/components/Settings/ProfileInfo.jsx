@@ -29,7 +29,6 @@ export default function ProfileInfo() {
 
   const onSubmit = async data => {
     await submitHandler(setAlert, updateAccount, data);
-    window.location.reload();
   };
 
   const handleEditField = fieldName => {
