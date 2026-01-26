@@ -10,8 +10,9 @@ export async function login(data) {
   return {
     status: response.status,
     message: response.data.message,
-    accessToken: response.data.accessToken,
+    // accessToken: response.data.accessToken.accessToken,
     user: response.data.user,
+    // expiresIn: response.data.expires_in,
   };
 }
 
@@ -31,8 +32,9 @@ export async function signUp(data) {
   return {
     status: response.status,
     message: response.data.message,
-    accessToken: response.data.accessToken,
+    // accessToken: response.data.accessToken,
     user: response.data.user,
+    // expiresIn: response.data.expires_in,
   };
 }
 
@@ -52,7 +54,7 @@ export async function refreshToken() {
   return {
     status: response.status,
     message: response.data.message,
-    accessToken: response.data.accessToken,
+    // accessToken: response.data.accessToken,
     user: response.data.user,
   };
 }

@@ -38,7 +38,6 @@ export default function ThreadForm({ parentID = null, onThreadCreated }) {
         parent_id: parentID || null,
       };
 
-      console.log(threadContent, threadData);
       const threadResponse = await createTread(threadData);
       const threadId = threadResponse.thread.id;
       if (files.length > 0) {

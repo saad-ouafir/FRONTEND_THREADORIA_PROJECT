@@ -1,4 +1,4 @@
 import GlobalStore from "../../context/GlobalStore";
 export default function getToken() {
-  return GlobalStore.getState().auth.accessToken;
+  return GlobalStore.getState().auth;
 }

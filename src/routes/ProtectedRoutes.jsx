@@ -1,25 +1,24 @@
 import { useLayoutEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import getToken from "../utils/auth/getToken";
-import setToken from "../utils/auth/setToken";
-import setProfile from "../utils/profile/setProfile";
 import { refreshToken } from "../api/auth.api";
 
 export default function ProtectedRoutes({ children }) {
   const [status, setStatus] = useState("loading");
 
   useLayoutEffect(() => {
+    // Check if user is authenticated
     const checkAuth = async () => {
-      if (getToken()) {
+      const auth = getToken();
+      if (auth !== null && auth.valid_until > Date.now()) {
         setStatus("authenticated");
         return;
       }
 
+      // If not authenticated, try to refresh token
       try {
         const result = await refreshToken();
-        if (result.accessToken) {
-          setToken(result.accessToken);
-          setProfile(result.user);
+        if (result.status === 200) {
           setStatus("authenticated");
         } else {
           setStatus("unauthenticated");

@@ -37,18 +37,19 @@ async function getFollowRequests() {
   const response = await axiosInstance.get("/follow/requests");
   return {
     status: response.status,
-    requests: response.data.requests,
+    message: response.data.message,
+    followRequests: response.data.followRequests,
   };
 }
-async function acceptFollowRequest(data) {
-  const response = await axiosInstance.post("/follow/requests/accept", data);
+async function acceptFollowRequest(followerID) {
+  const response = await axiosInstance.post("/follow/requests/accept", { followerID: followerID });
   return {
     status: response.status,
     message: response.data.message,
   };
 }
-async function rejectFollowRequest(data) {
-  const response = await axiosInstance.post("/follow/requests/reject", data);
+async function rejectFollowRequest(followerID) {
+  const response = await axiosInstance.post("/follow/requests/reject", followerID);
   return {
     status: response.status,
     message: response.data.message,

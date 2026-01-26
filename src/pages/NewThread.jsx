@@ -8,17 +8,17 @@ export default function NewThread() {
   const [images, setImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = e => {
     const files = Array.from(e.target.files);
     const newImages = files.map(file => ({
       file,
       preview: URL.createObjectURL(file),
-      id: Date.now() + Math.random()
+      id: Date.now() + Math.random(),
     }));
     setImages(prev => [...prev, ...newImages]);
   };
 
-  const removeImage = (imageId) => {
+  const removeImage = imageId => {
     setImages(prev => {
       const imageToRemove = prev.find(img => img.id === imageId);
       if (imageToRemove) {
@@ -28,12 +28,12 @@ export default function NewThread() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     if (!content.trim() && images.length === 0) return;
 
     setIsSubmitting(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       setContent("");
@@ -62,17 +62,14 @@ export default function NewThread() {
       <div className="bg-bg-secondary border-b border-border p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button
-              onClick={handleCancel}
-              className="text-text-secondary hover:text-text-primary transition-colors"
-            >
+            <button onClick={handleCancel} className="text-text-secondary hover:text-text-primary transition-colors">
               Cancel
             </button>
             <h1 className="text-xl font-bold text-text-primary">New Thread</h1>
           </div>
           <button
             onClick={handleSubmit}
-            disabled={!content.trim() && images.length === 0 || isSubmitting}
+            disabled={(!content.trim() && images.length === 0) || isSubmitting}
             className={`px-4 py-2 rounded-full font-medium text-sm transition-all duration-200 ${
               content.trim() || images.length > 0
                 ? "bg-accent text-white hover:bg-accent/90"
@@ -101,14 +98,12 @@ export default function NewThread() {
           <div className="mb-4">
             <textarea
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={e => setContent(e.target.value)}
               placeholder="Start a thread..."
               className="w-full min-h-[120px] p-4 text-lg bg-transparent border-none outline-none resize-none text-text-primary placeholder-text-muted"
               maxLength={500}
             />
-            <div className="text-right text-sm text-text-muted mt-2">
-              {content.length}/500
-            </div>
+            <div className="text-right text-sm text-text-muted mt-2">{content.length}/500</div>
           </div>
 
           {/* Image Upload Area */}
@@ -134,13 +129,9 @@ export default function NewThread() {
             {/* Image Preview */}
             {images.length > 0 && (
               <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {images.map((image) => (
+                {images.map(image => (
                   <div key={image.id} className="relative group">
-                    <img
-                      src={image.preview}
-                      alt="Preview"
-                      className="w-full h-32 object-cover rounded-lg"
-                    />
+                    <img src={image.preview} alt="Preview" className="w-full h-32 object-cover rounded-lg" />
                     <button
                       type="button"
                       onClick={() => removeImage(image.id)}
@@ -162,9 +153,7 @@ export default function NewThread() {
                 <span>Who can reply</span>
               </label>
             </div>
-            <div className="text-sm text-text-muted">
-              Anyone can reply
-            </div>
+            <div className="text-sm text-text-muted">Anyone can reply</div>
           </div>
         </form>
       </div>

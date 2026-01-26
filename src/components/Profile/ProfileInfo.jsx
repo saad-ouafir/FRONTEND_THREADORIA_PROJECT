@@ -29,10 +29,8 @@ export default function ProfileInfo({ userID }) {
         if (userID) {
           const response = await getProfile(userID);
           setUser(response.user);
-          // Check if current user is following this user
           if (localUser && response.user) {
-            // For now, we'll assume follow status - you might want to add an API endpoint to check this
-            setIsFollowing(false); // TODO: Implement proper follow status check
+            setIsFollowing(false);
           }
         } else {
           setUser(localUser);
@@ -73,9 +71,9 @@ export default function ProfileInfo({ userID }) {
 
   if (isLoading) {
     return (
-      <div className="h-full w-full bg-bg-primary flex items-center justify-center">
+      <div className="h-screen w-full bg-bg-primary flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-20 w-20 border-b-2 border-accent mx-auto mb-4"></div>
           <p className="text-text-muted text-lg">Loading profile...</p>
         </div>
       </div>

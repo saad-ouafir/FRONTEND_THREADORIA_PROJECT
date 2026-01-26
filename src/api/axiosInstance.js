@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
 
 // Intercept & Attach access token to every request
 axiosInstance.interceptors.request.use(config => {
-  const accessToken = getToken();
+  const accessToken = getToken().accessToken;
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
@@ -53,7 +53,7 @@ axiosInstance.interceptors.response.use(
       status,
       message: data?.message || "Unexpected Error - Please try again",
     });
-  }
+  },
 );
 
 export default axiosInstance;

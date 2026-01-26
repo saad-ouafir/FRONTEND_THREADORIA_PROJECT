@@ -1,194 +1,50 @@
 import { FaHeart, FaComment, FaShare, FaTrash } from "react-icons/fa";
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+// UI components
 import ImageGallery from "../UI/ImageGallery";
-import useProfile from "../../hooks/states/useProfile";
-import { deleteThread } from "../../api/thread.api";
-import { likeThread, unlikeThread, checkUserLike, shareThread } from "../../api/reaction.api";
 import AlertMessage from "../UI/AlertMessage";
+import useProfile from "../../hooks/states/useProfile";
+
+// Api methods
+import { deleteThread } from "../../api/thread.api";
+import { likeOrUnlikeThread, shareThread } from "../../api/reaction.api";
 import { getValidProfilePictureUrl, getUserInitials } from "../../utils/profile/profileUtils";
 import ConfirmationBox from "../UI/ConfirmationBox";
 import { Link } from "react-router-dom";
+import submitHandler from "../../handlers/submitHandler";
 
-export default function ThreadsCard({ threads = [], allowDelete = false, onDelete, message }) {
+export default function ThreadsCard({ threads = [], allowDelete = false, message }) {
   const [alert, setAlert] = useState(null);
   const [deletingThreadId, setDeletingThreadId] = useState(null);
-  const [likedThreads, setLikedThreads] = useState(new Set());
-  const [isLiking, setIsLiking] = useState({});
-  const [isSharing, setIsSharing] = useState({});
-  const [threadUpdates, setThreadUpdates] = useState({});
+  const filtredLikedThreads = new Array(...threads.filter(thread => thread.isLiked).map(thread => thread.id));
+
   const currentUser = useProfile();
   const navigate = useNavigate();
 
-  // Initialize liked threads on component mount
-  useEffect(() => {
-    const initializeLikedThreads = async () => {
-      if (!currentUser?.id || threads.length === 0) return;
-
-      try {
-        const likedSet = new Set();
-        for (const thread of threads) {
-          const response = await checkUserLike(thread.id);
-          if (response.liked) {
-            likedSet.add(thread.id);
-          }
-        }
-        setLikedThreads(likedSet);
-      } catch (err) {
-        console.error("Error checking liked threads:", err);
-      }
-    };
-
-    initializeLikedThreads();
-  }, [threads, currentUser?.id]);
-
-  // Memoize thread counts to ensure they update when threads change
-  const getThreadCounts = useMemo(() => {
-    return threadId => {
-      const thread = threads.find(t => t.id === threadId);
-      if (!thread) return { likes_count: 0, shares_count: 0, replies_count: 0 };
-
-      // Apply any pending updates
-      const updates = threadUpdates[threadId] || {};
-      return {
-        likes_count: Math.max(0, (thread.likes_count || 0) + (updates.likeDelta || 0)),
-        shares_count: Math.max(0, (thread.shares_count || 0) + (updates.shareDelta || 0)),
-        replies_count: Math.max(0, thread.replies_count || 0),
-      };
-    };
-  }, [threads, threadUpdates]);
-
   const handleDeleteThread = async threadId => {
-    try {
-      setAlert(null);
-      const response = await deleteThread(threadId);
-      setAlert({ message: response.message, statusCode: response.status });
-      setDeletingThreadId(null);
-
-      if (onDelete) {
-        onDelete(threadId);
-      }
-    } catch (err) {
-      setDeletingThreadId(null);
-      console.error("Delete error:", err);
-      setAlert({ message: err.message || "Failed to delete thread", statusCode: err.status || 500 });
-    }
+    setDeletingThreadId(threadId);
+    await submitHandler(setAlert, deleteThread, threadId);
   };
 
-  const handleLikeThread = async (e, threadId) => {
+  const handleLikeThread = async (e, thread) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if (!currentUser?.id) {
-      setAlert({ message: "Please log in to like threads", statusCode: 401 });
-      return;
-    }
-
-    try {
-      setIsLiking(prev => ({ ...prev, [threadId]: true }));
-
-      if (likedThreads.has(threadId)) {
-        await unlikeThread(threadId);
-        setLikedThreads(prev => new Set([...prev].filter(id => id !== threadId)));
-        // Update the like count
-        setThreadUpdates(prev => ({
-          ...prev,
-          [threadId]: {
-            ...prev[threadId],
-            likeDelta: (prev[threadId]?.likeDelta || 0) - 1,
-          },
-        }));
-      } else {
-        await likeThread(threadId);
-        setLikedThreads(prev => new Set([...prev, threadId]));
-        // Update the like count
-        setThreadUpdates(prev => ({
-          ...prev,
-          [threadId]: {
-            ...prev[threadId],
-            likeDelta: (prev[threadId]?.likeDelta || 0) + 1,
-          },
-        }));
-      }
-    } catch (err) {
-      console.error("Like error:", err);
-      setAlert({ message: err.message || "Failed to update like", statusCode: err.status || 500 });
-    } finally {
-      setIsLiking(prev => ({ ...prev, [threadId]: false }));
-    }
-  };
-
-  const handleCommentClick = (e, threadId) => {
-    e.preventDefault();
-    e.stopPropagation();
-    navigate(`/thread/${threadId}`);
-  };
-
-  const handleShareClick = (e, threadId) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!currentUser?.id) {
-      setAlert({ message: "Please log in to share threads", statusCode: 401 });
-      return;
-    }
-
-    setIsSharing(prev => ({ ...prev, [threadId]: true }));
-
-    const threadUrl = `${window.location.origin}/thread/${threadId}`;
-
-    // Try using native share API first
-    if (navigator.share) {
-      navigator
-        .share({
-          title: "Check out this thread",
-          url: threadUrl,
-        })
-        .then(async () => {
-          try {
-            // Call backend to record the share
-            await shareThread(threadId);
-            // Update the share count
-            setThreadUpdates(prev => ({
-              ...prev,
-              [threadId]: {
-                ...prev[threadId],
-                shareDelta: (prev[threadId]?.shareDelta || 0) + 1,
-              },
-            }));
-            setAlert({ message: "Thread shared successfully!", statusCode: 200 });
-          } catch (err) {
-            console.error("Share error:", err);
-            setAlert({ message: err.message || "Failed to record share", statusCode: err.status || 500 });
-          }
-        })
-        .catch(err => console.log("Share cancelled:", err))
-        .finally(() => {
-          setIsSharing(prev => ({ ...prev, [threadId]: false }));
-        });
+    await submitHandler(setAlert, likeOrUnlikeThread, thread.id);
+    if (!filtredLikedThreads.includes(thread.id)) {
+      thread.isLiked = true;
+      thread.likes_count++;
     } else {
-      // Fallback: Copy to clipboard and record share
-      navigator.clipboard.writeText(threadUrl);
-      shareThread(threadId)
-        .then(() => {
-          // Update the share count for clipboard copy too
-          setThreadUpdates(prev => ({
-            ...prev,
-            [threadId]: {
-              ...prev[threadId],
-              shareDelta: (prev[threadId]?.shareDelta || 0) + 1,
-            },
-          }));
-          setAlert({ message: "Thread link copied to clipboard!", statusCode: 200 });
-        })
-        .catch(err => {
-          console.error("Share error:", err);
-          setAlert({ message: err.message || "Failed to record share", statusCode: err.status || 500 });
-        })
-        .finally(() => {
-          setIsSharing(prev => ({ ...prev, [threadId]: false }));
-        });
+      thread.isLiked = false;
+      thread.likes_count--;
     }
+  };
+
+  const handleShareClick = async (e, threadId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await submitHandler(setAlert, shareThread, threadId);
   };
 
   return (
@@ -309,41 +165,39 @@ export default function ThreadsCard({ threads = [], allowDelete = false, onDelet
                     {/* Actions - improved styling and spacing */}
                     <div className="flex items-center gap-4 sm:gap-6 mt-4 pt-3 border-t border-border/30">
                       <button
-                        onClick={e => handleLikeThread(e, thread.id)}
-                        disabled={isLiking[thread.id]}
+                        onClick={e => handleLikeThread(e, thread)}
                         className={`flex items-center gap-1 sm:gap-2 text-xs sm:text-sm transition-colors group ${
-                          likedThreads.has(thread.id) ? "text-red-500" : "text-text-secondary hover:text-red-500"
+                          thread.isLiked ? "text-red-500" : "text-text-secondary hover:text-red-500"
                         }`}
                         title="Like thread"
                         aria-label="Like thread"
                       >
-                        <FaHeart
-                          className={`w-4 h-4 group-hover:scale-110 transition-transform ${
-                            likedThreads.has(thread.id) ? "fill-current" : ""
-                          }`}
-                        />
-                        <span className="font-medium">{getThreadCounts(thread.id).likes_count}</span>
+                        <FaHeart className={`w-4 h-4 group-hover:scale-110 transition-transform`} />
+                        <span className="font-medium">{thread.likes_count}</span>
                       </button>
 
                       <button
-                        onClick={e => handleCommentClick(e, thread.id)}
+                        onClick={e => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          navigate(`/thread/${thread.id}`);
+                        }}
                         className="flex items-center gap-1 sm:gap-2 text-text-secondary text-xs sm:text-sm hover:text-blue-500 transition-colors group"
                         title="Reply to thread"
                         aria-label="Reply to thread"
                       >
                         <FaComment className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                        <span className="font-medium">{getThreadCounts(thread.id).replies_count}</span>
+                        <span className="font-medium">{thread.replies_count}</span>
                       </button>
 
                       <button
                         onClick={e => handleShareClick(e, thread.id)}
-                        disabled={isSharing[thread.id]}
-                        className="flex items-center gap-1 sm:gap-2 text-text-secondary text-xs sm:text-sm hover:text-green-500 transition-colors group disabled:opacity-50"
+                        className="flex items-center gap-1 sm:gap-2 text-text-secondary text-xs sm:text-sm hover:text-green-500 transition-colors group"
                         title="Share thread"
                         aria-label="Share thread"
                       >
                         <FaShare className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                        <span className="font-medium">{getThreadCounts(thread.id).shares_count}</span>
+                        <span className="font-medium">{thread.shares_count}</span>
                       </button>
                     </div>
                   </div>

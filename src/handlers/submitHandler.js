@@ -9,6 +9,7 @@ export default async function submitHandler(setAlert, submitAPI, submitData, nav
     if (navigate) {
       navigate(direction);
     }
+    return response;
   } catch (err) {
     return setAlert({
       message: err.message || "Unexpected error ! Please contact us",

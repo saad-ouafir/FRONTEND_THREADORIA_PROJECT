@@ -18,29 +18,32 @@ export default function ThreadLayout() {
   };
 
   return (
-    <div className="flex flex-col h-max">
-      {/* Fixed Header */}
-      <div className="shrink-0">
+    <div className="flex flex-col h-full overflow-y-auto">
+      <div className="bg-bg-primary border-b border-border">
         <HeaderComponent page="Thread" />
       </div>
-      {/* Scrollable Content Area */}
-      <div className="flex-1 overflow-hidden flex flex-col">
-        {/* Main Thread - Fixed at top of scrollable area */}
-        <div className="shrink-0">
-          <Tread threadID={threadID} />
-        </div>
 
-        {/* Subthreads - Scrollable */}
-        <div className="flex-1 overflow-y-auto mt-4">
-          <h1 className="px-4 font-bold text-lg mb-3 text-text-primary">Replies</h1>
-          <SubTreads threadID={threadID} refreshTrigger={refreshTrigger} />
+      {/* Fixed Original Post within container */}
+      <div className="bg-bg-primary border-b border-border max-h-96">
+        <Tread threadID={threadID} />
+      </div>
+
+      {/* Scrollable Subthreads Area */}
+      <div className="flex-1 ">
+        <div className="h-full overflow-y-auto">
+          <div className="">
+            <HeaderComponent page="Replies" />
+          </div>
+          <div className="pb-4 px-4">
+            <SubTreads threadID={threadID} refreshTrigger={refreshTrigger} />
+          </div>
         </div>
       </div>
 
-      {/* Fixed Comment Form at Bottom */}
-      <div className="shrink-0 border-t border-border bg-bg-primary">
-        <div className="p-4">
-          <h1 className="font-bold text-lg mb-3 text-text-primary">Leave a comment</h1>
+      {/* Fixed Comment Form at Bottom within container */}
+      <div className="sticky bottom-0 bg-bg-primary border-t border-border z-20">
+        <div className="max-h-80 overflow-y-auto">
+          <h1 className="p-4 font-bold text-lg text-text-primary">Leave a comment</h1>
           <ThreadForm parentID={threadID} onThreadCreated={handleThreadCreated} />
         </div>
       </div>
