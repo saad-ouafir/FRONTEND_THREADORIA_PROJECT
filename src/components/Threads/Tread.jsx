@@ -1,30 +1,21 @@
 import { getThreadById } from "../../api/thread.api";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ThreadsCard from "./ThreadsCard";
 import AlertMessage from "../UI/AlertMessage";
+import { useFetch } from "../../hooks/api/useFetch";
 
-export default function Tread({ threadID }) {
-  const [thread, setThread] = useState([]);
+export default function Thread({ threadID }) {
   const [alert, setAlert] = useState(null);
 
-  useEffect(() => {
-    async function fetchThread() {
-      try {
-        const response = await getThreadById(threadID);
-        setThread([response.thread]);
-        console.log(thread);
-      } catch (error) {
-        setAlert("");
-        setAlert({ message: error.message || "Failed to fetch thread", statusCode: error.status || 500 });
-        console.error(error);
-      }
-    }
-    fetchThread();
-  }, [threadID]);
+  let displayThread = [];
+
+  const fetchedThread = useFetch(setAlert, getThreadById, threadID);
+  displayThread = fetchedThread.thread ? [fetchedThread.thread] : [];
 
   return (
     <div>
-      <ThreadsCard threads={thread} />
+      {alert && <AlertMessage message={alert.message} statusCode={alert.statusCode} />}
+      <ThreadsCard threads={displayThread} />
     </div>
   );
 }

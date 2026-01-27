@@ -10,6 +10,7 @@ async function createTread(threadData) {
 }
 
 async function getThreadById(threadID) {
+  console.log("thread id from exec", threadID);
   const response = await axiosInstance.get(`/threads/thread/${threadID}`);
   return {
     status: response.status,

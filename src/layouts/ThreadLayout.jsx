@@ -1,16 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SubTreads from "../components/Threads/SubThreads";
 import ThreadForm from "../components/Threads/ThreadForm";
-import Tread from "../components/Threads/Tread";
+import Thread from "../components/Threads/Thread";
 import { useParams } from "react-router-dom";
 import HeaderComponent from "../components/HeaderComponent";
 export default function ThreadLayout() {
   const { threadID } = useParams();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  useEffect(() => {
-    console.log(threadID);
-  });
 
   const handleThreadCreated = () => {
     // Increment the trigger to cause a refetch
@@ -25,7 +21,7 @@ export default function ThreadLayout() {
 
       {/* Fixed Original Post within container */}
       <div className="bg-bg-primary border-b border-border max-h-96">
-        <Tread threadID={threadID} />
+        <Thread threadID={threadID} />
       </div>
 
       {/* Scrollable Subthreads Area */}

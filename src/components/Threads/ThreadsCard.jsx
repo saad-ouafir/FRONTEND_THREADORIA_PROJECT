@@ -1,6 +1,6 @@
 import { FaHeart, FaComment, FaShare, FaTrash } from "react-icons/fa";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 // UI components
 import ImageGallery from "../UI/ImageGallery";
@@ -12,27 +12,32 @@ import { deleteThread } from "../../api/thread.api";
 import { likeOrUnlikeThread, shareThread } from "../../api/reaction.api";
 import { getValidProfilePictureUrl, getUserInitials } from "../../utils/profile/profileUtils";
 import ConfirmationBox from "../UI/ConfirmationBox";
-import { Link } from "react-router-dom";
 import submitHandler from "../../handlers/submitHandler";
 
 export default function ThreadsCard({ threads = [], allowDelete = false, message }) {
   const [alert, setAlert] = useState(null);
   const [deletingThreadId, setDeletingThreadId] = useState(null);
+
+  console.log(threads);
   const filtredLikedThreads = new Array(...threads.filter(thread => thread.isLiked).map(thread => thread.id));
 
   const currentUser = useProfile();
   const navigate = useNavigate();
 
-  const handleDeleteThread = async threadId => {
-    setDeletingThreadId(threadId);
-    await submitHandler(setAlert, deleteThread, threadId);
+  const handleDeleteThread = async thread => {
+    setDeletingThreadId(thread.id);
+    await submitHandler(setAlert, deleteThread, thread.id);
+    const idx = threads.indexOf(thread);
+    if (idx > -1) {
+      threads.splice(idx, 1);
+    }
   };
 
   const handleLikeThread = async (e, thread) => {
     e.preventDefault();
     e.stopPropagation();
     await submitHandler(setAlert, likeOrUnlikeThread, thread.id);
-    if (!filtredLikedThreads.includes(thread.id)) {
+    if (!filtredLikedThreads.includes(thread.id) && !thread.isLiked) {
       thread.isLiked = true;
       thread.likes_count++;
     } else {
@@ -98,7 +103,7 @@ export default function ThreadsCard({ threads = [], allowDelete = false, message
               {/* Confirmation modal */}
               {deletingThreadId === thread.id && (
                 <ConfirmationBox
-                  onConfirm={() => handleDeleteThread(deletingThreadId)}
+                  onConfirm={() => handleDeleteThread(thread)}
                   onClose={() => setDeletingThreadId(null)}
                   message="Are you sure you want to delete this thread? This action cannot be undone."
                 />

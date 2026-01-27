@@ -5,15 +5,19 @@ import AlertMessage from "../UI/AlertMessage";
 import { useParams } from "react-router-dom";
 import useProfile from "../../hooks/states/useProfile";
 import { useFetch } from "../../hooks/api/useFetch";
+
 export default function ProfileThreads() {
   const [alert, setAlert] = useState(null);
   const { id: userID } = useParams();
   const user = useProfile();
 
-  const fetchedThreads = useFetch(setAlert, getThreadsByUserID, userID || user?.id);
+  const fetchedThreads = useFetch(
+    setAlert,
+    getThreadsByUserID,
+    window.location.pathname === "/profile" ? user?.id : userID,
+  );
 
-  // Use fetched threads directly, fallback to empty array
-  let threads = fetchedThreads.threads || [];
+  let threads = fetchedThreads.threads;
 
   return (
     <>
