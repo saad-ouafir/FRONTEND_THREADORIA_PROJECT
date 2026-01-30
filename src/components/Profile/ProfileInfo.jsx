@@ -9,67 +9,30 @@ import { getProfile } from "../../api/profile.api.js";
 import { followUser, unfollowUser } from "../../api/follow.api.js";
 import AlertMessage from "../UI/AlertMessage.jsx";
 import { getValidProfilePictureUrl, getUserInitials } from "../../utils/profile/profileUtils.js";
+import { useFetch } from "../../hooks/api/useFetch.js";
 
 export default function ProfileInfo({ userID }) {
   const localUser = useProfile();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [alert, setAlert] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [followStatus, setFollowStatus] = useState(null);
   const [followLoading, setFollowLoading] = useState(false);
 
+  const idToUse = userID || localUser?.id;
+  const fetchedData = useFetch(setAlert, getProfile, idToUse);
+  const user = fetchedData.user;
+  console.log(user);
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        if (userID) {
-          const response = await getProfile(userID);
-          setUser(response.user);
-          if (localUser && response.user) {
-            setIsFollowing(false);
-          }
-        } else {
-          setUser(localUser);
-        }
-      } catch (err) {
-        setError({
-          message: err.message || "Failed to load profile",
-          statusCode: err.status || 500,
-        });
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserProfile();
-  }, [userID, localUser]);
-
-  const handleFollowToggle = async () => {
-    if (!user || !localUser || followLoading) return;
-
-    try {
-      setFollowLoading(true);
-      if (isFollowing) {
-        await unfollowUser({ userId: user.id });
-        setIsFollowing(false);
-      } else {
-        await followUser({ followingId: user.id });
-        setIsFollowing(true);
-      }
-    } catch (err) {
-      console.error("Follow/Unfollow error:", err);
-      // You might want to show an error message here
-    } finally {
-      setFollowLoading(false);
+    if (user && !user.loading) {
+      // setIsFollowing(user.isFollowing || false);
+      setFollowStatus(user.followStatus || null);
     }
-  };
+  }, [user]);
 
-  if (isLoading) {
+  if (!idToUse) {
     return (
       <div className="h-screen w-full bg-bg-primary flex items-center justify-center">
         <div className="text-center">
@@ -80,15 +43,48 @@ export default function ProfileInfo({ userID }) {
     );
   }
 
-  if (error) {
+  const handleFollowToggle = async () => {
+    if (!user || !localUser || followLoading || followStatus === "PENDING") return;
+
+    try {
+      setFollowLoading(true);
+      if (isFollowing) {
+        await unfollowUser({ userId: user.id });
+        setIsFollowing(false);
+        setFollowStatus(null);
+      } else {
+        await followUser({ followingId: user.id });
+        setIsFollowing(true);
+        setFollowStatus("PENDING"); // Assuming it becomes pending after follow
+      }
+    } catch (err) {
+      console.error("Follow/Unfollow error:", err);
+      // Optionally set alert or handle error
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
+  if (fetchedData.loading) {
     return (
-      <div className="h-full w-full bg-bg-primary flex items-center justify-center">
-        <AlertMessage message={error.message} statusCode={error.statusCode} onClose={() => setError(null)} />
+      <div className="h-screen w-full bg-bg-primary flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-20 w-20 border-b-2 border-accent mx-auto mb-4"></div>
+          <p className="text-text-muted text-lg">Loading profile...</p>
+        </div>
       </div>
     );
   }
 
-  if (!user) {
+  if (alert) {
+    return (
+      <div className="h-full w-full bg-bg-primary flex items-center justify-center">
+        <AlertMessage message={alert.message} statusCode={alert.statusCode} onClose={() => setAlert(null)} />
+      </div>
+    );
+  }
+
+  if (!user || !user.id) {
     return (
       <div className="h-full w-full bg-bg-primary flex items-center justify-center">
         <div className="text-center">
@@ -96,6 +92,21 @@ export default function ProfileInfo({ userID }) {
         </div>
       </div>
     );
+  }
+
+  let buttonText, buttonDisabled, buttonClass;
+  if (followStatus === "PENDING") {
+    buttonText = "Pending";
+    buttonDisabled = true;
+    buttonClass = "bg-gray-500 text-white cursor-not-allowed";
+  } else if (isFollowing) {
+    buttonText = "Following";
+    buttonDisabled = false;
+    buttonClass = "bg-bg-tertiary border border-border/70 text-text-secondary hover:bg-bg-tertiary/80";
+  } else {
+    buttonText = "Follow";
+    buttonDisabled = false;
+    buttonClass = "bg-accent text-white hover:bg-accent/90";
   }
 
   return (
@@ -127,14 +138,10 @@ export default function ProfileInfo({ userID }) {
               <div className="flex gap-3 pb-2">
                 <button
                   onClick={handleFollowToggle}
-                  disabled={followLoading}
-                  className={`px-6 py-2 rounded-full font-semibold transition-colors duration-200 ${
-                    isFollowing
-                      ? "bg-bg-tertiary border border-border/70 text-text-secondary hover:bg-bg-tertiary/80"
-                      : "bg-accent text-white hover:bg-accent/90"
-                  } ${followLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                  disabled={buttonDisabled || followLoading}
+                  className={`px-6 py-2 rounded-full font-semibold transition-colors duration-200 ${buttonClass} ${followLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
-                  {followLoading ? "Loading..." : isFollowing ? "Following" : "Follow"}
+                  {followLoading ? "Loading..." : buttonText}
                 </button>
               </div>
             )}

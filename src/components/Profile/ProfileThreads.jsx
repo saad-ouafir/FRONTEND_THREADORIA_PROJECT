@@ -18,11 +18,15 @@ export default function ProfileThreads() {
   );
 
   let threads = fetchedThreads.threads;
+  let forbidden = fetchedThreads.forbidden || false;
+  forbidden ? (threads = []) : (threads = threads || []);
+
+  console.log(fetchedThreads);
 
   return (
     <>
-      {alert && <AlertMessage message={alert.message} statusCode={alert.statusCode} />}
-      <ThreadsCard threads={threads} allowDelete={true} />
+      {alert && <AlertMessage message={alert.message} statusCode={alert.statusCode} onClose={() => setAlert(null)} />}
+      <ThreadsCard threads={threads} allowDelete={true} forbidden={forbidden} />
     </>
   );
 }

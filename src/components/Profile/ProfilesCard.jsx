@@ -5,6 +5,7 @@ import { FiUser, FiUsers, FiUserCheck, FiUserPlus } from "react-icons/fi";
 import { followUser, unfollowUser } from "../../api/follow.api";
 import AlertMessage from "../UI/AlertMessage";
 import { getValidProfilePictureUrl, getUserInitials } from "../../utils/profile/profileUtils";
+import submitHandler from "../../handlers/submitHandler";
 
 export default function ProfilesCard({ fetchedUsers, title = "Profiles" }) {
   const { t } = useTranslation();
@@ -12,6 +13,7 @@ export default function ProfilesCard({ fetchedUsers, title = "Profiles" }) {
   const [requested, setRequested] = useState(new Set());
   const [alertMessage, setAlertMessage] = useState(null);
 
+  console.log("fetched uers", fetchedUsers);
   const handleFollow = async userId => {
     try {
       if (following.has(userId)) {
@@ -57,6 +59,8 @@ export default function ProfilesCard({ fetchedUsers, title = "Profiles" }) {
     }
   };
 
+  // const handleRequest=()=>{await submitHandler(setAlertMessage,)}
+
   return (
     <div className="w-full p-4 sm:p-6">
       {alertMessage && (
@@ -78,9 +82,7 @@ export default function ProfilesCard({ fetchedUsers, title = "Profiles" }) {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6">
             <FiUsers className="w-10 h-10 text-text-muted" />
           </div>
-          <h3 className="text-lg font-semibold text-text-primary mb-2">
-            {t("search.no_users_found") || "No users found"}
-          </h3>
+          <h3 className="text-lg font-semibold text-text-primary mb-2">{t("search.no_users_found")}</h3>
         </div>
       ) : (
         <div className="space-y-3 sm:space-y-4">
@@ -141,8 +143,8 @@ export default function ProfilesCard({ fetchedUsers, title = "Profiles" }) {
                             ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 hover:bg-yellow-200 dark:hover:bg-yellow-800"
                             : "bg-gray-100 text-gray-700 dark:bg-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-500"
                           : following.has(user.id)
-                          ? "bg-bg-tertiary text-text-primary hover:bg-bg-tertiary/80"
-                          : "bg-accent text-white hover:bg-accent-hover shadow-sm hover:shadow-md"
+                            ? "bg-bg-tertiary text-text-primary hover:bg-bg-tertiary/80"
+                            : "bg-accent text-white hover:bg-accent-hover shadow-sm hover:shadow-md"
                       }`}
                     >
                       {user.is_private ? (

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { FiUser, FiChevronDown } from "react-icons/fi";
 import useProfile from "../../hooks/states/useProfile";
 
-export default function FollowersCard({ followers, displayLimit, onAccept, onReject, onFollow }) {
+export default function FollowersCard({ followers = [], displayLimit, onAccept, onReject, onFollow }) {
   const { t } = useTranslation();
   const [showAll, setShowAll] = useState(false);
   const is_private = useProfile().is_private;
@@ -27,7 +27,7 @@ export default function FollowersCard({ followers, displayLimit, onAccept, onRej
 
         {followers.length === 0 ||
           (!followers && (
-            <div className="bg-bg-primary ">
+            <div className="p-4 bg-bg-primary text-center">
               <p>{t("notifications.no_other")}</p>
             </div>
           ))}

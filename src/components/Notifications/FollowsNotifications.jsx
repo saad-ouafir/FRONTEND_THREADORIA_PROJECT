@@ -1,15 +1,15 @@
 import { useState } from "react";
 
 // Api Hook and Handlers
-import { acceptFollowRequest, followUser, getFollowRequests, rejectFollowRequest } from "../../../api/follow.api";
-import { useFetch } from "../../../hooks/api/useFetch";
-import submitHandler from "../../../handlers/submitHandler";
+import { acceptFollowRequest, followUser, getFollowRequests, rejectFollowRequest } from "../../api/follow.api";
+import { useFetch } from "../../hooks/api/useFetch";
+import submitHandler from "../../handlers/submitHandler";
 
 // UI components
-import AlertMessage from "../../UI/AlertMessage";
-import FollowersCard from "../FollowersCard";
+import AlertMessage from "../UI/AlertMessage";
+import FollowersCard from "./FollowersCard";
 
-export default function FollowRequestsNotifications() {
+export default function FollowsNotifications() {
   const [alert, setAlert] = useState("");
 
   // fetch follow requests

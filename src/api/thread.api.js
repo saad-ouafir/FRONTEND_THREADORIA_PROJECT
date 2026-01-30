@@ -23,6 +23,7 @@ async function getThreadsByUserID(userId) {
   return {
     status: response.status,
     threads: response.data.threads,
+    forbidden: response.data.forbidden,
   };
 }
 

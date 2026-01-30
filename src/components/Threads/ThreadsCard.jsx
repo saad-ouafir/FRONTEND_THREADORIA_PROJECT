@@ -13,8 +13,9 @@ import { likeOrUnlikeThread, shareThread } from "../../api/reaction.api";
 import { getValidProfilePictureUrl, getUserInitials } from "../../utils/profile/profileUtils";
 import ConfirmationBox from "../UI/ConfirmationBox";
 import submitHandler from "../../handlers/submitHandler";
+import { FiLock } from "react-icons/fi";
 
-export default function ThreadsCard({ threads = [], allowDelete = false, message }) {
+export default function ThreadsCard({ threads = [], allowDelete = false, message, forbidden }) {
   const [alert, setAlert] = useState(null);
   const [deletingThreadId, setDeletingThreadId] = useState(null);
 
@@ -50,19 +51,32 @@ export default function ThreadsCard({ threads = [], allowDelete = false, message
     e.preventDefault();
     e.stopPropagation();
     await submitHandler(setAlert, shareThread, threadId);
+    threads.find(thread => thread.id === threadId).shares_count++;
   };
 
   return (
     <>
       {alert && <AlertMessage message={alert.message} statusCode={alert.statusCode} onClose={() => setAlert(null)} />}
       <div className="divide-y divide-border">
-        {threads && threads.length === 0 && (
+        {forbidden && (
+          <div className="w-full min-h-48 flex items-center justify-center rounded-lg p-4 sm:p-6">
+            <p className="text-lg sm:text-2xl text-center font-semibold text-text-secondary">
+              <span>
+                <FiLock className="inline-block mr-2" />
+              </span>
+              This is A private Account
+            </p>
+          </div>
+        )}
+
+        {!forbidden && threads && threads.length === 0 && (
           <div className="w-full min-h-48 flex items-center justify-center rounded-lg p-4 sm:p-6">
             <p className="text-lg sm:text-2xl text-center font-semibold text-text-secondary">
               {message || "No threads found"}
             </p>
           </div>
         )}
+
         {threads &&
           threads.length > 0 &&
           threads.map(thread => (
