@@ -8,11 +8,13 @@ async function getProfile(userId) {
   };
 }
 
-async function suggestProfiles(cursor, exclude) {
-  const response = await axiosInstance.get(`/profile/suggest`, {
-    cursor,
-    exclude,
-  });
+async function suggestProfiles(limit = 10, cursor = null, exclude = null) {
+  const params = {};
+  if (limit) params.limit = limit;
+  if (cursor) params.cursor = cursor;
+  if (exclude) params.exclude = exclude;
+  
+  const response = await axiosInstance.get(`/profile/suggest`, { params });
   return {
     status: response.status,
     users: response.data.users,

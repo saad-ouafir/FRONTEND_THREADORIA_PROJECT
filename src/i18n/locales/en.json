@@ -35,7 +35,11 @@
     "cta_title": "Ready to Share Your Thread?",
     "cta_subtitle": "Join millions of users sharing their thoughts, connecting with friends, and discovering amazing content.",
     "cta_join": "Join Threadoria",
-    "cta_exploreCommunities": "Explore Communities"
+    "cta_exploreCommunities": "Explore Communities",
+    "threads_title": "Trending Threads",
+    "threads_description": "Discover what people are talking about",
+    "no_threads": "No threads yet. Be the first to post!",
+    "view_more": "View more threads"
   },
   "navmenu": {
     "home": "Home",
@@ -50,6 +54,7 @@
     "who_to_follow": "Who to follow",
     "follow": "Follow",
     "following": "Following",
+    "requested": "Requested",
     "see_more": "See more",
     "search": "Search"
   },
@@ -64,7 +69,9 @@
     "media": "Media",
     "likes": "Likes",
     "no_threads": "No threads yet",
-    "no_threads_description": "When this user posts threads, they'll show up here."
+    "no_threads_description": "When this user posts threads, they'll show up here.",
+    "remove": "Remove",
+    "unfollow": "Unfollow"
   },
   "login": {
     "welcome_back": "Sign-in",

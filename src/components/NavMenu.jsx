@@ -4,6 +4,8 @@ import { FiHome, FiBell, FiUser, FiSettings, FiEdit3, FiMoreHorizontal, FiLogOut
 import { useTranslation } from "react-i18next";
 import useProfile from "../hooks/states/useProfile";
 import { logout } from "../api/auth.api";
+import { getFollowRequests } from "../api/follow.api";
+import { getUserNotifications } from "../api/notification.api";
 import AlertMessage from "./UI/AlertMessage";
 import submitHandler from "../handlers/submitHandler";
 import { useSelector } from "react-redux";
@@ -11,7 +13,7 @@ import { getValidProfilePictureUrl, getUserInitials } from "../utils/profile/pro
 
 const NavMenu = () => {
   const { t } = useTranslation();
-  const [hasNotifications] = useState(true);
+  const [hasNotifications, setHasNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [alert, setAlert] = useState(null);
   const navigate = useNavigate();
@@ -22,6 +24,34 @@ const NavMenu = () => {
   if (isAuth) {
     user = userData;
   }
+
+  // Fetch notification count on mount and periodically
+  useEffect(() => {
+    if (!isAuth) return;
+
+    const checkNotifications = async () => {
+      try {
+        // Check for unread notifications
+        const notifResponse = await getUserNotifications();
+        const unreadNotifications = notifResponse.unreadCount > 0;
+
+        // Check for pending follow requests (for private accounts)
+        const followResponse = await getFollowRequests();
+        const pendingRequests = (followResponse.followRequests || []).length > 0;
+
+        setHasNotifications(unreadNotifications || pendingRequests);
+      } catch {
+        // Silently fail - don't show error for background check
+        setHasNotifications(false);
+      }
+    };
+
+    checkNotifications();
+
+    // Poll for new notifications every 30 seconds
+    const interval = setInterval(checkNotifications, 30000);
+    return () => clearInterval(interval);
+  }, [isAuth]);
 
   // Close dropdown when clicking outside
   useEffect(() => {

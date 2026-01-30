@@ -71,3 +71,43 @@ export function getProfilePictureUrl(user, fallbackUrl = null) {
 
   return null;
 }
+
+/**
+ * Gets display name from user object with fallbacks
+ * @param {Object} user - User object
+ * @returns {string} - Display name
+ */
+export function getDisplayName(user) {
+  return user?.full_name || user?.fullName || user?.name || "Unknown";
+}
+
+/**
+ * Gets username from user object with fallbacks
+ * @param {Object} user - User object
+ * @returns {string} - Username
+ */
+export function getUsername(user) {
+  return user?.username || user?.handle || "";
+}
+
+export function getFollowButtonConfig(followStatus, t, options = {}) {
+  const { namespace = "rightbar" } = options;
+
+  const configs = {
+    ACCEPTED: {
+      label: t(`${namespace}.following`),
+      className: "bg-bg-tertiary text-text-secondary hover:bg-bg-tertiary/80",
+    },
+    PENDING: {
+      label: t(`${namespace}.requested`),
+      className: "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300",
+    },
+  };
+
+  return (
+    configs[followStatus] || {
+      label: t(`${namespace}.follow`),
+      className: "bg-accent text-white hover:bg-accent-hover active:scale-[0.97]",
+    }
+  );
+}

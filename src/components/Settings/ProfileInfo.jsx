@@ -28,7 +28,10 @@ export default function ProfileInfo() {
   });
 
   const onSubmit = async data => {
-    await submitHandler(setAlert, updateAccount, data);
+    const result = await submitHandler(setAlert, updateAccount, data);
+    if (result?.status >= 200 && result?.status < 300) {
+      setEditingField(null);
+    }
   };
 
   const handleEditField = fieldName => {

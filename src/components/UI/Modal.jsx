@@ -26,7 +26,10 @@ const Modal = ({ isOpen, onClose, children }) => {
       <div className="fixed inset-0 transition-opacity duration-300 opacity-20" onClick={onClose} aria-hidden="true" />
 
       {/* Modal Content */}
-      <div className="relative bg-bg-secondary rounded-xl shadow-2xl w-4/6 max-w-none mx-4 max-h-150 z-10 transform transition-all duration-300 ease-out flex flex-col">
+      <div 
+        className="relative bg-bg-secondary rounded-xl shadow-2xl w-4/6 max-w-none mx-4 max-h-150 z-10 transform transition-all duration-300 ease-out flex flex-col"
+        onClick={e => e.stopPropagation()}
+      >
         {/* Close Button */}
         <button
           onClick={onClose}

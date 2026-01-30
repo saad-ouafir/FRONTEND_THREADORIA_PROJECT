@@ -17,19 +17,12 @@ async function getFollowing(userId) {
 }
 
 // Follow / Unfollow
-async function followUser(followingId) {
-  const response = await axiosInstance.post("/follow/follow", followingId);
+async function toggleFollow(followingId) {
+  const response = await axiosInstance.post("/follow/follow", { followingId: followingId });
   return {
     status: response.status,
     message: response.data.message,
     followStatus: response.data.followStatus,
-  };
-}
-async function unfollowUser(data) {
-  const response = await axiosInstance.post("/follow/unfollow", data);
-  return {
-    status: response.status,
-    message: response.data.message,
   };
 }
 
@@ -56,12 +49,20 @@ async function rejectFollowRequest(followerID) {
   };
 }
 
+async function removeFollower(followerId) {
+  const response = await axiosInstance.post("/follow/remove-follower", { followerId });
+  return {
+    status: response.status,
+    message: response.data.message,
+  };
+}
+
 export {
   getFollowers,
   getFollowing,
-  followUser,
-  unfollowUser,
+  toggleFollow,
   getFollowRequests,
   acceptFollowRequest,
   rejectFollowRequest,
+  removeFollower,
 };

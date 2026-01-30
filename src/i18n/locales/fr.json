@@ -49,6 +49,7 @@
     "who_to_follow": "Qui suivre",
     "follow": "Suivre",
     "following": "Suivi",
+    "requested": "En attente",
     "see_more": "Voir plus",
     "search": "Rechercher"
   },
@@ -63,7 +64,9 @@
     "media": "Médias",
     "likes": "J'aime",
     "no_threads": "Pas encore de fils",
-    "no_threads_description": "Quand cet utilisateur publiera des fils, ils apparaîtront ici."
+    "no_threads_description": "Quand cet utilisateur publiera des fils, ils apparaîtront ici.",
+    "remove": "Retirer",
+    "unfollow": "Ne plus suivre"
   },
   "login": {
     "welcome_back": "Se connecter",
