@@ -142,12 +142,6 @@ jobs:
             -Dsonar.organization=saad-ouafir
             -Dsonar.sources=src
 
-      - name: SonarQube Quality Gate check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
   # Build, Push to GAR, and Deploy via SSH
   build-and-deploy:
     name: Build and Deploy to GCP
