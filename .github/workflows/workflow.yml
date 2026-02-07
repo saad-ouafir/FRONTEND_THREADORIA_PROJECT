@@ -120,11 +120,10 @@ jobs:
         uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           args: >
             -Dsonar.projectKey=threadoria_frontend
-            -Dsonar.organization=zak009009
+            -Dsonar.organization=saad-ouafir
             -Dsonar.sources=src
 
       - name: SonarQube Quality Gate check
