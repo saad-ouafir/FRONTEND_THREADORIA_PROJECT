@@ -1,6 +1,11 @@
+//-----------------------------------
+// Redux Slice for current user Profile
+//-----------------------------------
+
 import { createSlice } from "@reduxjs/toolkit";
 import { formatDate } from "../utils/formatters/formatDate";
 
+// Get initial state from local storage if exists or return empty values by default
 const getInitialState = () => {
   try {
     const stored = localStorage.getItem("userProfile");
@@ -34,6 +39,7 @@ const getInitialState = () => {
   }
 };
 
+// Redux Slice for current user Profile
 const profileSlice = createSlice({
   name: "profile",
   initialState: getInitialState(),

@@ -1,5 +1,5 @@
 import { FaHeart, FaComment, FaShare, FaTrash } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 // UI components
@@ -19,7 +19,6 @@ export default function ThreadsCard({ threads = [], allowDelete = false, message
   const [alert, setAlert] = useState(null);
   const [deletingThreadId, setDeletingThreadId] = useState(null);
 
-  console.log(threads);
   const filtredLikedThreads = new Array(...threads.filter(thread => thread.isLiked).map(thread => thread.id));
 
   const currentUser = useProfile();

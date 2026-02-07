@@ -10,16 +10,20 @@
   "home": {
     "hero_title": "Share Your",
     "hero_highlight": "Thread",
+    "hero_subtitle": "Connect with people who share your interests",
     "hero_description": "Join the social platform built for meaningful connections. Share your thoughts, discover amazing content, and connect with like-minded people.",
     "hero_getStarted": "Explore now",
     "hero_explore": "Explore Threads",
     "hero_joinUsers": "Join 1M+ active users worldwide",
+    "hero_cta": "Get Started",
     "stats_users": "Active Users",
     "stats_posts": "Posts Shared",
     "stats_interactions": "Interactions",
     "stats_countries": "Countries",
+    "stats_title": "Growing Community",
     "features_title": "Why Threadoria?",
     "features_subtitle": "The social platform designed for meaningful connections and authentic conversations.",
+    "features_description": "Experience a new way to connect and share with the world.",
     "features_connect_title": "Connect & Share",
     "features_connect_description": "Share your thoughts, connect with friends, and build your community",
     "features_engage_title": "Engage & Interact",
@@ -36,6 +40,7 @@
     "cta_subtitle": "Join millions of users sharing their thoughts, connecting with friends, and discovering amazing content.",
     "cta_join": "Join Threadoria",
     "cta_exploreCommunities": "Explore Communities",
+    "cta_description": "Start your journey today and be part of something bigger.",
     "threads_title": "Trending Threads",
     "threads_description": "Discover what people are talking about",
     "no_threads": "No threads yet. Be the first to post!",
@@ -56,7 +61,8 @@
     "following": "Following",
     "requested": "Requested",
     "see_more": "See more",
-    "search": "Search"
+    "search": "Search",
+    "search_by_name_or_tag": "Search by name or username"
   },
   "profile": {
     "follow": "Follow",
@@ -158,7 +164,9 @@
     "appearance": "Appearance",
     "light_mode": "Light Mode",
     "dark_mode": "Dark Mode",
-    "language": "Language"
+    "language": "Language",
+    "private_account": "Private Account",
+    "public_description": "Anyone can see your posts and profile. Your account is discoverable in search results."
   },
   "delete": {
     "title": "Delete Account",
@@ -182,7 +190,9 @@
     "followers": "followers",
     "following": "following",
     "follow": "Follow",
-    "following_btn": "Following"
+    "following_btn": "Following",
+    "users": "Users",
+    "threads": "Threads"
   },
   "profileInfo": {
     "non_logedin": "Please log in to see your profile"

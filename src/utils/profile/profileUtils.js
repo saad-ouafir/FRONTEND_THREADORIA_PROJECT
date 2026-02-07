@@ -1,3 +1,7 @@
+// --------------------------------------
+// Get current profile data
+// --------------------------------------
+
 import GlobalStore from "../../context/GlobalStore";
 import { setProfileData } from "../../context/ProfileSlice";
 
@@ -17,8 +21,6 @@ export function getValidProfilePictureUrl(profilePictureUrl) {
   // Check if it's a valid HTTP/HTTPS URL
   try {
     const url = new URL(trimmedUrl);
-
-    // Ensure it's an HTTP/HTTPS URL
     if (url.protocol !== "http:" && url.protocol !== "https:") {
       return null;
     }
@@ -27,19 +29,12 @@ export function getValidProfilePictureUrl(profilePictureUrl) {
     if (trimmedUrl.includes("storage.googleapiscom")) {
       return trimmedUrl.replace("storage.googleapiscom", "storage.googleapis.com");
     }
-
     return trimmedUrl;
   } catch {
-    // Invalid URL format
     return null;
   }
 }
 
-/**
- * Gets user initials from full name or username
- * @param {Object} user - User object with full_name and username
- * @returns {string} - User initials (max 2 characters)
- */
 export function getUserInitials(user) {
   if (!user) return "U";
 
@@ -51,13 +46,6 @@ export function getUserInitials(user) {
     .toUpperCase()
     .slice(0, 2);
 }
-
-/**
- * Gets a safe profile picture URL with fallback handling
- * @param {Object} user - User object
- * @param {string} fallbackUrl - Optional fallback URL
- * @returns {string|null} - Valid profile picture URL or null
- */
 export function getProfilePictureUrl(user, fallbackUrl = null) {
   if (!user) return fallbackUrl;
 
@@ -71,21 +59,10 @@ export function getProfilePictureUrl(user, fallbackUrl = null) {
 
   return null;
 }
-
-/**
- * Gets display name from user object with fallbacks
- * @param {Object} user - User object
- * @returns {string} - Display name
- */
 export function getDisplayName(user) {
   return user?.full_name || user?.fullName || user?.name || "Unknown";
 }
 
-/**
- * Gets username from user object with fallbacks
- * @param {Object} user - User object
- * @returns {string} - Username
- */
 export function getUsername(user) {
   return user?.username || user?.handle || "";
 }

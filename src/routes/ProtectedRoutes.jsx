@@ -1,3 +1,7 @@
+// -----------------------------------
+// Protected routes to be applied to the Global routes
+// -----------------------------------
+
 import { useLayoutEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import getToken from "../utils/auth/getToken";

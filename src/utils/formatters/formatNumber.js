@@ -1,4 +1,8 @@
-export const formatNumber = (num) => {
+// --------------------------------------
+// Numbers formatter (likes, followers, posts count ....)
+// --------------------------------------
+
+export const formatNumber = num => {
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1) + "M";
   }

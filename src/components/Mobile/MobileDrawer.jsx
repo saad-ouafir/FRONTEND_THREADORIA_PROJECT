@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FiX, FiSettings, FiLogOut, FiSearch, FiSun, FiMoon, FiGlobe } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
@@ -10,6 +10,7 @@ const MobileDrawer = ({ isOpen, onClose }) => {
   const { isDark, toggleTheme, mounted } = useThemeHandler();
   const navigate = useNavigate();
   const drawerRef = useRef(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Focus trap inside drawer when open
   useEffect(() => {
@@ -33,6 +34,27 @@ const MobileDrawer = ({ isOpen, onClose }) => {
     navigate("/auth/login");
     onClose();
   };
+
+  const handleSearch = useCallback(
+    e => {
+      e?.preventDefault();
+      if (searchQuery.trim()) {
+        navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        onClose();
+        setSearchQuery("");
+      }
+    },
+    [searchQuery, navigate, onClose],
+  );
+
+  const handleSearchKeyDown = useCallback(
+    e => {
+      if (e.key === "Enter") {
+        handleSearch(e);
+      }
+    },
+    [handleSearch],
+  );
 
   const menuItems = [
     {
@@ -102,6 +124,28 @@ const MobileDrawer = ({ isOpen, onClose }) => {
                 <p className="font-medium text-text-primary truncate">{user.name}</p>
                 <p className="text-sm text-text-muted truncate">{user.username}</p>
               </div>
+            </div>
+          </div>
+
+          {/* Search Input */}
+          <div className="px-4 py-3 border-b border-border/50">
+            <div className="relative">
+              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-muted" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                placeholder={t("rightbar.search_by_name_or_tag") || "Search..."}
+                className="w-full pl-10 pr-16 py-2.5 text-sm border border-border rounded-lg bg-bg-tertiary text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50 transition-colors"
+              />
+              <button
+                type="button"
+                onClick={handleSearch}
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-accent hover:bg-accent-hover text-white px-3 py-1.5 text-xs font-medium rounded-md transition-colors"
+              >
+                {t("rightbar.search") || "Search"}
+              </button>
             </div>
           </div>
 

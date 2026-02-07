@@ -1,5 +1,11 @@
+//-----------------------------------
+// API Methods for Threads
+//-----------------------------------
+
 import axiosInstance from "./axiosInstance";
-async function createTread(threadData) {
+
+// Create new Threads
+async function createThread(threadData) {
   const { content, parent_id } = threadData;
   const response = await axiosInstance.post("/threads/create", { content, parent_id: parent_id || null });
   return {
@@ -9,8 +15,8 @@ async function createTread(threadData) {
   };
 }
 
+// Get thread by ID
 async function getThreadById(threadID) {
-  console.log("thread id from exec", threadID);
   const response = await axiosInstance.get(`/threads/thread/${threadID}`);
   return {
     status: response.status,
@@ -18,26 +24,33 @@ async function getThreadById(threadID) {
   };
 }
 
-async function getThreadsByUserID(userId) {
-  const response = await axiosInstance.get(`/threads/user/${userId}`);
-  return {
-    status: response.status,
-    threads: response.data.threads,
-    forbidden: response.data.forbidden,
-  };
-}
-
-async function suggestThreads(tags, limit) {
-  const response = await axiosInstance.get(`/threads/suggest`, {
-    tags,
-    limit,
+// Get threads by user
+async function getThreadsByUserID(userId, page = 1, limit = 10) {
+  const response = await axiosInstance.get(`/threads/user/${userId}`, {
+    params: { page, limit },
   });
   return {
     status: response.status,
     threads: response.data.threads,
+    forbidden: response.data.forbidden,
+    pagination: response.data.pagination,
   };
 }
 
+// Get suggested threads in "/home"
+async function suggestThreads(tags = null, page = 1, limit = 10) {
+  const params = { page, limit };
+  if (tags) params.tags = tags;
+
+  const response = await axiosInstance.get(`/threads/suggest`, { params });
+  return {
+    status: response.status,
+    threads: response.data.threads,
+    pagination: response.data.pagination,
+  };
+}
+
+// Delete Thread
 async function deleteThread(threadId) {
   const response = await axiosInstance.delete(`/threads/delete/${threadId}`);
   return {
@@ -46,6 +59,7 @@ async function deleteThread(threadId) {
   };
 }
 
+// Get sub threads (threads as type "replies")
 async function getSubThreads(parentID) {
   const response = await axiosInstance.get(`/threads/subThreads/${parentID}`);
   return {
@@ -54,4 +68,16 @@ async function getSubThreads(parentID) {
   };
 }
 
-export { createTread, getThreadsByUserID, suggestThreads, deleteThread, getThreadById, getSubThreads };
+// Search Threads that contains the query as a keyword
+async function searchThreads(query, page = 1, limit = 10) {
+  const response = await axiosInstance.get(`/threads/search`, {
+    params: { search: query, page, limit },
+  });
+  return {
+    status: response.status,
+    threads: response.data.threads,
+    pagination: response.data.pagination,
+  };
+}
+
+export { createThread, getThreadsByUserID, suggestThreads, deleteThread, getThreadById, getSubThreads, searchThreads };

@@ -1,3 +1,7 @@
+//-----------------------------------
+// API Methods for Reactions on Threads
+//-----------------------------------
+
 import axiosInstance from "./axiosInstance";
 
 // Like or Unlike threads (toggling)

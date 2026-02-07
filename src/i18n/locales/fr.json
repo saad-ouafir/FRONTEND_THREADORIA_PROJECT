@@ -9,16 +9,20 @@
   "home": {
     "hero_title": "Partagez Votre",
     "hero_highlight": "Fil",
+    "hero_subtitle": "Connectez-vous avec des personnes partageant vos intérêts",
     "hero_description": "Rejoignez la plateforme sociale conçue pour des connexions significatives. Partagez vos pensées, découvrez un contenu incroyable et connectez-vous avec des personnes partageant les mêmes idées.",
     "hero_getStarted": "Explorer",
     "hero_explore": "Explorer les Fils",
     "hero_joinUsers": "Rejoignez 1M+ dutilisateurs actifs dans le monde",
+    "hero_cta": "Commencer",
     "stats_users": "Utilisateurs Actifs",
     "stats_posts": "Messages Partagés",
     "stats_interactions": "Interactions",
     "stats_countries": "Pays",
+    "stats_title": "Communauté Croissante",
     "features_title": "Pourquoi Threadoria?",
     "features_subtitle": "La plateforme sociale conçue pour des connexions significatives et des conversations authentiques.",
+    "features_description": "Découvrez une nouvelle façon de vous connecter et de partager avec le monde.",
     "features_connect_title": "Connecter & Partager",
     "features_connect_description": "Partagez vos pensées, connectez-vous avec des amis et construisez votre communauté",
     "features_engage_title": "Engager & Interagir",
@@ -34,7 +38,8 @@
     "cta_title": "Prêt à Partager Votre Fil?",
     "cta_subtitle": "Rejoignez des millions dutilisateurs partageant leurs pensées, se connectant avec des amis et découvrant un contenu incroyable.",
     "cta_join": "Rejoindre Threadoria",
-    "cta_exploreCommunities": "Explorer les Communautés"
+    "cta_exploreCommunities": "Explorer les Communautés",
+    "cta_description": "Commencez votre voyage aujourd'hui et faites partie de quelque chose de plus grand."
   },
   "navmenu": {
     "home": "Accueil",
@@ -51,7 +56,8 @@
     "following": "Suivi",
     "requested": "En attente",
     "see_more": "Voir plus",
-    "search": "Rechercher"
+    "search": "Rechercher",
+    "search_by_name_or_tag": "Rechercher par nom ou nom d'utilisateur"
   },
   "profile": {
     "follow": "Suivre",
@@ -153,7 +159,9 @@
     "appearance": "Apparence",
     "light_mode": "Mode Clair",
     "dark_mode": "Mode Sombre",
-    "language": "Langue"
+    "language": "Langue",
+    "private_account": "Compte Privé",
+    "public_description": "Tout le monde peut voir vos publications et votre profil. Votre compte est découvrable dans les résultats de recherche."
   },
   "delete": {
     "title": "Supprimer Votre Compte",
@@ -177,7 +185,9 @@
     "followers": "abonnés",
     "following": "suivis",
     "follow": "Suivre",
-    "following_btn": "Suivi"
+    "following_btn": "Suivi",
+    "users": "Utilisateurs",
+    "threads": "Fils"
   },
   "profileInfo": {
     "non_logedin": "Veuillez vous connecter pour voir votre profil"

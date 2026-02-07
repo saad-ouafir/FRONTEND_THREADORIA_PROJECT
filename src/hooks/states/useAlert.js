@@ -1,9 +1,4 @@
 import { useState, useCallback } from "react";
-
-/**
- * Custom hook for managing alert state
- * @returns {Object} - Alert state and handlers
- */
 export function useAlert() {
   const [alert, setAlert] = useState(null);
 
@@ -15,11 +10,11 @@ export function useAlert() {
     setAlert(null);
   }, []);
 
-  const showSuccess = useCallback((message) => {
+  const showSuccess = useCallback(message => {
     setAlert({ message, statusCode: 200 });
   }, []);
 
-  const showError = useCallback((message) => {
+  const showError = useCallback(message => {
     setAlert({ message, statusCode: 500 });
   }, []);
 

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import ThreadsCard from "./ThreadsCard";
 import AlertMessage from "../UI/AlertMessage";
 
-export default function SubTreads({ threadID, refreshTrigger }) {
+export default function SubThreads({ threadID, refreshTrigger }) {
   const [thread, setThread] = useState([]);
   const [alert, setAlert] = useState(null);
 

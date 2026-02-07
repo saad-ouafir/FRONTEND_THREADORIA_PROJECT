@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { FiImage, FiHash, FiX } from "react-icons/fi";
 import useProfile from "../../hooks/states/useProfile";
-import { createTread } from "../../api/thread.api";
+import { createThread } from "../../api/thread.api";
 import { uploadThreadMedia } from "../../api/media.api";
 import { useValidateThreadForm } from "../../hooks/forms/useFormValidator";
 import AlertMessage from "../UI/AlertMessage";
@@ -38,7 +38,7 @@ export default function ThreadForm({ parentID = null, onThreadCreated }) {
         parent_id: parentID || null,
       };
 
-      const threadResponse = await createTread(threadData);
+      const threadResponse = await createThread(threadData);
       const threadId = threadResponse.thread.id;
       if (files.length > 0) {
         const mediaFormData = new FormData();
@@ -59,13 +59,11 @@ export default function ThreadForm({ parentID = null, onThreadCreated }) {
         onThreadCreated();
       }
     } catch (error) {
-      setAlert(null);
       console.error("Error creating thread:", error);
       setAlert({
         message: error.message || "Failed to create thread",
         statusCode: error.status || 500,
       });
-      this.setState({ loading: false });
     }
   };
 

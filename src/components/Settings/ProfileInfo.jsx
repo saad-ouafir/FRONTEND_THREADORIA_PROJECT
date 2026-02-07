@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
-import { FiEdit2 } from "react-icons/fi";
+import { useState, useCallback } from "react";
+import { FiEdit2, FiLock, FiGlobe } from "react-icons/fi";
 import useProfile from "../../hooks/states/useProfile";
 import { updateAccount } from "../../api/auth.api";
 import { useValidateProfileForm } from "../../hooks/forms/useFormValidator";
@@ -12,6 +12,8 @@ export default function ProfileInfo() {
   const user = useProfile();
   const [editingField, setEditingField] = useState(null);
   const [alert, setAlert] = useState(null);
+  const [isPrivate, setIsPrivate] = useState(user?.is_private || false);
+  const [privacyLoading, setPrivacyLoading] = useState(false);
 
   const {
     register,
@@ -33,6 +35,16 @@ export default function ProfileInfo() {
       setEditingField(null);
     }
   };
+
+  const handlePrivacyToggle = useCallback(async () => {
+    setPrivacyLoading(true);
+    const newPrivacyState = !isPrivate;
+    const result = await submitHandler(setAlert, updateAccount, { is_private: newPrivacyState });
+    if (result?.status >= 200 && result?.status < 300) {
+      setIsPrivate(newPrivacyState);
+    }
+    setPrivacyLoading(false);
+  }, [isPrivate]);
 
   const handleEditField = fieldName => {
     setEditingField(fieldName);
@@ -205,6 +217,39 @@ export default function ProfileInfo() {
             )}
           </div>
         </form>
+
+        {/* Privacy Toggle Section */}
+        <div className="space-y-2 sm:space-y-3 pt-4 border-t border-border">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {isPrivate ? <FiLock className="h-5 w-5 text-accent" /> : <FiGlobe className="h-5 w-5 text-text-muted" />}
+              <div>
+                <label className="text-sm sm:text-base font-medium text-text-primary">
+                  {t("settings.private_account") || "Private Account"}
+                </label>
+                <p className="text-xs text-text-muted">
+                  {isPrivate
+                    ? t("settings.private_description") || "Only approved followers can see your posts"
+                    : t("settings.public_description") || "Anyone can see your posts and follow you"}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handlePrivacyToggle}
+              disabled={privacyLoading}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
+                isPrivate ? "bg-accent" : "bg-bg-tertiary"
+              } ${privacyLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  isPrivate ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

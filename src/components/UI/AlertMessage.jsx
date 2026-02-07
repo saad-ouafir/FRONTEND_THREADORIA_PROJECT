@@ -1,12 +1,40 @@
 import { IoCheckmarkDoneCircleOutline, IoWarningOutline } from "react-icons/io5";
 import { MdErrorOutline, MdOutlineInfo } from "react-icons/md";
 import { HiOutlineXMark } from "react-icons/hi2";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
+
+// Reducer to handle alert state transitions
+function alertReducer(state, action) {
+  switch (action.type) {
+    case "SHOW":
+      return { ...state, isVisible: true, isExiting: false, countdown: 5 };
+    case "START_EXIT":
+      return { ...state, isExiting: true };
+    case "HIDE":
+      return { ...state, isVisible: false };
+    case "TICK":
+      return { ...state, countdown: state.countdown > 1 ? state.countdown - 1 : 0 };
+    default:
+      return state;
+  }
+}
 
 export default function AlertMessage({ type, message, statusCode, onClose }) {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isExiting, setIsExiting] = useState(false);
-  const [countdown, setCountdown] = useState(5);
+  const [state, dispatch] = useReducer(alertReducer, {
+    isVisible: !!message,
+    isExiting: false,
+    countdown: 5,
+  });
+  const { isVisible, isExiting, countdown } = state;
+
+  // Track previous message to detect changes
+  const [prevMessage, setPrevMessage] = useState(message);
+
+  // When message changes, show the alert
+  if (message && message !== prevMessage) {
+    setPrevMessage(message);
+    dispatch({ type: "SHOW" });
+  }
 
   const getAlertTypeFromStatus = () => {
     if (!statusCode) return type;
@@ -26,31 +54,29 @@ export default function AlertMessage({ type, message, statusCode, onClose }) {
     return message;
   };
 
+  // Auto-hide timer and countdown
   useEffect(() => {
-    if (!message) return;
+    if (!message || !isVisible) return;
 
-    setIsVisible(true);
-    setIsExiting(false);
-    setCountdown(5);
     const timer = setTimeout(() => {
-      setIsExiting(true);
-      setTimeout(() => setIsVisible(false), 300);
+      dispatch({ type: "START_EXIT" });
+      setTimeout(() => dispatch({ type: "HIDE" }), 300);
     }, 5000);
 
     const countdownTimer = setInterval(() => {
-      setCountdown(prev => (prev > 1 ? prev - 1 : 0));
+      dispatch({ type: "TICK" });
     }, 1000);
 
     return () => {
       clearTimeout(timer);
       clearInterval(countdownTimer);
     };
-  }, [message, statusCode]);
+  }, [message, isVisible]);
 
   const handleClose = () => {
-    setIsExiting(true);
+    dispatch({ type: "START_EXIT" });
     if (onClose) onClose();
-    setTimeout(() => setIsVisible(false), 300);
+    setTimeout(() => dispatch({ type: "HIDE" }), 300);
   };
 
   if (!isVisible) return null;

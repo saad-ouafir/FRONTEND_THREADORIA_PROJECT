@@ -1,14 +1,15 @@
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
+
+// Subscribe function for useSyncExternalStore (no-op since we just need to detect client)
+const subscribe = () => () => {};
+const getSnapshot = () => true;
+const getServerSnapshot = () => false;
 
 export const useThemeHandler = () => {
   const { theme, setTheme, resolvedTheme, systemTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Prevent hydration mismatch by only rendering after mount
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Use useSyncExternalStore to safely detect client-side rendering
+  const mounted = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   // Toggle between light and dark themes
   const toggleTheme = () => {

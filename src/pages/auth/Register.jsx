@@ -1,3 +1,7 @@
+// -----------------------------------
+// Sign Up Page
+// -----------------------------------
+
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +17,7 @@ export default function Register() {
   const [alert, setAlert] = useState(null);
   const { t } = useTranslation();
 
+  // Form Submission using React Hook Form & custom Hander
   const {
     register,
     handleSubmit,

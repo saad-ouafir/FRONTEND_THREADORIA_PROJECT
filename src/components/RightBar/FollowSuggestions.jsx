@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useId } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import Modal from "../UI/Modal";
@@ -7,6 +7,7 @@ import UserCard from "../UI/UserCard";
 import { suggestProfiles } from "../../api/profile.api";
 import { getFollowButtonConfig } from "../../utils/profile/profileUtils";
 import { useFollow } from "../../hooks/api/useFollow";
+import { useFollowSync } from "../../hooks/api/useFollowSyncHook.js";
 import { useAlert } from "../../hooks/states/useAlert";
 import useProfile from "../../hooks/states/useProfile";
 
@@ -17,6 +18,8 @@ const FollowSuggestions = () => {
   const isAuthenticated = !!currentUser?.id;
   const { alert, setAlert, clearAlert } = useAlert();
   const { toggleFollow } = useFollow(setAlert);
+  const { subscribe } = useFollowSync();
+  const componentId = useId();
 
   const [showModal, setShowModal] = useState(false);
   const [suggestedUsers, setSuggestedUsers] = useState([]);
@@ -36,6 +39,22 @@ const FollowSuggestions = () => {
     };
     fetchSuggestions();
   }, []);
+
+  // Subscribe to follow status changes from other components (e.g., ProfileInfo)
+  useEffect(() => {
+    const unsubscribe = subscribe(componentId, (userId, newFollowStatus) => {
+      setSuggestedUsers(prev => {
+        if (newFollowStatus === "ACCEPTED") {
+          // Remove user from suggestions when fully followed
+          return prev.filter(u => u.id !== userId);
+        } else {
+          // Update user's follow status (for PENDING or null)
+          return prev.map(u => (u.id === userId ? { ...u, followStatus: newFollowStatus } : u));
+        }
+      });
+    });
+    return unsubscribe;
+  }, [subscribe, componentId]);
 
   const handleFollow = useCallback(
     async userId => {

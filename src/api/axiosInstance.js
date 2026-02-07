@@ -1,3 +1,10 @@
+//-----------------------------------------
+// - Configured Axios instance ready to Call it when needed in other api methods.
+// - Handles token refreshing
+// - Handles errors
+// - Handles redirects in case of "Blocked"
+//-----------------------------------------
+
 import axios from "axios";
 import config from "../config/config";
 import getToken from "../utils/auth/getToken";
@@ -5,16 +12,16 @@ import setToken from "../utils/auth/setToken";
 import revokeToken from "../utils/auth/revokeToken";
 import clearProfile from "../utils/profile/clearProfile";
 
+// Prepare a new axios instance ready to use
 const axiosInstance = axios.create({
   baseURL: config.API_URL,
   withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });
 
-// Track if we're currently refreshing to prevent multiple refresh calls
+// Track if currently refreshing to prevent multiple refresh calls
 let isRefreshing = false;
 let failedQueue = [];
-
 const processQueue = (error, token = null) => {
   failedQueue.forEach(prom => {
     if (error) {
@@ -35,6 +42,7 @@ axiosInstance.interceptors.request.use(config => {
   return config;
 });
 
+// Intercept & Handle errors
 axiosInstance.interceptors.response.use(
   response => response,
   async error => {
@@ -59,11 +67,10 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
+      // Try to refresh the token if expired
       try {
-        // Try to refresh the token
         const response = await axiosInstance.post("/auth/refresh");
         const newToken = response.data.accessToken;
-
         if (newToken) {
           setToken(newToken);
           originalRequest.headers.Authorization = `Bearer ${newToken}`;

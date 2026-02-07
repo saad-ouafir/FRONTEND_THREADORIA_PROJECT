@@ -1,19 +1,15 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Play, ChevronLeft, ChevronRight, X, Download, Pause } from "lucide-react";
 
 const ImageGallery = ({
   media = [],
-  autoPlayVideos = true,
   autoPlayInterval = 5000,
-  enableSwipe = true,
   maxVisibleItems = null, // Auto-calculate if null
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
   const [gridCols, setGridCols] = useState(2);
   const autoPlayTimerRef = useRef(null);
   const touchStartRef = useRef(0);
@@ -21,6 +17,9 @@ const ImageGallery = ({
 
   const currentMedia = media[currentIndex] || {};
   const isVideo = currentMedia.type === "video";
+
+  // Memoize media length to avoid dependency issues
+  const mediaLength = useMemo(() => media.length, [media]);
 
   // **Responsive grid calculation**
   useEffect(() => {
@@ -42,44 +41,66 @@ const ImageGallery = ({
   const visibleMedia = media.slice(0, visibleMediaCount);
   const hasMore = media.length > visibleMediaCount;
 
-  // **Navigation callbacks**
-  const nextMedia = useCallback(() => {
-    if (media.length === 0) return;
+  // **Navigation functions (not using useCallback to avoid memoization issues)**
+  const nextMedia = () => {
+    if (mediaLength === 0) return;
     setIsLoading(true);
-    setCurrentIndex(prevIndex => (prevIndex + 1) % media.length);
-  }, [media.length]);
+    setCurrentIndex(prevIndex => (prevIndex + 1) % mediaLength);
+  };
 
-  const prevMedia = useCallback(() => {
-    if (media.length === 0) return;
+  const prevMedia = () => {
+    if (mediaLength === 0) return;
     setIsLoading(true);
-    setCurrentIndex(prevIndex => (prevIndex - 1 + media.length) % media.length);
-  }, [media.length]);
+    setCurrentIndex(prevIndex => (prevIndex - 1 + mediaLength) % mediaLength);
+  };
 
-  // **Auto-play timer**
-  const startAutoPlay = useCallback(() => {
+  // **Auto-play functions**
+  const startAutoPlay = () => {
     if (autoPlayTimerRef.current) clearInterval(autoPlayTimerRef.current);
     setIsAutoPlaying(true);
 
     autoPlayTimerRef.current = setInterval(() => {
-      setCurrentIndex(prev => (prev + 1) % media.length);
+      setCurrentIndex(prev => (prev + 1) % mediaLength);
       setIsLoading(true);
     }, autoPlayInterval);
-  }, [media.length, autoPlayInterval]);
+  };
 
-  const stopAutoPlay = useCallback(() => {
+  const stopAutoPlay = () => {
     if (autoPlayTimerRef.current) clearInterval(autoPlayTimerRef.current);
     setIsAutoPlaying(false);
-  }, []);
+  };
 
   // **Auto-play when entering fullscreen**
+  // Track auto-play state based on fullscreen mode changes
+  const shouldAutoPlay = isFullscreen && !isVideo;
+
   useEffect(() => {
-    if (isFullscreen && !isVideo) {
-      startAutoPlay();
-    } else {
-      stopAutoPlay();
+    if (!shouldAutoPlay) {
+      if (autoPlayTimerRef.current) {
+        clearInterval(autoPlayTimerRef.current);
+        autoPlayTimerRef.current = null;
+      }
+      return;
     }
-    return () => stopAutoPlay();
-  }, [isFullscreen, isVideo, startAutoPlay, stopAutoPlay]);
+
+    // Start auto-play with interval
+    autoPlayTimerRef.current = setInterval(() => {
+      setCurrentIndex(prev => (prev + 1) % mediaLength);
+      setIsLoading(true);
+    }, autoPlayInterval);
+
+    return () => {
+      if (autoPlayTimerRef.current) {
+        clearInterval(autoPlayTimerRef.current);
+        autoPlayTimerRef.current = null;
+      }
+    };
+  }, [shouldAutoPlay, mediaLength, autoPlayInterval]);
+
+  // Sync isAutoPlaying state with shouldAutoPlay (derived state)
+  useEffect(() => {
+    setIsAutoPlaying(shouldAutoPlay);
+  }, [shouldAutoPlay]);
 
   // **Keyboard navigation (enhanced)**
   useEffect(() => {
@@ -89,22 +110,34 @@ const ImageGallery = ({
       switch (e.key) {
         case "ArrowRight":
           e.preventDefault();
-          nextMedia();
-          stopAutoPlay();
+          setIsLoading(true);
+          setCurrentIndex(prevIndex => (prevIndex + 1) % mediaLength);
+          if (autoPlayTimerRef.current) clearInterval(autoPlayTimerRef.current);
+          setIsAutoPlaying(false);
           break;
         case "ArrowLeft":
           e.preventDefault();
-          prevMedia();
-          stopAutoPlay();
+          setIsLoading(true);
+          setCurrentIndex(prevIndex => (prevIndex - 1 + mediaLength) % mediaLength);
+          if (autoPlayTimerRef.current) clearInterval(autoPlayTimerRef.current);
+          setIsAutoPlaying(false);
           break;
         case "Escape":
           setIsFullscreen(false);
           break;
         case " ":
           e.preventDefault();
-          setIsAutoPlaying(!isAutoPlaying);
-          if (!isAutoPlaying) startAutoPlay();
-          else stopAutoPlay();
+          if (!isAutoPlaying) {
+            if (autoPlayTimerRef.current) clearInterval(autoPlayTimerRef.current);
+            setIsAutoPlaying(true);
+            autoPlayTimerRef.current = setInterval(() => {
+              setCurrentIndex(prev => (prev + 1) % mediaLength);
+              setIsLoading(true);
+            }, autoPlayInterval);
+          } else {
+            if (autoPlayTimerRef.current) clearInterval(autoPlayTimerRef.current);
+            setIsAutoPlaying(false);
+          }
           break;
         default:
           break;
@@ -113,37 +146,34 @@ const ImageGallery = ({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isFullscreen, nextMedia, prevMedia, isAutoPlaying, startAutoPlay, stopAutoPlay]);
+  }, [isFullscreen, isAutoPlaying, mediaLength, autoPlayInterval]);
 
   // **Swipe gesture detection**
-  const handleTouchStart = useCallback(e => {
+  const handleTouchStart = e => {
     touchStartRef.current = e.targetTouches[0].clientX;
-  }, []);
+  };
 
-  const handleTouchEnd = useCallback(
-    e => {
-      const touchEnd = e.changedTouches[0].clientX;
-      const diff = touchStartRef.current - touchEnd;
+  const handleTouchEnd = e => {
+    const touchEndPos = e.changedTouches[0].clientX;
+    const diff = touchStartRef.current - touchEndPos;
 
-      if (Math.abs(diff) > 50) {
-        // Minimum swipe distance
-        if (diff > 0) {
-          nextMedia(); // Swipe left = next
-        } else {
-          prevMedia(); // Swipe right = previous
-        }
-        stopAutoPlay();
+    if (Math.abs(diff) > 50) {
+      // Minimum swipe distance
+      if (diff > 0) {
+        nextMedia(); // Swipe left = next
+      } else {
+        prevMedia(); // Swipe right = previous
       }
-    },
-    [nextMedia, prevMedia, stopAutoPlay],
-  );
+      stopAutoPlay();
+    }
+  };
 
   // **Image preloading for better performance**
-  const preloadImage = useCallback(url => {
+  const preloadImage = url => {
     if (!url) return;
     const img = new Image();
     img.src = url;
-  }, []);
+  };
 
   useEffect(() => {
     // Preload next and previous images
@@ -158,7 +188,7 @@ const ImageGallery = ({
         preloadImage(media[prevIndex].url);
       }
     }
-  }, [currentIndex, media, preloadImage]);
+  }, [currentIndex, media]);
 
   const handleMediaLoad = () => setIsLoading(false);
 

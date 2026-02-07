@@ -12,7 +12,7 @@ export default function MainLayout() {
 
   return (
     <div className="h-screen bg-bg-surface flex flex-col overflow-hidden">
-      <Navbar />
+      <Navbar onMenuClick={openDrawer} />
       <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Left Sidebar - Hidden on mobile */}
         <aside className="hidden lg:block w-1/6 shrink-0 h-full overflow-y-auto">
@@ -31,7 +31,7 @@ export default function MainLayout() {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <BottomNavBar onMenuClick={openDrawer} />
+      <BottomNavBar />
 
       {/* Mobile Drawer */}
       <MobileDrawer isOpen={isDrawerOpen} onClose={closeDrawer} />

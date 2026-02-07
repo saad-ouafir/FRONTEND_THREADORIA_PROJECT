@@ -1,8 +1,14 @@
+//-----------------------------------
+// API Methods for Authentication
+//-----------------------------------
+
 import axiosInstance from "./axiosInstance";
 import setToken from "../utils/auth/setToken";
 import setProfile from "../utils/profile/setProfile";
 import clearProfile from "../utils/profile/clearProfile";
 import revokeToken from "../utils/auth/revokeToken";
+
+// Login
 export async function login(data) {
   const response = await axiosInstance.post("/auth/login", data);
   setToken(response.data.accessToken);
@@ -10,12 +16,11 @@ export async function login(data) {
   return {
     status: response.status,
     message: response.data.message,
-    // accessToken: response.data.accessToken.accessToken,
     user: response.data.user,
-    // expiresIn: response.data.expires_in,
   };
 }
 
+// Account Creation (Signup)
 export async function signUp(data) {
   const payload = {
     username: data.username,
@@ -32,12 +37,11 @@ export async function signUp(data) {
   return {
     status: response.status,
     message: response.data.message,
-    // accessToken: response.data.accessToken,
     user: response.data.user,
-    // expiresIn: response.data.expires_in,
   };
 }
 
+// Logout
 export async function logout() {
   const response = await axiosInstance.post("/auth/logout");
   revokeToken();
@@ -48,17 +52,18 @@ export async function logout() {
   };
 }
 
+// Refresh Token (Renew Access Token)
 export async function refreshToken() {
   const response = await axiosInstance.post("/auth/refresh");
   setToken(response.data.accessToken);
   return {
     status: response.status,
     message: response.data.message,
-    // accessToken: response.data.accessToken,
     user: response.data.user,
   };
 }
 
+// Update Account Details
 export async function updateAccount(data) {
   const response = await axiosInstance.put("/auth/update", data);
   clearProfile();
@@ -70,6 +75,7 @@ export async function updateAccount(data) {
   };
 }
 
+// Delete Account
 export async function deleteAccount() {
   const response = await axiosInstance.delete("/auth/delete");
   revokeToken();

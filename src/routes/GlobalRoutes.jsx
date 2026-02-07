@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+// -----------------------------------
+// Global routes
+// -----------------------------------
+
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Index from "../pages/Index";
 import NotFound from "../pages/NotFound";

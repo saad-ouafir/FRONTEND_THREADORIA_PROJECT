@@ -1,3 +1,7 @@
+// -----------------------------------
+// Login Page
+// -----------------------------------
+
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +16,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const { t } = useTranslation();
 
+  // Form Submission using React Hook Form & custom Hander
   const {
     register,
     handleSubmit,

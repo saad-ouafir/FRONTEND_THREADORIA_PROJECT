@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export default function ProfileSearchResults({ results }) {
-  const [threads, setThreads] = useState(results.threads);
+  const [threads] = useState(results.threads);
   return (
     <div>
       {!threads && <p>No threads found</p>}

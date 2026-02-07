@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId, useMemo, useRef } from "react";
 import { formatNumber } from "../../utils/formatters/formatNumber.js";
 import { formatDate } from "../../utils/formatters/formatDate.js";
 import { useTranslation } from "react-i18next";
@@ -10,16 +10,37 @@ import AlertMessage from "../UI/AlertMessage.jsx";
 import { getValidProfilePictureUrl, getUserInitials } from "../../utils/profile/profileUtils.js";
 import submitHandler from "../../handlers/submitHandler.js";
 import { useProfileContext } from "../../hooks/context/useProfileContext.js";
+import { useFollowSync } from "../../hooks/api/useFollowSyncHook.js";
+import { useOnlineStatus } from "../../hooks/api/useOnlineStatus.js";
 
 export default function ProfileInfo({ userID }) {
   const localUser = useProfile();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [alert, setAlert] = useState(null);
   const idToUse = userID || localUser?.id;
+  const { subscribe, notifyFollowChange } = useFollowSync();
+  const componentId = useId();
 
   const { profileData: user, loading, error, fetchProfile } = useProfileContext();
-  const [followStatus, setFollowStatus] = useState(null);
+
+  // Derive followStatus from user data, with local override for optimistic updates
+  const [localFollowStatus, setLocalFollowStatus] = useState(null);
+  const followStatus = localFollowStatus ?? user?.followStatus ?? null;
+  const setFollowStatus = setLocalFollowStatus;
+
+  // Derive alert from error
+  const alert = useMemo(() => (error ? { message: error, statusCode: 500 } : null), [error]);
+  const setAlert = useState(null)[1]; // Keep setAlert for submitHandler compatibility
+
+  // Track user id to reset local follow status when profile changes
+  const prevUserIdRef = useRef(user?.id);
+  if (user?.id !== prevUserIdRef.current) {
+    prevUserIdRef.current = user?.id;
+    if (localFollowStatus !== null) {
+      // Schedule state update for next render
+      Promise.resolve().then(() => setLocalFollowStatus(null));
+    }
+  }
 
   useEffect(() => {
     if (idToUse) {
@@ -27,17 +48,22 @@ export default function ProfileInfo({ userID }) {
     }
   }, [idToUse, fetchProfile]);
 
+  // Subscribe to follow status changes from other components
   useEffect(() => {
-    if (user?.followStatus !== undefined) {
-      setFollowStatus(user.followStatus);
-    }
-  }, [user?.followStatus]);
+    if (!userID) return;
 
-  useEffect(() => {
-    if (error) {
-      setAlert({ message: error, statusCode: 500 });
-    }
-  }, [error]);
+    const unsubscribe = subscribe(componentId, (userId, newFollowStatus) => {
+      if (parseInt(userId) === parseInt(userID)) {
+        setFollowStatus(newFollowStatus);
+      }
+    });
+    return unsubscribe;
+  }, [subscribe, componentId, userID, setFollowStatus]);
+
+  // Track online status of the profile user
+  const userIdsToTrack = useMemo(() => (userID ? [parseInt(userID)] : []), [userID]);
+  const { isUserOnline } = useOnlineStatus(localUser?.id, userIdsToTrack);
+  const profileUserOnline = userID ? isUserOnline(parseInt(userID)) : true; // Current user is always online
 
   if (!idToUse) {
     return (
@@ -52,7 +78,10 @@ export default function ProfileInfo({ userID }) {
 
   const handleFollowToggle = async () => {
     const response = await submitHandler(setAlert, toggleFollow, parseInt(userID));
-    setFollowStatus(response?.followStatus || null);
+    const newStatus = response?.followStatus || null;
+    setFollowStatus(newStatus);
+    // Notify other components about the follow status change
+    notifyFollowChange(parseInt(userID), newStatus);
   };
 
   if (loading) {
@@ -107,9 +136,12 @@ export default function ProfileInfo({ userID }) {
                   <span className="text-white text-2xl md:text-3xl font-bold">{getUserInitials(user)}</span>
                 )}
               </div>
-              {/* Only show online status for current user */}
-              {!userID && (
-                <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 rounded-full border-2 border-bg-secondary" />
+              {/* Online status indicator */}
+              {profileUserOnline && (
+                <div
+                  className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 rounded-full border-2 border-bg-secondary"
+                  title="Online"
+                />
               )}
             </div>
 

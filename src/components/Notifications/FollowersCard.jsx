@@ -34,7 +34,7 @@ export default function FollowersCard({ followers = [], displayLimit, onAccept, 
         <div className="space-y-2">
           {displayedFollowers.map(follower => (
             <div
-              key={follower.id}
+              key={follower.id || follower.follower_id}
               className={`flex items-center gap-3 p-3 bg-bg-primary border border-border hover:border-accent/30 transition-colors rounded-lg relative cursor-pointer ${
                 !follower.read ? "bg-accent/5 border-accent/20" : ""
               }`}

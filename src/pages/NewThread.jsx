@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { FiImage, FiX, FiSend } from "react-icons/fi";
 
 export default function NewThread() {
-  const { t } = useTranslation();
   const [content, setContent] = useState("");
   const [images, setImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);

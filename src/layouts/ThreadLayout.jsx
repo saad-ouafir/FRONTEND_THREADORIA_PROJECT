@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SubTreads from "../components/Threads/SubThreads";
+import SubThreads from "../components/Threads/SubThreads";
 import ThreadForm from "../components/Threads/ThreadForm";
 import Thread from "../components/Threads/Thread";
 import { useParams } from "react-router-dom";
@@ -31,7 +31,7 @@ export default function ThreadLayout() {
             <HeaderComponent page="Replies" />
           </div>
           <div className="pb-4 px-4">
-            <SubTreads threadID={threadID} refreshTrigger={refreshTrigger} />
+            <SubThreads threadID={threadID} refreshTrigger={refreshTrigger} />
           </div>
         </div>
       </div>

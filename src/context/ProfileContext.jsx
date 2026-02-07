@@ -1,7 +1,6 @@
-import { createContext, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { getProfile } from "../api/profile.api";
-
-export const ProfileContext = createContext(null);
+import { ProfileContext } from "./profileContext.js";
 
 export function ProfileProvider({ children, userID }) {
   const [profileData, setProfileData] = useState(null);

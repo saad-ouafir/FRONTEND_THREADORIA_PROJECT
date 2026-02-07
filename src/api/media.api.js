@@ -1,3 +1,7 @@
+//-----------------------------------
+// API Methods for Media
+//-----------------------------------
+
 import axiosInstance from "./axiosInstance";
 import setProfile from "../utils/profile/setProfile";
 

@@ -1,9 +1,6 @@
 import { Link } from "react-router-dom";
 import { getProfilePictureUrl, getUserInitials, getDisplayName, getUsername } from "../../utils/profile/profileUtils";
 
-/**
- * Reusable User Avatar component
- */
 export function UserAvatar({ user, size = "md", className = "" }) {
   const avatarUrl = getProfilePictureUrl(user);
   const displayName = getDisplayName(user);
@@ -29,9 +26,6 @@ export function UserAvatar({ user, size = "md", className = "" }) {
   );
 }
 
-/**
- * Reusable User Card component for displaying user info with optional action button
- */
 export default function UserCard({
   user,
   onAction,

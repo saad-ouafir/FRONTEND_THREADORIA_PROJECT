@@ -29,7 +29,7 @@ const Logo = ({ className }) => (
   </svg>
 );
 
-const Navbar = () => {
+const Navbar = ({ onMenuClick }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { i18n } = useTranslation();
   const { isDark, toggleTheme, mounted } = useThemeHandler();
@@ -86,8 +86,30 @@ const Navbar = () => {
                 </a>
               </div>
             )}
+          </div>
 
-            {/* Mobile Navigation */}
+          {/* Mobile Menu Button - For authenticated users */}
+          {isAuth && (
+            <div className="md:hidden flex items-center gap-1">
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-lg text-text-secondary hover:bg-bg-tertiary transition-colors"
+              >
+                {isDark ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
+              </button>
+
+              <button
+                onClick={onMenuClick}
+                className="p-2 rounded-lg text-text-secondary hover:bg-bg-tertiary transition-colors"
+                aria-label="Open menu"
+              >
+                <FiMenu className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+
+          {/* Mobile Navigation - For non-authenticated users */}
+          {!isAuth && (
             <div className="md:hidden flex items-center gap-1">
               <button
                 onClick={languageHandler}
@@ -110,11 +132,11 @@ const Navbar = () => {
                 {mobileMenuOpen ? <FiX className="w-5 h-5" /> : <FiMenu className="w-5 h-5" />}
               </button>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
+        {/* Mobile Menu - For non-authenticated users */}
+        {mobileMenuOpen && !isAuth && (
           <div className="md:hidden border-t border-border bg-bg-secondary">
             <div className="px-4 py-4 space-y-3">
               <a
