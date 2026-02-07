@@ -189,12 +189,12 @@ jobs:
             --zone=${{ env.ZONE }} \
             --tunnel-through-iap \
             --command="
-              sudo gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev --quiet
-              sudo docker stop frontend-container || true
-              sudo docker rm frontend-container || true
-              sudo docker pull $DOCKER_TAG
-              sudo docker image prune -af
-              sudo docker run -d \
+              gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev --quiet
+              docker stop frontend-container || true
+              docker rm frontend-container || true
+              docker pull $DOCKER_TAG
+              docker image prune -af
+              docker run -d \
                 --name frontend-container \
                 -p 80:80 \
                 --restart always \
