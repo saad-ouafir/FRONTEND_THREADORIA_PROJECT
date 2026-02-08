@@ -196,8 +196,7 @@ jobs:
               sudo docker image prune -af
               sudo docker run -d \
                 --name frontend-container \
-                -p 80:80 \
-                -p 443:443 \
+                -p 3000:80 \
                 --restart always \
                 $DOCKER_TAG
             "
