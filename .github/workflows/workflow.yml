@@ -17,7 +17,7 @@ env:
 
 jobs:
   # Combined Security & Lint Scans (faster than separate jobs)
-  security-lint-scan:
+  retirejs-Eslint-scan:
     name: Security & Lint Scans
     runs-on: ubuntu-latest
     steps:
@@ -146,7 +146,7 @@ jobs:
   build-and-deploy:
     name: Build and Deploy to GCP
     runs-on: ubuntu-latest
-    needs: [security-lint-scan, snyk-scan, sonarqube-scan]
+    needs: [retirejs-Eslint-scan, security-lint-scan, snyk-scan, sonarqube-scan]
     permissions:
       contents: "read"
       id-token: "write"
