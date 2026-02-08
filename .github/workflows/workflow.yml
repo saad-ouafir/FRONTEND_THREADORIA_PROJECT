@@ -146,7 +146,7 @@ jobs:
   build-and-deploy:
     name: Build and Deploy to GCP
     runs-on: ubuntu-latest
-    needs: [retirejs-Eslint-scan, security-lint-scan, snyk-scan, sonarqube-scan]
+    needs: [retirejs-Eslint-scan, dependency-check, snyk-scan, sonarqube-scan]
     permissions:
       contents: "read"
       id-token: "write"
